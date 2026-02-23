@@ -205,11 +205,11 @@
         const baseRanks = ['마카롱', '다쿠아즈'];
         const initialGuildRanks = {
             '뚠카롱': [...baseRanks, '크라운', '파르페', '티라미슈', '크로칸슈', '롤케이크', '팬케이크', '와플'],
-            '뚱카롱': [...baseRanks, '뚠케이크', '뚠브레드', '수플레', '뚠스콘', '반죽', '반죽(휴면)', '아인슈페너'],
-            '밤카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽', '반죽(휴면)'],
-            '별카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽', '반죽(휴면)'],
-            '달카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽', '반죽(휴면)'],
-            '꿀카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽', '반죽(휴면)']
+            '뚱카롱': [...baseRanks, '뚠케이크', '뚠브레드', '수플레', '뚠스콘', '반죽(휴면)', '아인슈페너'],
+            '밤카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽(휴면)'],
+            '별카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽(휴면)'],
+            '달카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽(휴면)'],
+            '꿀카롱': [...baseRanks, '부팬케이크', '부케이크', '아인슈페너', '반죽(휴면)']
         };
         const ITEMS_PER_PAGE = 17;
 
@@ -283,11 +283,19 @@
             return Object.entries(stats).sort((a,b) => a[0].localeCompare(b[0], 'ko'));
         };
 
+        const ROLE_PRIORITY = {'마카롱':0,'다쿠아즈':1,'크라운':2,'파르페':3,'티라미슈':4,'크로칸슈':5,'롤케이크':6,'팬케이크':7,'와플':8,'스콘':9,'반죽(휴면)':10,'뚠케이크':2,'뚠브레드':3,'아인슈페너':4,'부팬케이크':5,'수플레':6,'뚠스콘':7,'부케이크':8};
+
         function smartCompare(a, b, field, order) {
             let valA = a[field]; let valB = b[field];
             if (field === 'mainInfo') {
                 valA = a.isMain ? a.name : (a.mainCharName || "");
                 valB = b.isMain ? b.name : (b.mainCharName || "");
+            }
+            if (field === 'role') {
+                const pA = ROLE_PRIORITY[valA] !== undefined ? ROLE_PRIORITY[valA] : 99;
+                const pB = ROLE_PRIORITY[valB] !== undefined ? ROLE_PRIORITY[valB] : 99;
+                if (pA !== pB) return order === 'asc' ? pA - pB : pB - pA;
+                return 0;
             }
             if (valA === valB) return 0;
             const numA = parseFloat(valA); const numB = parseFloat(valB);
@@ -423,6 +431,14 @@
             const ddunT = window.calculateTotalSuro('뚠카롱'); 
             const ddungT = window.calculateTotalSuro('뚱카롱');
             
+            const ddunMembers = appState.members.filter(m => m.guild === '뚠카롱');
+            const roleCounts = {};
+            ddunMembers.forEach(m => { const r = m.role || '미설정'; roleCounts[r] = (roleCounts[r] || 0) + 1; });
+            const roleOrder = ['마카롱','다쿠아즈','크라운','파르페','티라미슈','크로칸슈','롤케이크','팬케이크','와플','스콘','반죽(휴면)'];
+            const roleEmoji = {'마카롱':'👑','다쿠아즈':'👑','크라운':'👑','파르페':'🍨','티라미슈':'🍰','크로칸슈':'🥐','롤케이크':'🍥','팬케이크':'🥞','와플':'🧇','스콘':'🍪','반죽(휴면)':'🫓'};
+            const roleColorClass = {'마카롱':'text-blue-600 bg-blue-50 border-blue-100','다쿠아즈':'text-pink-600 bg-pink-50 border-pink-100','크라운':'text-amber-600 bg-amber-50 border-amber-100','파르페':'text-indigo-600 bg-indigo-50 border-indigo-100','티라미슈':'text-indigo-600 bg-indigo-50 border-indigo-100','크로칸슈':'text-green-600 bg-green-50 border-green-100','롤케이크':'text-pink-600 bg-pink-50 border-pink-100','팬케이크':'text-pink-600 bg-pink-50 border-pink-100','와플':'text-orange-600 bg-orange-50 border-orange-100','스콘':'text-gray-600 bg-gray-50 border-gray-100','반죽(휴면)':'text-gray-400 bg-gray-50 border-gray-100'};
+            const roleCountHtml = roleOrder.filter(r => roleCounts[r]).map(r => `<div class="flex justify-between items-center py-1.5 px-2.5 rounded-lg border ${roleColorClass[r] || 'bg-gray-50 border-gray-100'}"><span>${roleEmoji[r] || ''} ${r}</span><span class="font-black">${roleCounts[r]}명</span></div>`).join('');
+            
             container.innerHTML = `
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8 fade-in shrink-0">
                 <div class="flex flex-col gap-6">
@@ -483,6 +499,10 @@
                                 <div class="flex justify-between items-center py-1.5 px-2.5 rounded-lg bg-gray-50 border border-gray-100"><span class="text-gray-400">🫓 반죽</span><span class="text-gray-400">휴면</span></div>
                             </div>
                         </div>
+                    </div>
+                    <div class="bg-white p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border border-gray-100 shadow-sm">
+                        <h3 class="text-[10px] lg:text-xs font-bold text-pink-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-users text-pink-400"></i> 뚠카롱 직위별 인원 <span class="text-gray-400 font-bold">(${ddunMembers.length}명)</span></h3>
+                        <div class="grid grid-cols-2 gap-1.5 text-[10px] lg:text-[11px] font-bold">${roleCountHtml}</div>
                     </div>
                 </div>
                 <div class="flex flex-col gap-8 h-full">
@@ -1187,7 +1207,7 @@
                 });
                 html += `</div>`;
             } else {
-                html = `<div class="overflow-y-auto flex-1 relative"><table class="w-full text-left min-w-[800px] text-xs whitespace-nowrap"><thead class="bg-gray-50 text-[10px] font-bold text-gray-500 border-b border-gray-100 shadow-sm"><tr><th class="p-4 text-center w-16">No.</th><th class="p-4 sortable" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th><th class="p-4 sortable" onclick="window.handleSort('mainInfo')">본캐 정보${sortIcon('mainInfo')}</th><th class="p-4 sortable" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th><th class="p-4 sortable" onclick="window.handleSort('role')">직위${sortIcon('role')}</th><th class="p-4 sortable" onclick="window.handleSort('class')">직업${sortIcon('class')}</th></tr></thead><tbody class="divide-y divide-gray-50 text-gray-600 font-bold">`;
+                html = `<div class="overflow-y-auto flex-1 relative"><table class="w-full text-left min-w-[800px] text-xs whitespace-nowrap"><thead class="bg-gray-50 text-[10px] font-bold text-gray-500 border-b border-gray-100 shadow-sm"><tr><th class="py-2 px-2 text-center w-12">No.</th><th class="py-2 px-2 sortable" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('mainInfo')">본캐 정보${sortIcon('mainInfo')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('role')">직위${sortIcon('role')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('class')">직업${sortIcon('class')}</th></tr></thead><tbody class="divide-y divide-gray-50 text-gray-600 font-bold">`;
                 
                 pageData.forEach((m, idx) => {
                     const globalIndex = (appState.pagination.members - 1) * ITEMS_PER_PAGE + idx + 1;
@@ -1195,19 +1215,12 @@
                     const mainMem = appState.members.find(x => x.name === mainName);
                     const mainRankHtml = mainMem ? formatRankWithSuffix(mainMem.role) : '-';
                     
-                    let mainInfoStyle = "";
-                    let mainInfoTextClass = "text-gray-700";
-                    let subInfoTextClass = "text-gray-400";
-                    
                     const targetRole = mainMem ? mainMem.role : (m.isMain ? m.role : '');
+                    let rowBorderStyle = "";
                     if (['티라미슈', '파르페', '크라운'].includes(targetRole)) {
-                        mainInfoStyle = "background-color: #0066FF;";
-                        mainInfoTextClass = "text-white";
-                        subInfoTextClass = "text-white opacity-80";
+                        rowBorderStyle = "border-left: 4px solid #0066FF;";
                     } else if (targetRole === '크로칸슈') {
-                        mainInfoStyle = "background-color: #92D050;";
-                        mainInfoTextClass = "text-black";
-                        subInfoTextClass = "text-black opacity-80";
+                        rowBorderStyle = "border-left: 4px solid #92D050;";
                     }
 
                     let roleHtml = `<span class="text-[10px]">${m.role}</span>`;
@@ -1215,18 +1228,16 @@
                         roleHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold text-white tracking-tight shadow-sm" style="background-color: #FF99FF; text-shadow: 0 1px 1px rgba(0,0,0,0.1);">${m.role}</span>`;
                     }
 
-                    html += `<tr class="hover:bg-pink-50/20 group transition-colors h-12">
-                        <td class="p-3 text-center text-gray-400 text-[11px]">${globalIndex}</td>
-                        <td class="p-3 font-bold text-gray-800 flex items-center h-full leading-none">${window.getNicknameIcon(m.role)}<span class="text-sm tracking-tight">${m.name}</span></td>
-                        <td class="p-3 leading-tight">
-                            <div class="rounded-xl p-2 transition-colors -m-1" style="${mainInfoStyle}">
-                                <span class="block text-[11px] font-bold ${mainInfoTextClass}">${mainName}</span>
-                                <span class="text-[9px] font-medium ${subInfoTextClass}">${mainRankHtml}</span>
-                            </div>
+                    html += `<tr class="hover:bg-pink-50/20 group transition-colors" style="${rowStyle}">
+                        <td class="py-1.5 px-2 text-center text-gray-400 text-[11px]">${globalIndex}</td>
+                        <td class="py-1.5 px-2 font-bold text-gray-800 flex items-center leading-none">${window.getNicknameIcon(m.role)}<span class="text-sm tracking-tight">${m.name}</span></td>
+                        <td class="py-1.5 px-2 leading-tight">
+                            <span class="block text-[11px] font-bold text-gray-700">${mainName}</span>
+                            <span class="text-[9px] font-medium text-gray-400">${mainRankHtml}</span>
                         </td>
-                        <td class="p-3">${m.guild}</td>
-                        <td class="p-3">${roleHtml}</td>
-                        <td class="p-3"><span class="text-[10px] text-gray-400">${m.class||'-'}</span></td>
+                        <td class="py-1.5 px-2">${m.guild}</td>
+                        <td class="py-1.5 px-2">${roleHtml}</td>
+                        <td class="py-1.5 px-2"><span class="text-[10px] text-gray-400">${m.class||'-'}</span></td>
                     </tr>`;
                 });
                 html += `</tbody></table></div>`;
