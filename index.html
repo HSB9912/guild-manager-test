@@ -1494,6 +1494,85 @@
             }, 200);
         };
 
+        window._renderAnalysisMobile = (processedList, recentHeaders, getWedStr) => {
+            const mobileEl = document.getElementById('analysisTableMobile');
+            const labelEl = document.getElementById('analysisPeriodLabel');
+            if (!mobileEl) return;
+            const idx = appState._analysisPeriodIdx || 0;
+            const h = recentHeaders[idx];
+            const prevH = idx > 0 ? recentHeaders[idx - 1] : null;
+            if (!h) { mobileEl.innerHTML = '<p class="p-4 text-xs text-gray-400">데이터 없음</p>'; return; }
+            if (labelEl) labelEl.textContent = getWedStr(h);
+
+            const sorted = [...processedList].sort((a, b) => {
+                const sa = Math.round(Number(a.suro?.[h])) || 0;
+                const sb = Math.round(Number(b.suro?.[h])) || 0;
+                return sb - sa;
+            });
+
+            const maxScore = sorted.length > 0 ? (Math.round(Number(sorted[0].suro?.[h])) || 1) : 1;
+
+            let html = `<div class="divide-y divide-gray-50">`;
+            sorted.forEach((m, i) => {
+                const score = Math.round(Number(m.suro?.[h])) || 0;
+                const prev = prevH ? (Math.round(Number(m.suro?.[prevH])) || 0) : 0;
+                const barPct = Math.max((score / maxScore) * 100, 0);
+                let diffHtml = '';
+                if (prev > 0 && score > 0) {
+                    const pct = ((score - prev) / prev * 100);
+                    if (score > prev) diffHtml = `<span class="text-red-500 text-[9px]">▲${pct.toFixed(1)}%</span>`;
+                    else if (score < prev) diffHtml = `<span class="text-blue-500 text-[9px]">▼${Math.abs(pct).toFixed(1)}%</span>`;
+                    else diffHtml = `<span class="text-gray-400 text-[9px]">-</span>`;
+                } else if (score > 0 && prev === 0) {
+                    diffHtml = `<span class="text-emerald-500 text-[9px]">NEW</span>`;
+                }
+
+                const rankBg = i === 0 ? 'bg-amber-50 border-l-4 border-amber-400' : i === 1 ? 'bg-gray-50 border-l-4 border-gray-400' : i === 2 ? 'bg-orange-50/50 border-l-4 border-orange-300' : '';
+                const rankIcon = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `<span class="text-[9px] text-gray-400">${i+1}</span>`;
+
+                html += `<div class="px-3 py-2 ${rankBg} ${score === 0 ? 'opacity-40' : ''}" onclick="window.showPersonalSuro('${m.name}')">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-5 text-center shrink-0">${rankIcon}</span>
+                            <span class="text-[11px] font-bold text-gray-800 truncate">${m.name}</span>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            ${diffHtml}
+                            <span class="text-[11px] font-mono font-bold ${score === 0 ? 'text-red-400' : 'text-gray-800'}">${score > 0 ? score.toLocaleString() : '0'}</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500 ${i === 0 ? 'bg-amber-400' : i < 3 ? 'bg-pink-400' : score === 0 ? 'bg-red-300' : 'bg-pink-300'}" style="width:${barPct}%"></div>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            mobileEl.innerHTML = html;
+        };
+
+        window._analysisPeriodPrev = () => {
+            const max = (appState.suroHeaders || []).length - 1;
+            if ((appState._analysisPeriodIdx || 0) > 0) {
+                appState._analysisPeriodIdx--;
+                window.renderAnalysis(document.getElementById('contentArea'), appState.analysisGuild);
+            }
+        };
+        window._analysisPeriodNext = () => {
+            const max = (appState.suroHeaders || []).length - 1;
+            if ((appState._analysisPeriodIdx || 0) < max) {
+                appState._analysisPeriodIdx++;
+                window.renderAnalysis(document.getElementById('contentArea'), appState.analysisGuild);
+            }
+        };
+
+        window._origSetAnalysisSearch = (val) => {
+            appState.analysisFilters.search = val;
+            if (window._analysisSearchTimer) clearTimeout(window._analysisSearchTimer);
+            window._analysisSearchTimer = setTimeout(() => {
+                window.updateAnalysisTable();
+            }, 200);
+        };
+
         window.updateAnalysisTable = () => {
             const tbody = document.getElementById('analysisTableBody');
             if (!tbody) return;
@@ -1822,10 +1901,21 @@
                     <div class="bg-white rounded-xl lg:rounded-2xl border border-gray-100 shadow-sm flex flex-col overflow-hidden h-full relative">
                         <div class="p-3 lg:p-4 border-b border-gray-50 flex justify-between items-center shrink-0 bg-white relative z-40">
                             <h3 class="text-[10px] lg:text-xs font-bold text-gray-800 uppercase tracking-widest">전체 데이터 (누적)</h3>
-                            <button onclick="window.expandTable()" class="text-[9px] text-gray-300 hover:text-pink-400 transition-colors flex items-center gap-1 font-bold"><i class="fas fa-expand-alt"></i> 확대</button>
+                            <div class="flex items-center gap-2">
+                                <div class="sm:hidden flex items-center gap-1">
+                                    <button onclick="window._analysisPeriodPrev()" class="w-7 h-7 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-100"><i class="fas fa-chevron-left text-[9px]"></i></button>
+                                    <span class="text-[9px] font-bold text-emerald-600 min-w-[70px] text-center" id="analysisPeriodLabel"></span>
+                                    <button onclick="window._analysisPeriodNext()" class="w-7 h-7 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-100"><i class="fas fa-chevron-right text-[9px]"></i></button>
+                                </div>
+                                <button onclick="window.expandTable()" class="text-[9px] text-gray-300 hover:text-pink-400 transition-colors flex items-center gap-1 font-bold"><i class="fas fa-expand-alt"></i> 확대</button>
+                            </div>
                         </div>
                         <div id="analysisTableWrapper" class="flex-1 overflow-auto bg-white scroll-smooth relative">
-                            <table class="w-full text-left text-xs whitespace-nowrap stick-head">
+                            ${(() => {
+                                const isMobile = false;
+                                return '';
+                            })()}
+                            <table class="w-full text-left text-xs whitespace-nowrap stick-head hidden sm:table" id="analysisTablePC">
                                 <thead class="text-[10px] text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
                                     <tr>
                                         <th class="p-3 text-center min-w-[50px] bg-gray-50">RANK</th>
@@ -1885,17 +1975,25 @@
                                     }).join('')}
                                 </tbody>
                             </table>
+
+                            <div class="sm:hidden" id="analysisTableMobile">
+                            </div>
                         </div>
                     </div>
                 </div>
                 </div>
             </div>`;
 
+            if (!appState._analysisPeriodIdx) appState._analysisPeriodIdx = recentHeaders.length - 1;
+            if (appState._analysisPeriodIdx >= recentHeaders.length) appState._analysisPeriodIdx = recentHeaders.length - 1;
+            if (appState._analysisPeriodIdx < 0) appState._analysisPeriodIdx = 0;
+
             setTimeout(() => {
                 const tableWrapper = document.getElementById('analysisTableWrapper');
                 if (tableWrapper) {
                     tableWrapper.scrollLeft = tableWrapper.scrollWidth;
                 }
+                window._renderAnalysisMobile(processedList, recentHeaders, getWedStr);
             }, 100);
 
             const ctx = document.getElementById('analysisChart');
@@ -2239,7 +2337,7 @@
             const pageData = filtered.slice((appState.pagination.members - 1) * ITEMS_PER_PAGE, appState.pagination.members * ITEMS_PER_PAGE);
             const sortIcon = (f) => appState.filters.sortField === f ? (appState.filters.sortOrder === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>') : '';
 
-            let html = `<div class="overflow-auto flex-1 relative -webkit-overflow-scrolling-touch"><table class="w-full text-left min-w-[700px] lg:min-w-[900px] text-[10px] lg:text-xs whitespace-nowrap"><thead class="bg-gray-50 text-[9px] lg:text-[10px] font-bold text-gray-500 border-b border-gray-100 shadow-sm"><tr><th class="py-2 px-2 text-center w-8 lg:w-12">${appState.isKickMode ? '선택' : 'No.'}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('mainInfo')">본캐${sortIcon('mainInfo')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('role')">직위${sortIcon('role')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('class')">직업${sortIcon('class')}</th>${isAdmin() ? '<th class="py-2 px-2 text-right">관리</th>' : ''}</tr></thead><tbody class="divide-y divide-gray-50 text-gray-600 font-bold">`;
+            let html = `<div class="overflow-auto flex-1 relative -webkit-overflow-scrolling-touch"><table class="w-full text-left text-[10px] lg:text-xs whitespace-nowrap"><thead class="bg-gray-50 text-[9px] lg:text-[10px] font-bold text-gray-500 border-b border-gray-100 shadow-sm"><tr><th class="py-2 px-2 text-center w-8 lg:w-12">${appState.isKickMode ? '선택' : 'No.'}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th><th class="py-2 px-2 sortable hidden sm:table-cell" onclick="window.handleSort('mainInfo')">본캐${sortIcon('mainInfo')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th><th class="py-2 px-2 sortable hidden sm:table-cell" onclick="window.handleSort('role')">직위${sortIcon('role')}</th><th class="py-2 px-2 sortable hidden md:table-cell" onclick="window.handleSort('class')">직업${sortIcon('class')}</th>${isAdmin() ? '<th class="py-2 px-2 text-right">관리</th>' : ''}</tr></thead><tbody class="divide-y divide-gray-50 text-gray-600 font-bold">`;
 
             pageData.forEach((m, idx) => {
                 const globalIndex = (appState.pagination.members - 1) * ITEMS_PER_PAGE + idx + 1;
@@ -2286,13 +2384,13 @@
                             : globalIndex}
                     </td>
                     <td class="py-1.5 px-2 font-bold text-gray-800 flex items-center leading-none">${window.getNicknameIcon(m.role)}<span class="text-sm tracking-tight">${m.name}</span></td>
-                    <td class="py-1.5 px-2 leading-tight">
+                    <td class="py-1.5 px-2 leading-tight hidden sm:table-cell">
                         <span class="block text-[11px] font-bold text-gray-700">${mainName}</span>
                         <span class="text-[9px] font-medium text-gray-400">${mainRankHtml}</span>
                     </td>
                     <td class="py-1.5 px-2">${appState.isBatchMode ? `<select onchange="window.stageUpdate('${m.id}', 'guild', this.value)" class="bg-white border rounded px-1 text-[10px] outline-none">${appState.guilds.map(g=>`<option value="${g.name}" ${currentGuild===g.name?'selected':''}>${g.name}</option>`).join('')}</select>` : m.guild}</td>
-                    <td class="py-1.5 px-2">${appState.isBatchMode ? `<select onchange="window.stageUpdate('${m.id}', 'role', this.value)" class="bg-white border rounded px-1 text-[10px] outline-none">${(appState.guildRanks[currentGuild]||initialGuildRanks[currentGuild]||initialGuildRanks['뚠카롱']).map(r=>`<option value="${r}" ${currentRole===r?'selected':''}>${r}</option>`).join('')}</select>` : roleHtml}</td>
-                    <td class="py-1.5 px-2">${appState.isBatchMode ? `<input type="text" value="${currentClass}" onchange="window.stageUpdate('${m.id}', 'class', this.value)" class="bg-white border rounded px-1 text-[10px] w-24 outline-none">` : `<span class="text-[10px] text-gray-400">${m.class||'-'}</span>`}</td>
+                    <td class="py-1.5 px-2 hidden sm:table-cell">${appState.isBatchMode ? `<select onchange="window.stageUpdate('${m.id}', 'role', this.value)" class="bg-white border rounded px-1 text-[10px] outline-none">${(appState.guildRanks[currentGuild]||initialGuildRanks[currentGuild]||initialGuildRanks['뚠카롱']).map(r=>`<option value="${r}" ${currentRole===r?'selected':''}>${r}</option>`).join('')}</select>` : roleHtml}</td>
+                    <td class="py-1.5 px-2 hidden md:table-cell">${appState.isBatchMode ? `<input type="text" value="${currentClass}" onchange="window.stageUpdate('${m.id}', 'class', this.value)" class="bg-white border rounded px-1 text-[10px] w-24 outline-none">` : `<span class="text-[10px] text-gray-400">${m.class||'-'}</span>`}</td>
                     <td class="py-1.5 px-2 text-right">
                         ${isAdmin() && !appState.isBatchMode && !appState.isKickMode ? `<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="window.openEditModal('${m.id}')" class="w-7 h-7 rounded-lg border border-gray-100 text-blue-500 hover:bg-blue-50 flex items-center justify-center shadow-sm"><i class="fas fa-edit text-[10px]"></i></button><button onclick="window.openDeleteModal('${m.id}')" class="w-7 h-7 rounded-lg border border-gray-100 text-red-500 hover:bg-red-50 flex items-center justify-center shadow-sm"><i class="fas fa-trash text-[10px]"></i></button></div>` : ''}
                     </td>
@@ -2543,12 +2641,12 @@
                     <div class="flex flex-wrap items-center gap-2 mb-3">
                         <h3 class="text-sm lg:text-base font-bold text-gray-800"><i class="fas fa-table mr-2 text-emerald-500"></i>DB 시트 뷰어</h3>
                         <div class="flex gap-1.5 ml-auto">
-                            ${['members','bail_history','penalty_history','operation_history','events'].map(t => 
-                                `<button onclick="window._sheetState.mode='${t}';window._sheetState.edited={};window._sheetState.suroEdited={};window.renderSheet(document.getElementById('contentArea'))" class="px-2.5 py-1 rounded-lg text-[9px] font-bold transition-all ${ss.mode === t ? 'bg-emerald-500 text-white shadow' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}">${({members:'멤버+수로',bail_history:'보석금',penalty_history:'벌점',operation_history:'운영이력',events:'일정'})[t]}</button>`
+                            ${['members','suro','bail_history','penalty_history','operation_history','events'].map(t => 
+                                `<button onclick="window._sheetState.mode='${t}';window._sheetState.edited={};window._sheetState.suroEdited={};window.renderSheet(document.getElementById('contentArea'))" class="px-2.5 py-1 rounded-lg text-[9px] font-bold transition-all ${ss.mode === t ? 'bg-emerald-500 text-white shadow' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}">${({members:'멤버',suro:'수로',bail_history:'보석금',penalty_history:'벌점',operation_history:'운영이력',events:'일정'})[t]}</button>`
                             ).join('')}
                         </div>
                     </div>
-                    ${ss.mode === 'members' ? `
+                    ${(ss.mode === 'members' || ss.mode === 'suro') ? `
                     <div class="flex flex-wrap items-center gap-2">
                         <div class="flex gap-1">
                             ${appState.guilds.map(g => 
@@ -2584,6 +2682,8 @@
 
             if (ss.mode === 'members') {
                 window._sheetRenderMembers(wrap);
+            } else if (ss.mode === 'suro') {
+                window._sheetRenderSuro(wrap);
             } else {
                 window._sheetRenderTable(wrap, ss.mode);
             }
@@ -2614,11 +2714,6 @@
             const countEl = document.getElementById('sheetCount');
             if (countEl) countEl.textContent = `${members.length}명`;
 
-            const shortHeaders = headers.map(h => {
-                const match = h.match(/~ (\d{2}-\d{2}-\d{2}\([^)]+\))/);
-                return match ? match[1] : h.substring(0, 15);
-            });
-
             const memberFields = [
                 { key: 'role', label: '직위', w: 60 },
                 { key: 'class', label: '직업', w: 55 },
@@ -2626,14 +2721,13 @@
                 { key: 'mainCharName', label: '본캐닉', w: 60 }
             ];
 
-            let html = `<table class="w-full text-left border-collapse" style="min-width:${500 + memberFields.length * 60 + headers.length * 85}px">
+            let html = `<table class="w-full text-left border-collapse" style="min-width:${300 + memberFields.length * 60}px">
                 <thead class="bg-gray-50 sticky top-0 z-10">
                     <tr class="text-[8px] lg:text-[9px] font-bold text-gray-500 uppercase">
                         <th class="p-1.5 border-b border-r border-gray-100 w-6 text-center sticky left-0 bg-gray-50 z-20">#</th>
                         <th class="p-1.5 border-b border-r border-gray-100 sticky left-6 bg-gray-50 z-20" style="min-width:70px">닉네임</th>
                         <th class="p-1.5 border-b border-r border-gray-100" style="min-width:50px">길드</th>
                         ${memberFields.map(f => `<th class="p-1.5 border-b border-r border-gray-100 ${f.center?'text-center':''}" style="min-width:${f.w}px">${f.label}</th>`).join('')}
-                        ${shortHeaders.map(h => `<th class="p-1.5 border-b border-r border-gray-100 text-center text-emerald-600" style="min-width:80px">${h}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody class="text-[10px] lg:text-[11px] font-bold">`;
@@ -2641,7 +2735,7 @@
             members.forEach((m, i) => {
                 const mid = m.id;
                 const mEdits = ss.edited[mid] || {};
-                const totalCols = 3 + memberFields.length + headers.length;
+                const totalCols = 3 + memberFields.length;
 
                 if (i > 0 && i % 17 === 0) {
                     html += `<tr><td colspan="${totalCols}" class="p-0"><div class="h-[3px] bg-pink-200"></div></td></tr>`;
@@ -2690,20 +2784,6 @@
                     }
                 });
 
-                headers.forEach(h => {
-                    const suroKey = `${mid}_${h}`;
-                    const origScore = m.suro?.[h] || '';
-                    const val = ss.suroEdited[suroKey] !== undefined ? ss.suroEdited[suroKey] : origScore;
-                    const wasEdited = ss.suroEdited[suroKey] !== undefined;
-                    const displayVal = val ? Number(val).toLocaleString() : '';
-                    html += `<td class="p-0 border-r border-gray-50 ${wasEdited ? 'bg-yellow-100' : ''}">
-                        <input type="text" value="${val}" 
-                            class="w-full px-1 py-1 text-[10px] font-mono font-bold outline-none bg-transparent border-0 focus:bg-emerald-50 transition-colors text-right" 
-                            onfocus="this.select()"
-                            onchange="window._sheetEditSuro('${mid}','${h}',this.value)">
-                    </td>`;
-                });
-
                 html += `</tr>`;
             });
 
@@ -2729,6 +2809,110 @@
                 const targetInput = targetTd.querySelector('input, select');
                 if (targetInput) { targetInput.focus(); if (targetInput.select) targetInput.select(); }
             });
+        };
+
+        window._sheetRenderSuro = (wrap) => {
+            const ss = window._sheetState;
+            const allHeaders = [...(appState.suroHeaders || [])].reverse();
+            const isMobile = window.innerWidth < 768;
+
+            if (!ss.suroPeriodIdx) ss.suroPeriodIdx = 0;
+
+            let members = appState.members.filter(m => m.guild === ss.guild);
+            if (ss.search.trim()) {
+                const q = ss.search.toLowerCase();
+                members = members.filter(m => m.name.toLowerCase().includes(q));
+            }
+            members.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+
+            const shortLabel = (h) => { const m = h.match(/~ (\d{2}-\d{2}-\d{2}\([^)]+\))/); return m ? m[1] : h.substring(0, 12); };
+
+            if (isMobile) {
+                const h = allHeaders[ss.suroPeriodIdx] || allHeaders[0];
+                if (!h) { wrap.innerHTML = '<p class="p-4 text-xs text-gray-400">수로 데이터 없음</p>'; return; }
+                const countEl = document.getElementById('sheetCount');
+                if (countEl) countEl.textContent = `${members.length}명`;
+
+                let html = `<div class="p-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2 sticky top-0 z-10">
+                    <button onclick="window._sheetSuroPrev()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 ${ss.suroPeriodIdx >= allHeaders.length - 1 ? 'opacity-30 pointer-events-none' : ''}"><i class="fas fa-chevron-left text-[10px]"></i></button>
+                    <div class="flex-1 text-center"><span class="text-xs font-bold text-emerald-600">${shortLabel(h)}</span><span class="text-[9px] text-gray-400 ml-2">${ss.suroPeriodIdx + 1}/${allHeaders.length}</span></div>
+                    <button onclick="window._sheetSuroNext()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100 ${ss.suroPeriodIdx <= 0 ? 'opacity-30 pointer-events-none' : ''}"><i class="fas fa-chevron-right text-[10px]"></i></button>
+                </div>`;
+
+                html += `<table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 sticky top-[52px] z-10"><tr class="text-[8px] font-bold text-gray-500 uppercase">
+                    <th class="p-1.5 border-b border-gray-100 w-6 text-center">#</th>
+                    <th class="p-1.5 border-b border-gray-100">닉네임</th>
+                    <th class="p-1.5 border-b border-gray-100 text-right w-24">점수</th>
+                </tr></thead><tbody class="text-[11px] font-bold">`;
+
+                members.forEach((m, i) => {
+                    const mid = m.id;
+                    const suroKey = `${mid}_${h}`;
+                    const origScore = m.suro?.[h] || '';
+                    const val = ss.suroEdited[suroKey] !== undefined ? ss.suroEdited[suroKey] : origScore;
+                    const wasEdited = ss.suroEdited[suroKey] !== undefined;
+                    const numVal = Number(val) || 0;
+                    if (i > 0 && i % 17 === 0) html += `<tr><td colspan="3" class="p-0"><div class="h-[2px] bg-emerald-200"></div></td></tr>`;
+                    html += `<tr class="border-b border-gray-50 ${wasEdited ? 'bg-yellow-50' : ''}">
+                        <td class="p-1.5 text-[9px] text-gray-300 text-center">${i+1}</td>
+                        <td class="p-1.5 text-gray-800">${m.name}</td>
+                        <td class="p-0 ${numVal === 0 && !wasEdited ? 'bg-red-50/50' : ''}">
+                            <input type="text" value="${val}"
+                                class="w-full px-2 py-1.5 text-[11px] font-mono font-bold outline-none bg-transparent border-0 focus:bg-emerald-50 text-right"
+                                onfocus="this.select()"
+                                onchange="window._sheetEditSuro('${mid}','${h}',this.value)">
+                        </td></tr>`;
+                });
+                html += `</tbody></table>`;
+                wrap.innerHTML = html;
+            } else {
+                const countEl = document.getElementById('sheetCount');
+                if (countEl) countEl.textContent = `${members.length}명 · ${allHeaders.length}주차`;
+                const shortHeaders = allHeaders.map(shortLabel);
+
+                let html = `<table class="w-full text-left border-collapse" style="min-width:${120 + allHeaders.length * 80}px">
+                <thead class="bg-gray-50 sticky top-0 z-10"><tr class="text-[8px] lg:text-[9px] font-bold text-gray-500 uppercase">
+                    <th class="p-1.5 border-b border-r border-gray-100 w-6 text-center sticky left-0 bg-gray-50 z-20">#</th>
+                    <th class="p-1.5 border-b border-r border-gray-100 sticky left-6 bg-gray-50 z-20" style="min-width:70px">닉네임</th>
+                    ${shortHeaders.map(h => `<th class="p-1.5 border-b border-r border-gray-100 text-center text-emerald-600" style="min-width:75px">${h}</th>`).join('')}
+                </tr></thead><tbody class="text-[10px] lg:text-[11px] font-bold">`;
+
+                members.forEach((m, i) => {
+                    const mid = m.id;
+                    if (i > 0 && i % 17 === 0) html += `<tr><td colspan="${2 + allHeaders.length}" class="p-0"><div class="h-[3px] bg-emerald-200"></div></td></tr>`;
+                    html += `<tr class="hover:bg-emerald-50/30 transition-colors border-b border-gray-50">
+                        <td class="p-1 text-[9px] text-gray-300 border-r border-gray-50 text-center font-mono sticky left-0 bg-white z-10">${i+1}</td>
+                        <td class="p-1 border-r border-gray-50 text-gray-800 sticky left-6 bg-white z-10 whitespace-nowrap">${m.name}</td>`;
+                    allHeaders.forEach(h => {
+                        const suroKey = `${mid}_${h}`;
+                        const origScore = m.suro?.[h] || '';
+                        const val = ss.suroEdited[suroKey] !== undefined ? ss.suroEdited[suroKey] : origScore;
+                        const wasEdited = ss.suroEdited[suroKey] !== undefined;
+                        const numVal = Number(val) || 0;
+                        html += `<td class="p-0 border-r border-gray-50 ${wasEdited ? 'bg-yellow-100' : numVal === 0 ? 'bg-red-50/30' : ''}">
+                            <input type="text" value="${val}"
+                                class="w-full px-1 py-1 text-[10px] font-mono font-bold outline-none bg-transparent border-0 focus:bg-emerald-50 transition-colors text-right"
+                                onfocus="this.select()"
+                                onchange="window._sheetEditSuro('${mid}','${h}',this.value)">
+                        </td>`;
+                    });
+                    html += `</tr>`;
+                });
+                html += `</tbody></table>`;
+                wrap.innerHTML = html;
+            }
+            window._sheetUpdateButtons();
+        };
+
+        window._sheetSuroPrev = () => {
+            const ss = window._sheetState;
+            const max = (appState.suroHeaders || []).length - 1;
+            if (ss.suroPeriodIdx < max) { ss.suroPeriodIdx++; window._sheetRender(); }
+        };
+        window._sheetSuroNext = () => {
+            const ss = window._sheetState;
+            if (ss.suroPeriodIdx > 0) { ss.suroPeriodIdx--; window._sheetRender(); }
         };
 
         window._sheetEditMember = (memberId, field, newVal) => {
