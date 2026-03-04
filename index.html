@@ -74,6 +74,7 @@
    <button onclick="router('members')" class="nav-item w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-600 hover:bg-pink-50 font-bold text-sm" data-target="members"><i class="fas fa-users w-5 text-center text-xs"></i><span>길드원</span></button>
    <button onclick="router('analysis')" class="nav-item w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-600 hover:bg-pink-50 font-bold text-sm" data-target="analysis"><i class="fas fa-chart-line w-5 text-center text-xs"></i><span>수로 분석</span></button>
    <button onclick="router('guild_stats')" class="nav-item w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-600 hover:bg-pink-50 font-bold text-sm" data-target="guild_stats"><i class="fas fa-chart-pie w-5 text-center text-xs"></i><span>길드 현황</span></button>
+   <button onclick="router('board')" class="nav-item w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-600 hover:bg-pink-50 font-bold text-sm" data-target="board"><i class="fas fa-clipboard w-5 text-center text-xs"></i><span>게시판</span></button>
    <button onclick="router('bail')" class="nav-item w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-600 hover:bg-pink-50 font-bold text-sm" data-target="bail"><i class="fas fa-gem w-5 text-center text-xs"></i><span>보석금</span></button>
    <button onclick="router('penalty')" class="nav-item w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-gray-600 hover:bg-pink-50 font-bold text-sm" data-target="penalty"><i class="fas fa-exclamation-triangle w-5 text-center text-xs"></i><span>벌점</span></button>
    <p class="admin-only hidden px-4 pt-4 pb-2 text-[9px] font-bold text-gray-300 uppercase tracking-widest">관리자</p>
@@ -641,26 +642,35 @@
                 window.showLoading(true); 
                 window.setLoadProgress(10, '일괄 수정 준비 중...');
 
-                const allMembers = appState.members.map(m => {
-                    const upd = appState.pendingUpdates[m.id];
-                    return {
-                        name: m.name, guild: upd?.guild !== undefined ? upd.guild : m.guild,
-                        role: upd?.role !== undefined ? upd.role : m.role,
-                        class: upd?.class !== undefined ? upd.class : (m.class || ''),
-                        isMain: m.isMain || false,
-                        mainCharName: m.mainCharName || '', joinDate: m.joinDate || ''
-                    };
-                });
+                try {
+                    let done = 0;
+                    for (const upd of updates) {
+                        const updateData = {};
+                        if (upd.guild !== undefined) updateData.guild = upd.guild;
+                        if (upd.role !== undefined) updateData.role = upd.role;
+                        if (upd.class !== undefined) updateData.class = upd.class;
+                        if (upd.isMain !== undefined) updateData.is_main = upd.isMain;
+                        if (upd.mainCharName !== undefined) updateData.main_char_name = upd.mainCharName;
 
-                window.setLoadProgress(30, '서버에 전송 중...');
-                const success = await window.sendAction('save_members', { members: allMembers });
+                        if (Object.keys(updateData).length > 0) {
+                            const {error} = await supaDb.from('members').update(updateData).eq('id', upd.id);
+                            if (error) throw error;
+                        }
+                        done++;
+                        window.setLoadProgress(10 + Math.round(done / updates.length * 70), `${done}/${updates.length} 저장 중...`);
+                    }
 
-                window.setLoadProgress(80, '데이터 갱신 중...');
-                if(success) {
+                    window.setLoadProgress(85, '운영 이력 기록 중...');
+                    const names = updates.map(u => appState.members.find(m => m.id === u.id)?.name || u.id).join(', ');
+                    await supaDb.from('operation_history').insert({ date: new Date().toISOString().split('T')[0], category: '일괄수정', name: '관리자', content: `${updates.length}명 정보 수정: ${names.substring(0, 200)}` });
+
+                    window.setLoadProgress(90, '데이터 갱신 중...');
                     window.showMsg(`${updates.length}명의 정보가 저장되었습니다.`, "success");
                     appState.isBatchMode = false; 
                     appState.pendingUpdates = {};
                     await window.fetchMembers();
+                } catch(e) {
+                    window.showMsg('저장 실패: ' + e.message, 'error');
                 }
                 window.showLoading(false);
             } 
@@ -1194,12 +1204,13 @@
             const content = document.getElementById('contentArea'); if(!content) return;
             content.innerHTML = '';
             document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.target === tab));
-            const titles = { home: '홈', members: '길드원', analysis: '수로 분석', guild_stats: '길드 현황', suro_input: '수로 입력', bail: '보석금', penalty: '벌점', sheet: 'DB 시트', guide_edit: '가이드 편집', history: '운영 이력', records: '영구 기록', sync: '동기화', settings: '설정', role_assign: '직위 반영' };
+            const titles = { home: '홈', members: '길드원', analysis: '수로 분석', guild_stats: '길드 현황', board: '게시판', suro_input: '수로 입력', bail: '보석금', penalty: '벌점', sheet: 'DB 시트', guide_edit: '가이드 편집', history: '운영 이력', records: '영구 기록', sync: '동기화', settings: '설정', role_assign: '직위 반영' };
             document.getElementById('pageTitle').innerText = titles[tab] || '';
             if (tab === 'home') window.renderHome(content);
             else if (tab === 'members') window.renderMembers(content);
             else if (tab === 'analysis') window.renderAnalysis(content, appState.analysisGuild);
             else if (tab === 'guild_stats') window.renderGuildStats(content);
+            else if (tab === 'board') window.renderBoard(content);
             else if (tab === 'suro_input' && isAdmin()) window.renderSuroInput(content);
             else if (tab === 'bail') window.renderBail(content);
             else if (tab === 'penalty') window.renderPenalty(content);
@@ -3971,6 +3982,351 @@
 
   window._recordsState = { data: [], view: 'table', filter: '', statusFilter: 'all', guildFilter: 'all', editingId: null };
 
+  // ============ 게시판 ============
+  window._boardState = { tab: 'notice', page: 1, posts: [], viewingPost: null, composing: false };
+  const BOARD_PER_PAGE = 10;
+  const BOARD_STORAGE_URL = SUPABASE_URL + '/storage/v1/object/public/board-images/';
+
+  window.renderBoard = async (container) => {
+    const bs = window._boardState;
+    container.innerHTML = `
+    <div class="flex flex-col gap-3 fade-in h-full" id="boardRoot">
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 lg:p-4 shrink-0">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-bold text-gray-800"><i class="fas fa-clipboard mr-2 text-pink-400"></i>게시판</h3>
+          <div class="flex gap-1.5 ml-4">
+            ${['notice','free'].map(t => `<button onclick="window._boardSwitchTab('${t}')" class="px-3 py-1 rounded-lg text-[10px] font-bold transition-all ${bs.tab===t ? (t==='notice'?'bg-red-500 text-white shadow':'bg-blue-500 text-white shadow') : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}">${t==='notice'?'공지':'자유'}</button>`).join('')}
+          </div>
+          ${window.isLoggedIn() ? `<button onclick="window._boardCompose()" class="ml-auto px-3 py-1.5 rounded-xl text-[10px] font-bold bg-pink-500 text-white shadow hover:bg-pink-600 transition-all"><i class="fas fa-pen mr-1"></i>글쓰기</button>` : ''}
+        </div>
+      </div>
+      <div id="boardContent" class="bg-white rounded-2xl border border-gray-100 shadow-sm flex-1 overflow-hidden flex flex-col"></div>
+    </div>`;
+    window._boardLoadPosts();
+  };
+
+  window._boardSwitchTab = (tab) => {
+    window._boardState.tab = tab;
+    window._boardState.page = 1;
+    window._boardState.viewingPost = null;
+    window._boardState.composing = false;
+    window.renderBoard(document.getElementById('contentArea'));
+  };
+
+  window._boardLoadPosts = async () => {
+    const bs = window._boardState;
+    const wrap = document.getElementById('boardContent');
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>로딩 중...</div>';
+
+    try {
+      let query = supaDb.from('board_posts').select('*').eq('board_type', bs.tab).order('is_pinned', {ascending: false}).order('created_at', {ascending: false});
+      const {data, error} = await query;
+      if (error) throw error;
+      bs.posts = data || [];
+      window._boardRenderList(wrap);
+    } catch(e) {
+      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + e.message + '</div>';
+    }
+  };
+
+  window._boardRenderList = (wrap) => {
+    const bs = window._boardState;
+    const posts = bs.posts;
+    const totalPages = Math.max(1, Math.ceil(posts.length / BOARD_PER_PAGE));
+    if (bs.page > totalPages) bs.page = totalPages;
+    const pageData = posts.slice((bs.page - 1) * BOARD_PER_PAGE, bs.page * BOARD_PER_PAGE);
+
+    if (posts.length === 0) {
+      wrap.innerHTML = '<div class="p-12 text-center text-gray-300 text-sm font-bold"><i class="fas fa-inbox text-3xl mb-3 block"></i>게시글이 없습니다</div>';
+      return;
+    }
+
+    let html = `<div class="flex-1 overflow-y-auto divide-y divide-gray-50">`;
+    pageData.forEach(p => {
+      const date = new Date(p.created_at);
+      const dateStr = (date.getMonth()+1) + '/' + date.getDate();
+      const timeStr = date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0');
+      const hasImg = p.images && p.images.length > 0;
+      html += `<div class="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors" onclick="window._boardViewPost(${p.id})">
+        <div class="flex items-start gap-2">
+          ${p.is_pinned ? '<span class="shrink-0 px-1.5 py-0.5 bg-red-500 text-white text-[8px] font-black rounded mt-0.5">고정</span>' : ''}
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] lg:text-xs font-bold text-gray-800 truncate">${p.title}</span>
+              ${p.comment_count > 0 ? `<span class="text-[9px] font-bold text-pink-500">[${p.comment_count}]</span>` : ''}
+              ${hasImg ? '<i class="fas fa-image text-[9px] text-gray-300"></i>' : ''}
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-[9px] font-bold text-gray-400">${p.author_name || '익명'}</span>
+              <span class="text-[9px] text-gray-300">${dateStr} ${timeStr}</span>
+              <span class="text-[9px] text-gray-300"><i class="fas fa-eye mr-0.5"></i>${p.view_count}</span>
+              ${p.like_count > 0 ? `<span class="text-[9px] text-pink-400"><i class="fas fa-heart mr-0.5"></i>${p.like_count}</span>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    html += `<div class="p-3 border-t border-gray-100 flex justify-center items-center gap-4 bg-gray-50/50 shrink-0">
+      <button onclick="window._boardPage(-1)" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 hover:bg-pink-50 disabled:opacity-30" ${bs.page<=1?'disabled':''}><i class="fas fa-chevron-left text-[10px]"></i></button>
+      <span class="text-xs font-bold text-gray-500">${bs.page} / ${totalPages}</span>
+      <button onclick="window._boardPage(1)" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 hover:bg-pink-50 disabled:opacity-30" ${bs.page>=totalPages?'disabled':''}><i class="fas fa-chevron-right text-[10px]"></i></button>
+    </div>`;
+
+    wrap.innerHTML = html;
+  };
+
+  window._boardPage = (d) => {
+    window._boardState.page += d;
+    window._boardRenderList(document.getElementById('boardContent'));
+  };
+
+  // === 게시글 보기 ===
+  window._boardViewPost = async (postId) => {
+    const wrap = document.getElementById('boardContent');
+    if (!wrap) return;
+    wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>로딩 중...</div>';
+
+    try {
+      supaDb.rpc('increment_view_count', {post_id_input: postId});
+      const {data: post, error} = await supaDb.from('board_posts').select('*').eq('id', postId).single();
+      if (error) throw error;
+
+      const {data: comments} = await supaDb.from('board_comments').select('*').eq('post_id', postId).order('created_at', {ascending: true});
+
+      let liked = false;
+      if (CURRENT_USER) {
+        const {data: likeData} = await supaDb.from('board_likes').select('id').eq('post_id', postId).eq('user_email', CURRENT_USER.email).maybeSingle();
+        liked = !!likeData;
+      }
+
+      const date = new Date(post.created_at);
+      const dateStr = date.getFullYear() + '.' + String(date.getMonth()+1).padStart(2,'0') + '.' + String(date.getDate()).padStart(2,'0') + ' ' + String(date.getHours()).padStart(2,'0') + ':' + String(date.getMinutes()).padStart(2,'0');
+      const isAuthor = CURRENT_USER && CURRENT_USER.email === post.author_email;
+      const imgs = post.images || [];
+
+      let html = `<div class="flex-1 overflow-y-auto">
+        <div class="p-4 lg:p-5 border-b border-gray-100">
+          <button onclick="window._boardBack()" class="text-[10px] text-gray-400 hover:text-pink-500 font-bold mb-3 block"><i class="fas fa-arrow-left mr-1"></i>목록으로</button>
+          <h2 class="text-base lg:text-lg font-black text-gray-800 mb-2">${post.is_pinned ? '<span class="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded mr-2 align-middle font-bold">고정</span>' : ''}${post.title}</h2>
+          <div class="flex items-center gap-3 text-[10px] text-gray-400 font-bold">
+            <span>${post.author_name || '익명'}</span>
+            <span>${dateStr}</span>
+            <span><i class="fas fa-eye mr-0.5"></i>${post.view_count + 1}</span>
+            <span><i class="fas fa-heart mr-0.5"></i>${post.like_count}</span>
+            ${isAuthor ? `<span class="ml-auto flex gap-2"><button onclick="window._boardEditPost(${post.id})" class="text-blue-400 hover:text-blue-600"><i class="fas fa-edit"></i></button><button onclick="window._boardDeletePost(${post.id})" class="text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button></span>` : ''}
+          </div>
+        </div>
+
+        <div class="p-4 lg:p-5 text-[12px] lg:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">${post.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+
+        ${imgs.length > 0 ? `<div class="px-4 pb-4 flex flex-wrap gap-2">${imgs.map(url => `<img src="${url}" class="rounded-xl border border-gray-100 max-h-60 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open('${url}','_blank')">`).join('')}</div>` : ''}
+
+        <div class="px-4 pb-4 flex items-center gap-2">
+          <button onclick="window._boardToggleLike(${post.id})" class="px-4 py-2 rounded-xl border text-[11px] font-bold transition-all ${liked ? 'bg-pink-50 border-pink-200 text-pink-500' : 'border-gray-200 text-gray-400 hover:border-pink-200 hover:text-pink-400'}">
+            <i class="fas fa-heart mr-1"></i>추천 <span id="boardLikeCount">${post.like_count}</span>
+          </button>
+        </div>
+
+        <div class="border-t border-gray-100 p-4 lg:p-5">
+          <h4 class="text-[11px] font-bold text-gray-600 mb-3"><i class="fas fa-comment mr-1 text-blue-400"></i>댓글 ${(comments||[]).length}개</h4>
+          <div class="space-y-2 mb-4" id="boardComments">
+            ${(comments||[]).map(c => {
+              const cd = new Date(c.created_at);
+              const cds = (cd.getMonth()+1)+'/'+cd.getDate()+' '+String(cd.getHours()).padStart(2,'0')+':'+String(cd.getMinutes()).padStart(2,'0');
+              const isCAuthor = CURRENT_USER && CURRENT_USER.email === c.author_email;
+              return `<div class="flex gap-2 px-3 py-2 bg-gray-50 rounded-xl">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold text-gray-700">${c.author_name || '익명'}</span>
+                    <span class="text-[9px] text-gray-400">${cds}</span>
+                    ${isCAuthor ? `<button onclick="window._boardDeleteComment(${c.id},${post.id})" class="text-[9px] text-red-400 hover:text-red-600 ml-auto"><i class="fas fa-times"></i></button>` : ''}
+                  </div>
+                  <p class="text-[11px] text-gray-600 mt-1 whitespace-pre-wrap break-words">${c.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+          ${window.isLoggedIn() ? `<div class="flex gap-2">
+            <input type="text" id="boardCommentInput" placeholder="댓글을 입력하세요..." class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[11px] font-bold outline-none focus:ring-2 focus:ring-pink-100" onkeydown="if(event.key==='Enter')window._boardAddComment(${post.id})">
+            <button onclick="window._boardAddComment(${post.id})" class="px-4 py-2 bg-pink-500 text-white rounded-xl text-[10px] font-bold shadow hover:bg-pink-600 transition-all shrink-0">등록</button>
+          </div>` : '<p class="text-[10px] text-gray-400">댓글을 작성하려면 로그인이 필요합니다.</p>'}
+        </div>
+      </div>`;
+
+      wrap.innerHTML = html;
+    } catch(e) {
+      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패</div>';
+    }
+  };
+
+  window._boardBack = () => {
+    window._boardState.viewingPost = null;
+    window._boardState.composing = false;
+    window.renderBoard(document.getElementById('contentArea'));
+  };
+
+  // === 추천 ===
+  window._boardToggleLike = async (postId) => {
+    if (!CURRENT_USER) return window.showMsg('로그인이 필요합니다.', 'error');
+    try {
+      const {data: existing, error: selErr} = await supaDb.from('board_likes').select('id').eq('post_id', postId).eq('user_email', CURRENT_USER.email).maybeSingle();
+      if (selErr) throw selErr;
+      if (existing) {
+        const {error: delErr} = await supaDb.from('board_likes').delete().eq('id', existing.id);
+        if (delErr) throw delErr;
+        const {error: upErr} = await supaDb.from('board_posts').update({like_count: Math.max(0, (parseInt(document.getElementById('boardLikeCount')?.textContent)||1) - 1)}).eq('id', postId);
+        if (upErr) throw upErr;
+      } else {
+        const {error: insErr} = await supaDb.from('board_likes').insert({post_id: postId, user_email: CURRENT_USER.email});
+        if (insErr) throw insErr;
+        const {error: upErr} = await supaDb.from('board_posts').update({like_count: (parseInt(document.getElementById('boardLikeCount')?.textContent)||0) + 1}).eq('id', postId);
+        if (upErr) throw upErr;
+      }
+      window._boardViewPost(postId);
+    } catch(e) { window.showMsg('추천 실패: ' + e.message, 'error'); console.error('Like error:', e); }
+  };
+
+  // === 댓글 ===
+  window._boardAddComment = async (postId) => {
+    if (!CURRENT_USER) return;
+    const input = document.getElementById('boardCommentInput');
+    const content = (input?.value || '').trim();
+    if (!content) return;
+    try {
+      const memberMatch = appState.members.find(m => m.name && CURRENT_USER.email && m.name === CURRENT_USER.user_metadata?.name) || null;
+      const authorName = CURRENT_USER.user_metadata?.name || CURRENT_USER.email.split('@')[0];
+      await supaDb.from('board_comments').insert({post_id: postId, content, author_email: CURRENT_USER.email, author_name: authorName});
+      const {data: post} = await supaDb.from('board_posts').select('comment_count').eq('id', postId).single();
+      await supaDb.from('board_posts').update({comment_count: (post?.comment_count || 0) + 1}).eq('id', postId);
+      window._boardViewPost(postId);
+    } catch(e) { window.showMsg('댓글 등록 실패: ' + e.message, 'error'); }
+  };
+
+  window._boardDeleteComment = async (commentId, postId) => {
+    if (!confirm('댓글을 삭제하시겠습니까?')) return;
+    try {
+      await supaDb.from('board_comments').delete().eq('id', commentId);
+      const {count} = await supaDb.from('board_comments').select('id', {count: 'exact', head: true}).eq('post_id', postId);
+      await supaDb.from('board_posts').update({comment_count: count || 0}).eq('id', postId);
+      window._boardViewPost(postId);
+    } catch(e) { window.showMsg('삭제 실패', 'error'); }
+  };
+
+  // === 글 삭제 ===
+  window._boardDeletePost = async (postId) => {
+    if (!confirm('게시글을 삭제하시겠습니까?')) return;
+    try {
+      await supaDb.from('board_posts').delete().eq('id', postId);
+      window.showMsg('삭제되었습니다.', 'success');
+      window._boardBack();
+    } catch(e) { window.showMsg('삭제 실패', 'error'); }
+  };
+
+  // === 글쓰기/수정 ===
+  window._boardCompose = (editPost) => {
+    const wrap = document.getElementById('boardContent');
+    if (!wrap || !CURRENT_USER) return;
+    const bs = window._boardState;
+    const isEdit = !!editPost;
+    const canNotice = isAdmin();
+
+    wrap.innerHTML = `<div class="flex-1 overflow-y-auto p-4 lg:p-5">
+      <button onclick="window._boardBack()" class="text-[10px] text-gray-400 hover:text-pink-500 font-bold mb-3 block"><i class="fas fa-arrow-left mr-1"></i>뒤로</button>
+      <h3 class="text-sm font-bold text-gray-800 mb-4">${isEdit ? '글 수정' : '새 글 작성'}</h3>
+
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <select id="boardPostType" class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[11px] font-bold outline-none">
+            ${canNotice ? `<option value="notice" ${(isEdit ? editPost.board_type : bs.tab)==='notice'?'selected':''}>공지</option>` : ''}
+            <option value="free" ${(isEdit ? editPost.board_type : bs.tab)==='free'?'selected':''}>자유</option>
+          </select>
+          ${canNotice ? `<label class="flex items-center gap-1.5 text-[10px] font-bold text-gray-500"><input type="checkbox" id="boardPostPin" ${isEdit && editPost.is_pinned ? 'checked' : ''}> 상단 고정</label>` : ''}
+        </div>
+
+        <input type="text" id="boardPostTitle" placeholder="제목을 입력하세요" value="${isEdit ? editPost.title.replace(/"/g,'&quot;') : ''}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-pink-100">
+
+        <textarea id="boardPostContent" placeholder="내용을 입력하세요..." rows="10" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs outline-none focus:ring-2 focus:ring-pink-100 resize-y leading-relaxed">${isEdit ? editPost.content : ''}</textarea>
+
+        <div>
+          <label class="text-[10px] font-bold text-gray-500 block mb-1"><i class="fas fa-image mr-1"></i>이미지 첨부 (최대 3장)</label>
+          <input type="file" id="boardPostImages" accept="image/*" multiple class="text-[10px] text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-pink-50 file:text-pink-500 file:font-bold file:text-[10px] file:cursor-pointer">
+          ${isEdit && editPost.images?.length > 0 ? `<div class="flex gap-2 mt-2">${editPost.images.map(u => `<img src="${u}" class="h-16 rounded-lg border border-gray-200">`).join('')}<span class="text-[9px] text-gray-400 self-center">기존 이미지 (새로 업로드 시 교체)</span></div>` : ''}
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="window._boardSubmitPost(${isEdit ? editPost.id : 'null'})" class="px-5 py-2.5 bg-pink-500 text-white rounded-xl text-xs font-bold shadow hover:bg-pink-600 transition-all"><i class="fas fa-paper-plane mr-1"></i>${isEdit ? '수정' : '등록'}</button>
+          <button onclick="window._boardBack()" class="px-5 py-2.5 bg-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-300 transition-all">취소</button>
+        </div>
+      </div>
+    </div>`;
+  };
+
+  window._boardEditPost = async (postId) => {
+    try {
+      const {data} = await supaDb.from('board_posts').select('*').eq('id', postId).single();
+      if (data) window._boardCompose(data);
+    } catch(e) { window.showMsg('로딩 실패', 'error'); }
+  };
+
+  window._boardSubmitPost = async (editId) => {
+    if (!CURRENT_USER) return;
+    const title = (document.getElementById('boardPostTitle')?.value || '').trim();
+    const content = (document.getElementById('boardPostContent')?.value || '').trim();
+    const boardType = document.getElementById('boardPostType')?.value || 'free';
+    const isPinned = document.getElementById('boardPostPin')?.checked || false;
+    const fileInput = document.getElementById('boardPostImages');
+
+    if (!title) return window.showMsg('제목을 입력하세요.', 'error');
+    if (!content) return window.showMsg('내용을 입력하세요.', 'error');
+    if (boardType === 'notice' && !isAdmin()) return window.showMsg('공지는 관리자만 작성 가능합니다.', 'error');
+
+    try {
+      window.showMsg('저장 중...', 'info');
+
+      let imageUrls = [];
+      if (fileInput && fileInput.files.length > 0) {
+        const files = Array.from(fileInput.files).slice(0, 3);
+        for (const file of files) {
+          const ext = file.name.split('.').pop();
+          const path = Date.now() + '_' + Math.random().toString(36).substring(2,8) + '.' + ext;
+          const {error: upErr} = await supaDb.storage.from('board-images').upload(path, file);
+          if (upErr) throw upErr;
+          imageUrls.push(BOARD_STORAGE_URL + path);
+        }
+      } else if (editId) {
+        const {data: existing} = await supaDb.from('board_posts').select('images').eq('id', editId).single();
+        imageUrls = existing?.images || [];
+      }
+
+      const authorName = CURRENT_USER.user_metadata?.name || CURRENT_USER.email.split('@')[0];
+      const postData = {
+        board_type: boardType,
+        title, content,
+        author_email: CURRENT_USER.email,
+        author_name: authorName,
+        is_pinned: isPinned,
+        images: imageUrls,
+        updated_at: new Date().toISOString()
+      };
+
+      if (editId) {
+        const {error} = await supaDb.from('board_posts').update(postData).eq('id', editId);
+        if (error) throw error;
+        window.showMsg('수정되었습니다.', 'success');
+      } else {
+        const {error} = await supaDb.from('board_posts').insert(postData);
+        if (error) throw error;
+        window.showMsg('등록되었습니다.', 'success');
+      }
+
+      window._boardState.tab = boardType;
+      window._boardBack();
+    } catch(e) { window.showMsg('저장 실패: ' + e.message, 'error'); }
+  };
+
   window.renderGuildStats = (container) => {
     const members = appState.members;
     const guilds = appState.guilds;
@@ -4037,7 +4393,7 @@
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 lg:p-4 text-center">
           <div class="text-2xl lg:text-3xl font-black ${orphanSubs.length > 0 ? 'text-red-500' : 'text-emerald-500'}">${orphanSubs.length}</div>
-          <div class="text-[10px] lg:text-xs text-gray-400 font-bold mt-1">고아 부캐</div>
+          <div class="text-[10px] lg:text-xs text-gray-400 font-bold mt-1">미아 부캐</div>
         </div>
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 lg:p-4 text-center">
           <div class="text-2xl lg:text-3xl font-black text-blue-500">${suroParticipation ? suroParticipation.rate + '%' : '-'}</div>
