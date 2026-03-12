@@ -3273,6 +3273,7 @@
             { id: 'color_badge', icon: '🏷️', label: '뱃지 그룹', html: `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px"><span style="background:#f0fdf4;color:#16a34a;padding:4px 12px;border-radius:8px;font-weight:700;font-size:12px">뱃지1 → 설명</span><span style="background:#fef2f2;color:#ef4444;padding:4px 12px;border-radius:8px;font-weight:700;font-size:12px">뱃지2 → 설명</span><span style="background:#ecfdf5;color:#059669;padding:4px 12px;border-radius:8px;font-weight:700;font-size:12px">뱃지3 → 설명</span></div>` },
             { id: 'guild_info', icon: '🎮', label: '길드 정보 카드', html: `<div style="background:white;border-radius:16px;border:1px solid #f3f4f6;padding:16px;margin-bottom:12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">🍰</span><h4 style="font-weight:900;color:#1f2937;font-size:14px;margin:0">길드명</h4><span style="font-size:10px;background:#fef2f2;color:#ef4444;padding:2px 8px;border-radius:999px;font-weight:700">설명</span></div><span style="font-size:12px;font-weight:700;color:#9ca3af">49p</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px"><div style="background:#f9fafb;padding:8px 12px;border-radius:8px"><span style="color:#9ca3af">노블 조건:</span> <b>수로 필참</b></div><div style="background:#f9fafb;padding:8px 12px;border-radius:8px"><span style="color:#9ca3af">캐릭 제한:</span> <b>없음</b></div></div></div>` },
             { id: 'spacer', icon: '➖', label: '여백', html: `<div style="height:16px"></div>` },
+            { id: 'nav_button', icon: '🔀', label: '페이지 이동 버튼', html: `<div style="margin-bottom:12px"><a href="#" onclick="router('buddy');return false" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:16px;padding:16px 20px;text-decoration:none;color:inherit;cursor:pointer;transition:all 0.2s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"><span style="font-size:24px">🤝</span><div><p style="font-weight:900;font-size:14px;color:#92400e;margin:0">뚠뚠 버디</p><p style="font-size:11px;color:#b45309;margin:4px 0 0 0;font-weight:600">버디팀 현황 보러가기 →</p></div><i class="fas fa-chevron-right" style="color:#d97706;margin-left:auto;font-size:14px"></i></a></div>` },
             { id: 'image_card', icon: '🖼️', label: '이미지 카드', html: `<div style="background:white;border-radius:16px;border:1px solid #f3f4f6;overflow:hidden;margin-bottom:12px"><img src="이미지URL" style="width:100%;max-height:300px;object-fit:cover" alt="이미지"><div style="padding:12px 16px;font-size:12px;font-weight:700;color:#374151">이미지 설명을 입력하세요</div></div>` },
             { id: 'profile_grid', icon: '👤', label: '프로필 카드 (4열)', html: `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:12px"><div style="background:white;border-radius:16px;border:1px solid #f3f4f6;overflow:hidden"><img src="이미지URL" style="width:100%;height:180px;object-fit:cover" alt="프로필"><div style="padding:12px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:14px">❤️</span><b style="font-size:14px;color:#1f2937">닉네임</b></div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px"><span style="background:#fdf2f8;color:#ec4899;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">뚠카롱</span></div><p style="font-size:11px;color:#6b7280;margin:0">▶ 담당 업무 설명</p><p style="font-size:11px;color:#9ca3af;margin:6px 0 0 0;font-style:italic">" 한마디를 입력하세요 "</p></div></div></div>` },
         ];
@@ -3681,6 +3682,7 @@
   };
 
   window._guideInsertBlock = (blockId) => {
+   if (blockId === 'nav_button') { window._guideInsertNavBlock(); return; }
    const block = window._guideBlocks.find(b => b.id === blockId);
    if (!block) return;
    const editor = document.getElementById('guideEditor');
@@ -3697,6 +3699,56 @@
    }
    }
    document.getElementById('guideBlockMenu')?.classList.add('hidden');
+  };
+
+  window._guideNavTargets = [
+    { route: 'buddy', icon: '🤝', label: '뚠뚠 버디', color: '#f59e0b', bg: '#fef3c7' },
+    { route: 'members', icon: '👥', label: '길드원', color: '#ec4899', bg: '#fdf2f8' },
+    { route: 'analysis', icon: '📊', label: '수로 분석', color: '#3b82f6', bg: '#eff6ff' },
+    { route: 'guild_stats', icon: '📈', label: '현황', color: '#10b981', bg: '#ecfdf5' },
+    { route: 'suro_reward', icon: '🎁', label: '수로 보상', color: '#8b5cf6', bg: '#f5f3ff' },
+    { route: 'board', icon: '📋', label: '게시판', color: '#f97316', bg: '#fff7ed' },
+    { route: 'bail', icon: '💎', label: '보석금', color: '#06b6d4', bg: '#ecfeff' },
+    { route: 'penalty', icon: '⚠️', label: '벌점', color: '#ef4444', bg: '#fef2f2' },
+  ];
+
+  window._guideInsertNavBlock = () => {
+    document.getElementById('guideBlockMenu')?.classList.add('hidden');
+    const ov = document.createElement('div');
+    ov.id = 'navBlockOverlay';
+    ov.className = 'fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 backdrop-blur-sm p-4';
+    ov.innerHTML = `<div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5">
+      <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-arrow-right mr-2 text-amber-500"></i>이동할 페이지 선택</h3>
+      <div class="grid grid-cols-2 gap-2">
+        ${window._guideNavTargets.map(t => `<button onclick="window._guideDoInsertNav('${t.route}','${t.icon}','${t.label}','${t.color}','${t.bg}')" class="flex items-center gap-2 p-3 rounded-xl border border-gray-100 hover:border-amber-300 hover:bg-amber-50 transition-all text-left">
+          <span class="text-lg">${t.icon}</span>
+          <span class="text-xs font-bold text-gray-700">${t.label}</span>
+        </button>`).join('')}
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100">
+        <p class="text-[9px] text-gray-400 font-bold mb-2">커스텀 (직접 입력)</p>
+        <div class="flex gap-2">
+          <input id="navCustomRoute" class="flex-1 bg-gray-50 border rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none" placeholder="라우트명 (예: buddy)">
+          <input id="navCustomLabel" class="flex-1 bg-gray-50 border rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none" placeholder="버튼 텍스트">
+          <button onclick="window._guideDoInsertNav(document.getElementById('navCustomRoute').value,'🔗',document.getElementById('navCustomLabel').value||'이동','#6b7280','#f3f4f6')" class="px-3 py-1.5 bg-gray-700 text-white rounded-lg text-[10px] font-bold">삽입</button>
+        </div>
+      </div>
+      <button onclick="document.getElementById('navBlockOverlay').remove()" class="w-full mt-3 py-2 bg-gray-100 text-gray-500 rounded-xl text-xs font-bold">취소</button>
+    </div>`;
+    document.body.appendChild(ov);
+  };
+
+  window._guideDoInsertNav = (route, icon, label, color, bg) => {
+    const html = `<div style="margin-bottom:12px"><a href="#" onclick="router('${route}');return false" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,${bg},${bg});border:2px solid ${color};border-radius:16px;padding:16px 20px;text-decoration:none;color:inherit;cursor:pointer;transition:all 0.2s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"><span style="font-size:24px">${icon}</span><div><p style="font-weight:900;font-size:14px;color:${color};margin:0">${label}</p><p style="font-size:11px;color:${color};margin:4px 0 0 0;font-weight:600;opacity:0.7">${label} 바로가기 →</p></div><i class="fas fa-chevron-right" style="color:${color};margin-left:auto;font-size:14px;opacity:0.5"></i></a></div>`;
+    const editor = document.getElementById('guideEditor');
+    const source = document.getElementById('guideSourceEditor');
+    if (source && !source.classList.contains('hidden')) {
+      source.value += '\n' + html;
+    } else if (editor) {
+      editor.focus();
+      editor.innerHTML += html;
+    }
+    document.getElementById('navBlockOverlay')?.remove();
   };
 
   window._guideToggleHome = async (slug) => {
