@@ -612,6 +612,12 @@
             return rank;
         }
 
+        window.getKSTDateStr = () => {
+            const now = new Date();
+            const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+            return kst.toISOString().split('T')[0];
+        };
+
         window.getSuroPeriodHeader = (dateObj) => { 
             const now = dateObj || new Date(); 
             const day = now.getDay(); 
@@ -674,7 +680,7 @@
 
                     window.setLoadProgress(85, '운영 이력 기록 중...');
                     const names = updates.map(u => appState.members.find(m => m.id === u.id)?.name || u.id).join(', ');
-                    await supaDb.from('operation_history').insert({ date: new Date().toISOString().split('T')[0], category: '일괄수정', name: '관리자', content: `${updates.length}명 정보 수정: ${names.substring(0, 200)}` });
+                    await supaDb.from('operation_history').insert({ date: window.getKSTDateStr(), category: '일괄수정', name: '관리자', content: `${updates.length}명 정보 수정: ${names.substring(0, 200)}` });
 
                     window.setLoadProgress(90, '데이터 갱신 중...');
                     window.showMsg(`${updates.length}명의 정보가 저장되었습니다.`, "success");
@@ -880,7 +886,7 @@
                             join_date: data.joinDate || new Date().toISOString().split('T')[0]
                         });
                         if (error) throw error;
-                        await supaDb.from('operation_history').insert({ date: new Date().toISOString().split('T')[0], category: '추가', name: data.name, content: `${data.guild} 길드에 추가됨` });
+                        await supaDb.from('operation_history').insert({ date: window.getKSTDateStr(), category: '추가', name: data.name, content: `${data.guild} 길드에 추가됨` });
                         success = true; break;
                     }
                     case 'update': {
@@ -889,7 +895,7 @@
                             is_main: data.isMain !== false, main_char_name: data.mainCharName || ''
                         }).eq('id', data.id);
                         if (error) throw error;
-                        await supaDb.from('operation_history').insert({ date: new Date().toISOString().split('T')[0], category: '수정', name: data.name, content: `정보 수정됨 (${data.guild}/${data.role})` });
+                        await supaDb.from('operation_history').insert({ date: window.getKSTDateStr(), category: '수정', name: data.name, content: `정보 수정됨 (${data.guild}/${data.role})` });
                         success = true; break;
                     }
                     case 'save_members': {
@@ -1194,7 +1200,7 @@
                     done++;
                     window.setLoadProgress(10 + Math.round(70 * done / changes.length), `${done}/${changes.length} 직위 변경 중...`);
                     historyEntries.push({
-                        date: new Date().toISOString().split('T')[0],
+                        date: window.getKSTDateStr(),
                         category: '직위변경',
                         name: change.name,
                         content: `${change.from} → ${change.to} (${member.guild})`
@@ -3129,13 +3135,13 @@
             let newRow = {};
 
             if (tableName === 'bail_history') {
-                newRow = { date: new Date().toISOString().split('T')[0], payer: '', receiver: '', amount: 0, memo: '' };
+                newRow = { date: window.getKSTDateStr(), payer: '', receiver: '', amount: 0, memo: '' };
             } else if (tableName === 'penalty_history') {
-                newRow = { date: new Date().toISOString().split('T')[0], name: '', points: 1, reason: '' };
+                newRow = { date: window.getKSTDateStr(), name: '', points: 1, reason: '' };
             } else if (tableName === 'operation_history') {
-                newRow = { date: new Date().toISOString().split('T')[0], category: '', name: '', content: '' };
+                newRow = { date: window.getKSTDateStr(), category: '', name: '', content: '' };
             } else if (tableName === 'events') {
-                newRow = { date: new Date().toISOString().split('T')[0], title: '', content: '' };
+                newRow = { date: window.getKSTDateStr(), title: '', content: '' };
             } else return;
 
             try {
@@ -5307,7 +5313,7 @@
     if (!mentor || !mentee) return window.showMsg('멘토/멘티 이름을 입력하세요', 'error');
     if (mentor === mentee) return window.showMsg('멘토와 멘티가 같습니다', 'error');
     try {
-      const {error} = await supaDb.from('buddy_teams').insert({team_name: name, mentor_name: mentor, mentee_name: mentee, reward_choice: reward, start_date: new Date().toISOString().split('T')[0]});
+      const {error} = await supaDb.from('buddy_teams').insert({team_name: name, mentor_name: mentor, mentee_name: mentee, reward_choice: reward, start_date: window.getKSTDateStr()});
       if (error) throw error;
       document.getElementById('buddyCreateOverlay')?.remove();
       window.showMsg('버디팀 생성!', 'success');
@@ -5827,7 +5833,7 @@
   window._recRenderAddForm = (editData) => {
    const body = document.getElementById('recBody');
    if (!body) return;
-   const r = editData || { join_date: new Date().toISOString().split('T')[0], nickname: '', job_class: '', suro_score: '', join_guild: '뚠카롱', prev_guild: '', join_source: '', join_category: '', join_reason: '', leave_category: '', leave_reason: '', referrer: '', status: 'active' };
+   const r = editData || { join_date: window.getKSTDateStr(), nickname: '', job_class: '', suro_score: '', join_guild: '뚠카롱', prev_guild: '', join_source: '', join_category: '', join_reason: '', leave_category: '', leave_reason: '', referrer: '', status: 'active' };
    const isEdit = !!editData;
 
    const jobList = ['히어로','팔라딘','다크나이트','아크메이지(불,독)','아크메이지(썬,콜)','비숍','보우마스터','신궁','패스파인더','나이트로드','섀도어','듀얼블레이드','바이퍼','캡틴','캐논슈터','미하일','소울마스터','플레임위자드','윈드브레이커','나이트워커','스트라이커','아란','에반','루미너스','메르세데스','팬텀','은월','카이저','엔젤릭버스터','카데나','아델','일리움','아크','라라','칼리','제로','키네시스','제논','데몬슬레이어','데몬어벤져','블래스터','배틀메이지','와일드헌터','메카닉','제논','나로','렌','불독','썬콜','보마','패파','듀블','엔버','나워','윈브','섀도어','카인','소마','히어로','비숍'];
@@ -6923,7 +6929,7 @@
    if (newConfig.guildStartDate) GUILD_START_DATE = new Date(newConfig.guildStartDate);
 
    try {
-   await supaDb.from('operation_history').insert({ date: new Date().toISOString().split('T')[0], category: '설정', name: '디자인 설정', content: '디자인 설정이 변경되었습니다.' });
+   await supaDb.from('operation_history').insert({ date: window.getKSTDateStr(), category: '설정', name: '디자인 설정', content: '디자인 설정이 변경되었습니다.' });
    } catch(e) {}
 
    window.showMsg('디자인 설정이 저장되었습니다!', 'success');
@@ -7395,7 +7401,7 @@
    class: tr.querySelector('.bulk-class')?.value || '',
    is_main: tr.querySelector('.bulk-isMain')?.checked !== false,
    main_char_name: tr.querySelector('.bulk-mainChar')?.value.trim() || '',
-   join_date: new Date().toISOString().split('T')[0]
+   join_date: window.getKSTDateStr()
    });
    });
 
@@ -7411,7 +7417,7 @@
    if (error) throw error;
 
    const historyRows = members.map(m => ({
-   date: new Date().toISOString().split('T')[0],
+   date: window.getKSTDateStr(),
    category: '추가', name: m.name, content: `${m.guild} 길드에 추가됨`
    }));
    await supaDb.from('operation_history').insert(historyRows);
@@ -7453,7 +7459,7 @@
    if (reason) {
    window.setLoadProgress(70, '이력 저장 중...');
    const historyRows = kickedNames.map(name => ({
-   date: new Date().toISOString().split('T')[0],
+   date: window.getKSTDateStr(),
    category: '추방', name: name, content: reason
    }));
    await supaDb.from('operation_history').insert(historyRows);
@@ -7487,7 +7493,7 @@
 
    if (reason) {
    await supaDb.from('operation_history').insert({
-   date: new Date().toISOString().split('T')[0],
+   date: window.getKSTDateStr(),
    category: appState.deleteType === 'kick' ? '추방' : '자진탈퇴',
    name: delName, content: reason
    });
@@ -8389,7 +8395,7 @@
    if (!error) {
    ok++;
    await supaDb.from('operation_history').insert({
-   date: new Date().toISOString().split('T')[0], category: '닉변',
+   date: window.getKSTDateStr(), category: '닉변',
    name: s.newName, content: `닉네임 변경: ${s.oldName} → ${s.newName} (${s.guild}/${s.class}) — 동기화 감지`
    });
    }
@@ -8450,7 +8456,7 @@
    const lvl = parseInt(row.querySelector('.sync-new-level')?.value) || 0;
    const isMain = row.querySelector('.sync-new-isMain')?.checked !== false;
    const mainChar = row.querySelector('.sync-new-mainChar')?.value || '';
-   toAdd.push({ name: m.name, guild, role, class: cls, level: lvl, is_main: isMain, main_char_name: mainChar, join_date: new Date().toISOString().split('T')[0] });
+   toAdd.push({ name: m.name, guild, role, class: cls, level: lvl, is_main: isMain, main_char_name: mainChar, join_date: window.getKSTDateStr() });
    });
 
    if (toAdd.length === 0) { window.showMsg('추가할 멤버를 선택해주세요.', 'error'); return; }
@@ -8462,7 +8468,7 @@
    if (error) throw error;
 
    await supaDb.from('operation_history').insert(
-   toAdd.map(m => ({ date: new Date().toISOString().split('T')[0], category: '동기화-추가', name: m.name, content: `${m.guild} 길드에 추가됨 (${m.role}/${m.class || '미설정'}) — API 동기화` }))
+   toAdd.map(m => ({ date: window.getKSTDateStr(), category: '동기화-추가', name: m.name, content: `${m.guild} 길드에 추가됨 (${m.role}/${m.class || '미설정'}) — API 동기화` }))
    );
 
    window.showMsg(`${toAdd.length}명이 DB에 추가되었습니다!`, 'success');
@@ -8499,7 +8505,7 @@
    await supaDb.from('operation_history').insert(
    selected.map(m => {
    const dbInfo = appState.members.find(d => d.id === m.id) || {};
-   return { date: new Date().toISOString().split('T')[0], category: '동기화-삭제', name: m.name, content: `${m.guild}/${dbInfo.role || '-'}/${dbInfo.class || '-'} — API에서 미발견 (삭제)` };
+   return { date: window.getKSTDateStr(), category: '동기화-삭제', name: m.name, content: `${m.guild}/${dbInfo.role || '-'}/${dbInfo.class || '-'} — API에서 미발견 (삭제)` };
    })
    );
 
@@ -8531,7 +8537,7 @@
    await supaDb.from('operation_history').insert(
    [...checks].map(c => {
    const m = window._syncMovedMembers[parseInt(c.dataset.idx)];
-   return { date: new Date().toISOString().split('T')[0], category: '동기화-이동', name: m.name, content: `${m.fromGuild} → ${m.toGuild} 소속 변경 (API 동기화)` };
+   return { date: window.getKSTDateStr(), category: '동기화-이동', name: m.name, content: `${m.fromGuild} → ${m.toGuild} 소속 변경 (API 동기화)` };
    })
    );
 
@@ -8792,7 +8798,7 @@
 
    const changeDesc = Object.entries(changes).map(([k,v]) => `${k}: ${v}`).join(', ');
    await supaDb.from('operation_history').insert({
-   date: new Date().toISOString().split('T')[0], category: '수정',
+   date: window.getKSTDateStr(), category: '수정',
    name: newName, content: `DB 편집 (#${m.id}) ${changeDesc}`
    });
 
@@ -8815,7 +8821,7 @@
    if (error) throw error;
 
    await supaDb.from('operation_history').insert({
-   date: new Date().toISOString().split('T')[0], category: '삭제',
+   date: window.getKSTDateStr(), category: '삭제',
    name: m.name, content: `DB 편집에서 삭제 (#${m.id}, ${m.guild}/${m.role || '-'})`
    });
 
@@ -9139,7 +9145,7 @@
 
    const changeDesc = Object.entries(changes).map(([k,v]) => `${k}: ${v}`).join(', ');
    await supaDb.from('operation_history').insert({
-   date: new Date().toISOString().split('T')[0], category: '수정',
+   date: window.getKSTDateStr(), category: '수정',
    name: newName, content: `DB 편집 (#${m.id}) ${changeDesc}`
    });
    updated++;
@@ -9190,7 +9196,7 @@
    const { error } = await supaDb.from('members').update(changes).eq('id', m.id);
    if (error) throw error;
    await supaDb.from('operation_history').insert({
-   date: new Date().toISOString().split('T')[0], category: '수정',
+   date: window.getKSTDateStr(), category: '수정',
    name: newName, content: `일괄 DB 편집 (#${m.id}) ${Object.entries(changes).map(([k,v])=>`${k}:${v}`).join(', ')}`
    });
    totalUpdated++;
@@ -9231,7 +9237,7 @@
    if (error) throw error;
 
    await supaDb.from('operation_history').insert(
-   toDelete.map(m => ({ date: new Date().toISOString().split('T')[0], category: '중복삭제', name: m.name, content: `중복 제거 (#${m.id}, ${m.guild}/${m.role || '-'}) — 유지: #${keepMember.id}` }))
+   toDelete.map(m => ({ date: window.getKSTDateStr(), category: '중복삭제', name: m.name, content: `중복 제거 (#${m.id}, ${m.guild}/${m.role || '-'}) — 유지: #${keepMember.id}` }))
    );
 
    window.showMsg(`"${name}" 중복 ${toDelete.length}건 삭제 완료!`, 'success');
@@ -9273,7 +9279,7 @@
    if (error) throw error;
 
    await supaDb.from('operation_history').insert(
-   allToDelete.map(m => ({ date: new Date().toISOString().split('T')[0], category: '중복삭제', name: m.name, content: `일괄 중복 제거 (#${m.id}, ${m.guild}/${m.role || '-'}) — 유지: #${m.keepId}` }))
+   allToDelete.map(m => ({ date: window.getKSTDateStr(), category: '중복삭제', name: m.name, content: `일괄 중복 제거 (#${m.id}, ${m.guild}/${m.role || '-'}) — 유지: #${m.keepId}` }))
    );
 
    window.showMsg(`총 ${totalDelete}건의 중복 데이터가 삭제되었습니다!`, 'success');
