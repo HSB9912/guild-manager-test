@@ -6362,16 +6362,17 @@
         <div class="space-y-2">
           ${guilds.map(g => {
             const cnt = guildCounts[g.name] || 0;
-            const pct = totalCount > 0 ? (cnt / totalCount * 100) : 0;
+            const gMax = g.max || 200;
+            const barPct = Math.min((cnt / gMax) * 100, 100);
             const colors = {'뚠카롱':'bg-pink-400','뚱카롱':'bg-rose-500','밤카롱':'bg-indigo-400','별카롱':'bg-amber-400','달카롱':'bg-blue-400','꿀카롱':'bg-orange-400'};
             return `<div class="flex items-center gap-3">
               <span class="text-[10px] font-bold text-gray-600 w-14 shrink-0">${g.name.replace('카롱','')}</span>
               <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-                <div class="h-full ${colors[g.name]||'bg-pink-300'} rounded-full flex items-center justify-end pr-2 transition-all" style="width:${Math.max(pct,5)}%">
+                <div class="h-full ${colors[g.name]||'bg-pink-300'} rounded-full flex items-center justify-end pr-2 transition-all" style="width:${Math.max(barPct,5)}%">
                   <span class="text-[9px] font-black text-white">${cnt}</span>
                 </div>
               </div>
-              <span class="text-[9px] font-bold text-gray-400 w-10 text-right">${pct.toFixed(0)}%</span>
+              <span class="text-[9px] font-bold text-gray-400 w-14 text-right">${cnt}/${gMax}</span>
             </div>`;
           }).join('')}
         </div>
