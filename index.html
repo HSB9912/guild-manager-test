@@ -1387,7 +1387,7 @@
             else if (tab === 'guide_edit' && isAdmin()) window.renderGuideEditor(content);
             else if (tab === 'history' && isAdmin()) window.renderHistory(content);
             else if (tab === 'sync' && isAdmin()) window.renderSync(content);
-            else if (tab === 'settings' && isAdmin()) { window.renderSettings(content); setTimeout(() => { window._loadAdminList(); if(window._settingsTab==='roulette') window._rouletteRenderSettings(); }, 100); }
+            else if (tab === 'settings' && isAdmin()) { window.renderSettings(content); setTimeout(() => { window._loadAdminList(); if(window._settingsTab==='roulette') window._rouletteRenderSettings(); if(window._settingsTab==='design' || !window._settingsTab) window._cfgInitRoleDrag?.(); }, 100); }
             else if (tab === 'role_assign' && isAdmin()) window.renderRoleAssign(content);
             else if (tab === 'records' && isAdmin()) window.renderRecords(content);
             const _sb = document.getElementById('sidebar'), _ov = document.getElementById('sidebarOverlay');
@@ -7381,27 +7381,33 @@
    </div>`).join('');
 
    const allRoleNames = [...new Set(Object.values(ranks).flat())];
-   const rolesHtml = allRoleNames.map((rName, ri) => {
+   // 우선순위 순으로 정렬
+   const sortedRoleNames = [...allRoleNames].sort((a, b) => {
+     const pa = rolePriority[a] !== undefined ? rolePriority[a] : 99;
+     const pb = rolePriority[b] !== undefined ? rolePriority[b] : 99;
+     return pa - pb;
+   });
+   const rolesHtml = sortedRoleNames.map((rName, ri) => {
    const rd = roleDisplay[rName] || {};
-   const pri = rolePriority[rName] !== undefined ? rolePriority[rName] : 99;
    const tc = rd.textColor || '';
    const bc = rd.bgColor || '';
    const rc = rd.rowColor || '';
-   return `<div class="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100 flex-wrap">
-   <input class="cfg-role-emoji w-10 text-center bg-white border border-gray-200 rounded-lg px-1 py-1 text-sm outline-none" value="${rd.emoji || ''}" data-role="${rName}">
-   <span class="text-xs font-bold flex-1 min-w-[60px]" data-role-preview="${rName}" style="${tc?'color:'+tc+';':''}${bc?'background:'+bc+';padding:2px 8px;border-radius:6px;':''}${bc&&!tc?'color:white;':''}">${rName}</span>
-   <div class="flex items-center gap-1">
+   return `<div class="cfg-role-item flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-gray-200 cursor-grab active:cursor-grabbing hover:shadow-sm transition-shadow" draggable="true" data-role="${rName}" data-pri="${ri}">
+   <span class="text-gray-300 text-xs mr-1 drag-handle"><i class="fas fa-grip-vertical"></i></span>
+   <input class="cfg-role-emoji w-10 text-center bg-gray-50 border border-gray-200 rounded-lg px-1 py-1 text-sm outline-none" value="${rd.emoji || ''}" data-role="${rName}">
+   <span class="text-xs font-bold min-w-[60px]" data-role-preview="${rName}" style="${tc?'color:'+tc+';':''}${bc?'background:'+bc+';padding:2px 8px;border-radius:6px;':''}${bc&&!tc?'color:white;':''}">${rName}</span>
+   <div class="flex items-center gap-1 ml-auto">
      <label class="text-[8px] text-gray-400 font-bold">뱃지</label>
-     <input type="color" class="cfg-role-textcolor w-6 h-6 border border-gray-200 rounded cursor-pointer p-0.5" value="${tc || '#374151'}" data-role="${rName}" oninput="window._cfgPreviewRole('${rName}')">
-     <input type="color" class="cfg-role-bgcolor w-6 h-6 border border-gray-200 rounded cursor-pointer p-0.5" value="${bc || '#f3f4f6'}" data-role="${rName}" oninput="window._cfgPreviewRole('${rName}')">
-     <button onclick="document.querySelector('.cfg-role-textcolor[data-role=\\'${rName}\\']').value='#374151';document.querySelector('.cfg-role-bgcolor[data-role=\\'${rName}\\']').value='#f3f4f6';window._cfgPreviewRole('${rName}')" class="text-[8px] text-gray-300 hover:text-red-400" title="뱃지 초기화"><i class="fas fa-times"></i></button>
+     <input type="color" class="cfg-role-textcolor w-5 h-5 border border-gray-200 rounded cursor-pointer p-0" value="${tc || '#374151'}" data-role="${rName}" oninput="window._cfgPreviewRole('${rName}')">
+     <input type="color" class="cfg-role-bgcolor w-5 h-5 border border-gray-200 rounded cursor-pointer p-0" value="${bc || '#f3f4f6'}" data-role="${rName}" oninput="window._cfgPreviewRole('${rName}')">
+     <button onclick="document.querySelector('.cfg-role-textcolor[data-role=\\'${rName}\\']').value='#374151';document.querySelector('.cfg-role-bgcolor[data-role=\\'${rName}\\']').value='#f3f4f6';window._cfgPreviewRole('${rName}')" class="text-[8px] text-gray-300 hover:text-red-400"><i class="fas fa-times"></i></button>
    </div>
    <div class="flex items-center gap-1">
      <label class="text-[8px] text-gray-400 font-bold">행</label>
-     <input type="color" class="cfg-role-rowcolor w-6 h-6 border border-gray-200 rounded cursor-pointer p-0.5" value="${rc || '#ffffff'}" data-role="${rName}">
-     <button onclick="document.querySelector('.cfg-role-rowcolor[data-role=\\'${rName}\\']').value='#ffffff'" class="text-[8px] text-gray-300 hover:text-red-400" title="행 색상 제거"><i class="fas fa-times"></i></button>
+     <input type="color" class="cfg-role-rowcolor w-5 h-5 border border-gray-200 rounded cursor-pointer p-0" value="${rc || '#ffffff'}" data-role="${rName}">
+     <button onclick="document.querySelector('.cfg-role-rowcolor[data-role=\\'${rName}\\']').value='#ffffff'" class="text-[8px] text-gray-300 hover:text-red-400"><i class="fas fa-times"></i></button>
    </div>
-   <input type="number" class="cfg-role-priority w-10 text-center bg-white border border-gray-200 rounded-lg px-1 py-1 text-[10px] font-bold outline-none" value="${pri}" data-role="${rName}" title="우선순위">
+   <input type="number" class="cfg-role-priority w-8 text-center bg-gray-50 border border-gray-200 rounded px-0 py-0.5 text-[9px] font-bold outline-none hidden" value="${ri}" data-role="${rName}" title="우선순위">
    </div>`;
    }).join('');
 
@@ -7505,8 +7511,9 @@
    </div>
 
    <div class="mb-8">
-   <h4 class="text-sm text-gray-600 mb-3 flex items-center gap-2"><i class="fas fa-medal text-pink-400 text-xs"></i> 직위 이모지 / 색상 / 우선순위</h4>
-   <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">${rolesHtml}</div>
+   <h4 class="text-sm text-gray-600 mb-2 flex items-center gap-2"><i class="fas fa-medal text-pink-400 text-xs"></i> 직위 이모지 / 색상</h4>
+   <p class="text-[9px] text-gray-400 mb-2"><i class="fas fa-grip-vertical text-gray-300 mr-1"></i>드래그로 순서 변경 (위 = 높은 우선순위)</p>
+   <div class="space-y-1" id="cfgRoleList">${rolesHtml}</div>
    </div>
 
    <div class="mb-8">
@@ -7626,6 +7633,47 @@
     if (tc && tc !== '#374151') style += 'color:' + tc + ';';
     if (bc && bc !== '#f3f4f6') { style += 'background:' + bc + ';padding:2px 8px;border-radius:6px;'; if (!tc || tc === '#374151') style += 'color:white;'; }
     preview.style.cssText = style;
+  };
+
+  window._cfgInitRoleDrag = () => {
+    const list = document.getElementById('cfgRoleList');
+    if (!list) return;
+    let dragEl = null;
+    list.querySelectorAll('.cfg-role-item').forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        dragEl = item;
+        item.style.opacity = '0.4';
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      item.addEventListener('dragend', () => {
+        item.style.opacity = '1';
+        list.querySelectorAll('.cfg-role-item').forEach(el => el.classList.remove('border-purple-400','border-t-2'));
+        // 순서 업데이트
+        list.querySelectorAll('.cfg-role-item').forEach((el, idx) => {
+          const priInput = el.querySelector('.cfg-role-priority');
+          if (priInput) priInput.value = idx;
+        });
+        dragEl = null;
+      });
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        list.querySelectorAll('.cfg-role-item').forEach(el => el.classList.remove('border-purple-400','border-t-2'));
+        item.classList.add('border-purple-400','border-t-2');
+      });
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (dragEl && dragEl !== item) {
+          const rect = item.getBoundingClientRect();
+          const mid = rect.top + rect.height / 2;
+          if (e.clientY < mid) {
+            list.insertBefore(dragEl, item);
+          } else {
+            list.insertBefore(dragEl, item.nextSibling);
+          }
+        }
+      });
+    });
   };
 
   window._cfgAddGuild = () => {
