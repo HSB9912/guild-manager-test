@@ -473,7 +473,7 @@
    { id: 'ddun', name: '뚠카롱', type: '메인 1기', color: '#f472b6', icon: 'fa-crown', max: 200 },
    { id: 'ddung', name: '뚱카롱', type: '메인 2기', color: '#fb7185', icon: 'fa-heart', max: 200 },
    { id: 'bam', name: '밤카롱', type: '부캐 1기', color: '#6366f1', icon: 'fa-moon', max: 200 },
-   { id: 'byeol', name: '별카롱', type: '부캐 2기', color: '#facc15', icon: 'fa-star', max: 200 },
+   { id: 'byeol', name: '별카롱', type: '부캐 2기', color: '#facc15', icon: '⭐', max: 200 },
    { id: 'dal', name: '달카롱', type: '부캐 3기', color: '#60a5fa', icon: 'fa-sun', max: 200 },
    { id: 'kkul', name: '꿀카롱', type: '부캐 4기', color: '#fbbf24', icon: 'fa-cube', max: 200 },
    ],
@@ -1455,7 +1455,7 @@
                 ${appState.guilds.map(g => { 
                     const count = appState.members.filter(m => m.guild === g.name).length; 
                     const pct = Math.min((count / g.max) * 100, 100); 
-                    return `<div class="bg-white p-4 lg:p-8 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group" onclick="filterByGuild('${g.name}')"><div class="flex justify-between items-start mb-3 lg:mb-6"><div class="flex items-center gap-2 lg:gap-3"><div class="w-8 h-8 lg:w-10 lg:h-10 bg-gray-50 rounded-xl lg:rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-pink-50 group-hover:text-pink-500 transition-colors text-xs lg:text-base"><i class="fas ${g.icon}"></i></div><div><span class="block font-bold text-sm lg:text-lg text-gray-800 group-hover:text-pink-500">${g.name}</span><span class="text-[8px] lg:text-[10px] text-gray-400 font-bold">${g.type}</span></div></div></div><div class="w-full bg-gray-50 rounded-full h-1 lg:h-1.5 overflow-hidden"><div class="h-full bg-pink-500 transition-all duration-1000" style="width:${pct}%"></div></div><p class="text-[9px] lg:text-[10px] text-gray-400 font-bold mt-1.5 lg:mt-2 text-right">${count} / ${g.max}</p></div>`; 
+                    return `<div class="bg-white p-4 lg:p-8 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group" onclick="filterByGuild('${g.name}')"><div class="flex justify-between items-start mb-3 lg:mb-6"><div class="flex items-center gap-2 lg:gap-3"><div class="w-8 h-8 lg:w-10 lg:h-10 bg-gray-50 rounded-xl lg:rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-pink-50 group-hover:text-pink-500 transition-colors text-xs lg:text-base">${g.icon}</div><div><span class="block font-bold text-sm lg:text-lg text-gray-800 group-hover:text-pink-500">${g.name}</span><span class="text-[8px] lg:text-[10px] text-gray-400 font-bold">${g.type}</span></div></div></div><div class="w-full bg-gray-50 rounded-full h-1 lg:h-1.5 overflow-hidden"><div class="h-full bg-pink-500 transition-all duration-1000" style="width:${pct}%"></div></div><p class="text-[9px] lg:text-[10px] text-gray-400 font-bold mt-1.5 lg:mt-2 text-right">${count} / ${g.max}</p></div>`; 
                 }).join('')}
             </div>`;
             setTimeout(() => window.updateJobChart('all'), 0);
@@ -6837,18 +6837,18 @@
    const badgeStyles = cfg.guildBadgeStyles || {};
    const ranks = cfg.ranks || initialGuildRanks;
    const rolePriority = cfg.rolePriority || ROLE_PRIORITY;
-   const iconOptions = ['fa-crown','fa-heart','fa-moon','fa-star','fa-sun','fa-cube','fa-gem','fa-fire','fa-bolt','fa-shield-alt','fa-dragon','fa-feather','fa-leaf','fa-snowflake'];
+   const iconOptions = ['👑','❤️','🌙','⭐','☀️','🌰','🍯','🐉','🌸','💎','🔥','⚡','🛡️','🎮','🍀','🌊','⛰️','🦋','🐝','🌈','🍰','🧁','🍩','🍪','🎂','🍭','🍬','☕','🧇','🥐','🍞','🎪','🎯','🎲','🏰','⚔️','🗡️','🏹','🔮','✨','💫','🌟','🎵','🎨','🦊','🐻','🐰','🐱','🐶','🦁','🐸','🦉','🐧','🐼','🌺','🌻','🌷','🍎','🍋','🍒'];
 
    // 길드 카드 (압축형)
    const guildsHtml = guilds.map((g, gi) => {
-     const icOpts = iconOptions.map(ic => '<option value="'+ic+'" '+(g.icon===ic?'selected':'')+'>'+ic.replace('fa-','')+'</option>').join('');
+     const icOpts = iconOptions.map(ic => '<span onclick="this.closest(\'div\').querySelector(\'input\').value=\''+ic+'\';" style="cursor:pointer;font-size:16px;padding:2px" title="'+ic+'">'+ic+'</span>').join('');
      return '<div class="bg-gray-50 rounded-xl p-3 border border-gray-100" data-guild-idx="'+gi+'">'
-     +'<div class="flex items-center gap-2 mb-2"><div class="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs" style="background:'+g.color+'"><i class="fas '+g.icon+' text-[10px]"></i></div><span class="font-bold text-gray-800 text-xs">'+g.name+'</span><button onclick="window._cfgRemoveGuild('+gi+')" class="ml-auto text-gray-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div>'
+     +'<div class="flex items-center gap-2 mb-2"><div class="w-6 h-6 rounded-lg flex items-center justify-center text-sm" style="background:'+g.color+'15">'+g.icon+'</div><span class="font-bold text-gray-800 text-xs">'+g.name+'</span><button onclick="window._cfgRemoveGuild('+gi+')" class="ml-auto text-gray-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div>'
      +'<div class="grid grid-cols-5 gap-1.5 text-[10px]">'
      +'<div><label class="text-[8px] text-gray-400 block">이름</label><input class="cfg-guild-name w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold outline-none" value="'+g.name+'" data-idx="'+gi+'"></div>'
      +'<div><label class="text-[8px] text-gray-400 block">타입</label><input class="cfg-guild-type w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold outline-none" value="'+g.type+'" data-idx="'+gi+'"></div>'
      +'<div><label class="text-[8px] text-gray-400 block">색상</label><div class="flex items-center gap-1"><input type="color" class="cfg-guild-color w-6 h-6 rounded border-0 cursor-pointer" value="'+g.color+'" data-idx="'+gi+'"></div></div>'
-     +'<div><label class="text-[8px] text-gray-400 block">아이콘</label><select class="cfg-guild-icon w-full bg-white border border-gray-200 rounded-lg px-1 py-1 text-[10px] font-bold outline-none" data-idx="'+gi+'">'+icOpts+'</select></div>'
+     +'<div><label class="text-[8px] text-gray-400 block">아이콘</label><div class="flex items-center gap-1"><input class="cfg-guild-icon w-10 text-center bg-white border border-gray-200 rounded-lg py-1 text-sm outline-none" value="'+g.icon+'" data-idx="'+gi+'"><details class="relative"><summary class="text-[8px] text-gray-400 cursor-pointer hover:text-pink-500">선택</summary><div class="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl p-2 flex flex-wrap gap-0.5 w-48 mt-1" style="max-height:120px;overflow-y:auto">'+icOpts+'</div></details></div></div>'
      +'<div><label class="text-[8px] text-gray-400 block">인원</label><input type="number" class="cfg-guild-max w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold outline-none" value="'+g.max+'" data-idx="'+gi+'"></div>'
      +'</div></div>';
    }).join('');
@@ -7096,7 +7096,7 @@
    window.showMsg('길드 추가: 저장 후 반영됩니다');
    const cfg = SITE_CONFIG || {};
    if (!cfg.guilds) cfg.guilds = [...appState.guilds];
-   cfg.guilds.push({ id: 'new_' + Date.now(), name: '새길드', type: '신규', color: '#9ca3af', icon: 'fa-star', max: 200 });
+   cfg.guilds.push({ id: 'new_' + Date.now(), name: '새길드', type: '신규', color: '#9ca3af', icon: '⭐', max: 200 });
    SITE_CONFIG = cfg;
    window.renderSettings(document.getElementById('contentArea'));
   };
@@ -7163,7 +7163,7 @@
    name: card.querySelector('.cfg-guild-name')?.value || '',
    type: card.querySelector('.cfg-guild-type')?.value || '',
    color: card.querySelector('.cfg-guild-color')?.value || '#9ca3af',
-   icon: card.querySelector('.cfg-guild-icon')?.value || 'fa-star',
+   icon: card.querySelector('.cfg-guild-icon')?.value || '⭐',
    max: parseInt(card.querySelector('.cfg-guild-max')?.value) || 200
    });
    });
