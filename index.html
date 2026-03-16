@@ -566,7 +566,7 @@
             overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:1rem;';
             overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
             function statCard(label,value,colorName){ return '<div class="text-center p-3 rounded-xl '+(dk?'bg-'+colorName+'-900/30 border border-'+colorName+'-800/30':'bg-'+colorName+'-50 border border-'+colorName+'-100')+'"><p class="text-[8px] '+(dk?'text-'+colorName+'-300':'text-'+colorName+'-500')+' font-bold uppercase">'+label+'</p><p class="text-lg font-black '+(dk?'text-'+colorName+'-300':'text-'+colorName+'-600')+'">'+value+'</p></div>'; }
-            overlay.innerHTML = '<div style="background:'+(dk?'#1a1d27':'white')+';border-radius:1.5rem;width:100%;max-width:500px;max-height:85vh;box-shadow:0 25px 50px rgba(0,0,0,0.25);display:flex;flex-direction:column;overflow:hidden;">'+'<div class="p-5 border-b '+(dk?'border-gray-700':'border-gray-100')+' flex justify-between items-center shrink-0"><div class="flex items-center gap-3">'+window.getNicknameIcon(member.role)+'<div><h3 class="text-lg font-bold '+(dk?'text-gray-100':'text-gray-800')+'">'+member.name+'</h3><p class="text-[10px] '+(dk?'text-gray-400':'text-gray-500')+'">'+member.guild+' \xB7 '+(member.class||'-')+' \xB7 '+(member.role||'-')+'</p></div></div><button onclick="this.closest(\'[style*=position\\:fixed]\')" class="w-8 h-8 rounded-full '+(dk?'bg-gray-700 hover:bg-gray-600 text-gray-300':'bg-gray-100 hover:bg-gray-200 text-gray-500')+' flex items-center justify-center transition-colors" id="pSuroClose"><i class="fas fa-times"></i></button></div>'+'<div class="p-5 flex-1 overflow-y-auto">'+'<div class="grid grid-cols-4 gap-2 mb-5">'+statCard('\uD3C9\uADE0',avg.toLocaleString(),'pink')+statCard('\uCD5C\uACE0',mx.toLocaleString(),'blue')+statCard('\uCD5C\uC800',mn.toLocaleString(),'amber')+statCard('\uCC38\uC5EC\uC728',participation+'%','green')+'</div>'+'<div class="mb-5"><p class="text-[10px] '+(dk?'text-gray-400':'text-gray-500')+' font-bold uppercase tracking-widest mb-3">\uCD5C\uADFC \uCD94\uC138</p><div class="space-y-2">'+trendHtml+'</div></div>'+'<div><p class="text-[10px] '+(dk?'text-gray-400':'text-gray-500')+' font-bold uppercase tracking-widest mb-3">\uC804\uCCB4 \uAE30\uB85D ('+headers.length+'\uC8FC\uCC28)</p><div class="max-h-[200px] overflow-y-auto space-y-1">'+allHtml+'</div></div>'+'</div></div>';
+            overlay.innerHTML = '<div style="background:'+(dk?'#1a1d27':'white')+';border-radius:1.5rem;width:100%;max-width:500px;max-height:85vh;box-shadow:0 25px 50px rgba(0,0,0,0.25);display:flex;flex-direction:column;overflow:hidden;">'+'<div class="p-5 border-b '+(dk?'border-gray-700':'border-gray-100')+' flex justify-between items-center shrink-0"><div class="flex items-center gap-3">'+window.getNicknameIcon(member.role, member)+'<div><h3 class="text-lg font-bold '+(dk?'text-gray-100':'text-gray-800')+'">'+member.name+'</h3><p class="text-[10px] '+(dk?'text-gray-400':'text-gray-500')+'">'+member.guild+' \xB7 '+(member.class||'-')+' \xB7 '+(member.role||'-')+'</p></div></div><button onclick="this.closest(\'[style*=position\\:fixed]\')" class="w-8 h-8 rounded-full '+(dk?'bg-gray-700 hover:bg-gray-600 text-gray-300':'bg-gray-100 hover:bg-gray-200 text-gray-500')+' flex items-center justify-center transition-colors" id="pSuroClose"><i class="fas fa-times"></i></button></div>'+'<div class="p-5 flex-1 overflow-y-auto">'+'<div class="grid grid-cols-4 gap-2 mb-5">'+statCard('\uD3C9\uADE0',avg.toLocaleString(),'pink')+statCard('\uCD5C\uACE0',mx.toLocaleString(),'blue')+statCard('\uCD5C\uC800',mn.toLocaleString(),'amber')+statCard('\uCC38\uC5EC\uC728',participation+'%','green')+'</div>'+'<div class="mb-5"><p class="text-[10px] '+(dk?'text-gray-400':'text-gray-500')+' font-bold uppercase tracking-widest mb-3">\uCD5C\uADFC \uCD94\uC138</p><div class="space-y-2">'+trendHtml+'</div></div>'+'<div><p class="text-[10px] '+(dk?'text-gray-400':'text-gray-500')+' font-bold uppercase tracking-widest mb-3">\uC804\uCCB4 \uAE30\uB85D ('+headers.length+'\uC8FC\uCC28)</p><div class="max-h-[200px] overflow-y-auto space-y-1">'+allHtml+'</div></div>'+'</div></div>';
             document.body.appendChild(overlay);
             document.getElementById('pSuroClose').onclick = function(){ overlay.remove(); };
         };
@@ -641,12 +641,59 @@
             return order === 'asc' ? res : -res;
         }
 
-        window.getNicknameIcon = (role) => {
+        window.getNicknameIcon = (role, member) => {
             const rd = SITE_CONFIG?.roleDisplay?.[role] || {};
-            if (rd.emoji) return `<span class="mr-1.5 text-sm">${rd.emoji}</span>`;
-            if (role === '마카롱') return '<i class="fas fa-crown text-blue-500 mr-2 shadow-sm"></i>';
-            if (role === '다쿠아즈') return '<i class="fas fa-crown text-pink-500 mr-2 shadow-sm"></i>';
-            return '<span class="w-3 h-3 rounded-full bg-gray-200 mr-2 inline-block"></span>';
+            let icon = '';
+            if (rd.emoji) icon = `<span class="mr-1.5 text-sm">${rd.emoji}</span>`;
+            else if (role === '마카롱') icon = '<i class="fas fa-crown text-blue-500 mr-1.5 shadow-sm"></i>';
+            else if (role === '다쿠아즈') icon = '<i class="fas fa-crown text-pink-500 mr-1.5 shadow-sm"></i>';
+            else icon = '<span class="w-3 h-3 rounded-full bg-gray-200 mr-1.5 inline-block"></span>';
+
+            // 간부(마카롱/다쿠아즈) 서브 직위 뱃지
+            if (member && ['마카롱','다쿠아즈'].includes(role)) {
+              const sub = window.getComputedRank(member);
+              if (sub) {
+                const subRd = SITE_CONFIG?.roleDisplay?.[sub] || {};
+                const subEmoji = subRd.emoji || '';
+                const subColors = {'크라운':'bg-amber-100 text-amber-600 border-amber-200','파르페':'bg-pink-100 text-pink-600 border-pink-200','티라미슈':'bg-orange-100 text-orange-600 border-orange-200','크로칸슈':'bg-green-100 text-green-600 border-green-200','롤케이크':'bg-purple-100 text-purple-600 border-purple-200','팬케이크':'bg-blue-100 text-blue-600 border-blue-200','스콘':'bg-gray-100 text-gray-500 border-gray-200'};
+                const sc = subColors[sub] || 'bg-gray-100 text-gray-500 border-gray-200';
+                icon += `<span class="text-[7px] font-bold px-1 py-0 rounded border ${sc} mr-1" title="수로 기준 직위">${subEmoji||''}${sub}</span>`;
+              }
+            }
+            return icon;
+        };
+
+        // 마카롱/다쿠아즈 간부의 수로 기반 가상 직위 계산
+        window.getComputedRank = (member) => {
+            if (!member || !['마카롱','다쿠아즈'].includes(member.role)) return null;
+            const guild = member.guild;
+            const headers = appState.suroHeaders || [];
+            const latestH = headers.length > 0 ? headers[headers.length - 1] : null;
+            if (!latestH) return null;
+
+            // 같은 길드 본캐 전체를 점수순 정렬
+            const allMembers = appState.members
+              .filter(m => m.guild === guild && m.isMain !== false)
+              .map(m => ({ name: m.name, score: Math.round(Number(m.suro?.[latestH])) || 0 }))
+              .sort((a,b) => b.score - a.score);
+
+            const myIdx = allMembers.findIndex(m => m.name === member.name);
+            if (myIdx < 0) return null;
+            const myScore = allMembers[myIdx].score;
+
+            const rules = SITE_CONFIG?.autoRankRules?.[guild] || [];
+            const topNRules = rules.filter(r => r.topN > 0).sort((a,b) => a.topN - b.topN);
+            const scoreRules = rules.filter(r => !r.topN || r.topN <= 0).sort((a,b) => b.min - a.min);
+
+            let cumTop = 0;
+            for (const r of topNRules) {
+              cumTop += (r.topN || 0);
+              if (myIdx < cumTop && myScore > 0) return r.rank;
+            }
+            for (const r of scoreRules) {
+              if (myScore >= (r.min || 0)) return r.rank;
+            }
+            return null;
         };
 
         function formatRankWithSuffix(rank) {
@@ -1036,30 +1083,39 @@
             const latestHeader = headers.length > 0 ? headers[headers.length - 1] : null;
             if(!latestHeader) return window.showMsg("수로 데이터가 없습니다.", "error");
 
-            const getRoleByScore = (score) => {
-                const rules = SITE_CONFIG?.autoRankRules?.['뚠카롱'] || [
-                    { min: 130000, rank: '파르페' }, { min: 95000, rank: '티라미슈' },
-                    { min: 72000, rank: '크로칸슈' }, { min: 50000, rank: '롤케이크' },
-                    { min: 38000, rank: '팬케이크' }, { min: 0, rank: '스콘' }
-                ];
-                const sorted = [...rules].sort((a,b) => b.min - a.min);
-                for (const r of sorted) { if (score >= r.min) return r.rank; }
-                return sorted.length > 0 ? sorted[sorted.length-1].rank : '스콘';
-            };
-
             const scored = targets.map(m => ({
                 ...m,
                 latestScore: Math.round(Number(m.suro?.[latestHeader])) || 0
             })).sort((a, b) => b.latestScore - a.latestScore);
 
+            // 설정에서 규칙 로드 (topN: 등수 기반, min: 점수 기반)
+            const rules = SITE_CONFIG?.autoRankRules?.['뚠카롱'] || [
+                { min: 130000, rank: '파르페' }, { min: 95000, rank: '티라미슈' },
+                { min: 72000, rank: '크로칸슈' }, { min: 50000, rank: '롤케이크' },
+                { min: 38000, rank: '팬케이크' }, { min: 0, rank: '스콘' }
+            ];
+
+            // topN 규칙 분리 (등수 기반) vs 점수 기반
+            const topNRules = rules.filter(r => r.topN > 0).sort((a,b) => a.topN - b.topN);
+            const scoreRules = rules.filter(r => !r.topN || r.topN <= 0).sort((a,b) => b.min - a.min);
+
+            const getRoleByRank = (idx, score) => {
+                // 1. 등수 기반 규칙 먼저 확인
+                let cumTop = 0;
+                for (const r of topNRules) {
+                    cumTop += (r.topN || 0);
+                    if (idx < cumTop && score > 0) return r.rank;
+                }
+                // 2. 점수 기반 규칙
+                for (const r of scoreRules) {
+                    if (score >= (r.min || 0)) return r.rank;
+                }
+                return scoreRules.length > 0 ? scoreRules[scoreRules.length-1].rank : '스콘';
+            };
+
             const changes = [];
             scored.forEach((m, idx) => {
-                let newRole;
-                if(idx < 3 && m.latestScore > 0) {
-                    newRole = '크라운';
-                } else {
-                    newRole = getRoleByScore(m.latestScore);
-                }
+                const newRole = getRoleByRank(idx, m.latestScore);
                 if(m.role !== newRole) {
                     changes.push({ name: m.name, from: m.role, to: newRole, score: m.latestScore });
                 }
@@ -1134,23 +1190,32 @@
             const latestHeader = headers.length > 0 ? headers[headers.length - 1] : null;
             if(!latestHeader) return window.showMsg("수로 데이터가 없습니다.", "error");
 
-            const getDdungRole = (score) => {
-                const rules = SITE_CONFIG?.autoRankRules?.['뚱카롱'] || [
-                    { min: 18000, rank: '뚠케이크' }, { min: 5000, rank: '뚠브레드' }, { min: 0, rank: '뚠스콘' }
-                ];
-                const sorted = [...rules].sort((a,b) => b.min - a.min);
-                for (const r of sorted) { if (score >= r.min) return r.rank; }
-                return sorted.length > 0 ? sorted[sorted.length-1].rank : '뚠스콘';
-            };
-
             const scored = targets.map(m => ({
                 ...m,
                 latestScore: Math.round(Number(m.suro?.[latestHeader])) || 0
-            }));
+            })).sort((a, b) => b.latestScore - a.latestScore);
+
+            const rules = SITE_CONFIG?.autoRankRules?.['뚱카롱'] || [
+                { min: 18000, rank: '뚠케이크' }, { min: 5000, rank: '뚠브레드' }, { min: 0, rank: '뚠스콘' }
+            ];
+            const topNRules = rules.filter(r => r.topN > 0).sort((a,b) => a.topN - b.topN);
+            const scoreRules = rules.filter(r => !r.topN || r.topN <= 0).sort((a,b) => b.min - a.min);
+
+            const getRoleByRank = (idx, score) => {
+                let cumTop = 0;
+                for (const r of topNRules) {
+                    cumTop += (r.topN || 0);
+                    if (idx < cumTop && score > 0) return r.rank;
+                }
+                for (const r of scoreRules) {
+                    if (score >= (r.min || 0)) return r.rank;
+                }
+                return scoreRules.length > 0 ? scoreRules[scoreRules.length-1].rank : '뚠스콘';
+            };
 
             const changes = [];
-            scored.forEach(m => {
-                const newRole = getDdungRole(m.latestScore);
+            scored.forEach((m, idx) => {
+                const newRole = getRoleByRank(idx, m.latestScore);
                 if(m.role !== newRole) {
                     changes.push({ name: m.name, from: m.role, to: newRole, score: m.latestScore });
                 }
@@ -1728,7 +1793,7 @@
                     <td class="p-3 text-center text-gray-400 group-hover:bg-gray-50 border-r border-gray-50 bg-white group-hover:bg-gray-50">${globalIndex}</td>
                     <td class="p-3 text-gray-800 group-hover:bg-gray-50 border-r border-gray-50 bg-white group-hover:bg-gray-50">
                         <div class="flex items-center leading-none overflow-hidden text-ellipsis">
-                            ${window.getNicknameIcon(m.role)}<div class="flex flex-col min-w-0"><span class="truncate">${m.name}${m.level>0?'<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.'+m.level+'</span>':''}</span><span class="text-[9px] text-gray-400 font-medium truncate">${m.class||''}</span></div>
+                            ${window.getNicknameIcon(m.role, m)}<div class="flex flex-col min-w-0"><span class="truncate">${m.name}${m.level>0?'<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.'+m.level+'</span>':''}</span><span class="text-[9px] text-gray-400 font-medium truncate">${m.class||''}</span></div>
                         </div>
                     </td>
                     <td class="p-3 text-center text-pink-600 bg-pink-50/30 group-hover:bg-pink-100 border-r border-pink-50">${m.avg.toLocaleString()}</td>
@@ -2019,7 +2084,7 @@
                                             <td class="p-3 text-center text-gray-400 group-hover:bg-gray-50 border-r border-gray-50 bg-white group-hover:bg-gray-50">${globalIndex}</td>
                                             <td class="p-3 text-gray-800 group-hover:bg-gray-50 border-r border-gray-50 bg-white group-hover:bg-gray-50">
                                                 <div class="flex items-center leading-none overflow-hidden text-ellipsis">
-                                                    ${window.getNicknameIcon(m.role)}<div class="flex flex-col min-w-0"><span class="truncate">${m.name}${m.level>0?'<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.'+m.level+'</span>':''}</span><span class="text-[9px] text-gray-400 font-medium truncate">${m.class||''}</span></div>
+                                                    ${window.getNicknameIcon(m.role, m)}<div class="flex flex-col min-w-0"><span class="truncate">${m.name}${m.level>0?'<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.'+m.level+'</span>':''}</span><span class="text-[9px] text-gray-400 font-medium truncate">${m.class||''}</span></div>
                                                 </div>
                                             </td>
                                             <td class="p-3 text-center text-pink-600 bg-pink-50/30 group-hover:bg-pink-100 border-r border-pink-50">${m.avg.toLocaleString()}</td>
@@ -2141,7 +2206,7 @@
                             <div class="flex justify-between items-center py-2 px-3 rounded-xl ${i < 3 ? 'bg-gradient-to-r ' + c[1] + ' border ' + c[2] : i % 2 === 0 ? 'bg-gray-50' : ''} transition-colors">
                                 <div class="flex items-center gap-3 overflow-hidden">
                                     <span class="font-black text-${c[0]}-500 w-7 text-center text-sm ${i < 3 ? '' : 'text-gray-400'}">${i+1}</span>
-                                    <div class="flex items-center gap-1.5">${window.getNicknameIcon(m.role)}<span class="font-bold text-gray-800 text-sm truncate" style="max-width:180px;">${m.name}</span></div>
+                                    <div class="flex items-center gap-1.5">${window.getNicknameIcon(m.role, m)}<span class="font-bold text-gray-800 text-sm truncate" style="max-width:180px;">${m.name}</span></div>
                                 </div>
                                 <span class="font-black text-${c[0]}-600 text-sm shrink-0 ${i >= 3 ? 'text-gray-600' : ''}">${formatVal(m)}</span>
                             </div>
@@ -2211,7 +2276,7 @@
                         tbody.innerHTML = processed.map((m,i) => {
                             let row = `<tr class="group h-11 hover:bg-gray-50 transition-colors border-b border-gray-50">
                                 <td class="p-3 text-center text-gray-400 bg-white">${i+1}</td>
-                                <td class="p-3 text-gray-800 bg-white"><div class="flex items-center leading-none">${window.getNicknameIcon(m.role)}<div class="flex flex-col min-w-0"><span class="truncate">${m.name}${m.level>0?'<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.'+m.level+'</span>':''}</span><span class="text-[9px] text-gray-400 font-medium truncate">${m.class||''}</span></div></div></td>
+                                <td class="p-3 text-gray-800 bg-white"><div class="flex items-center leading-none">${window.getNicknameIcon(m.role, m)}<div class="flex flex-col min-w-0"><span class="truncate">${m.name}${m.level>0?'<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.'+m.level+'</span>':''}</span><span class="text-[9px] text-gray-400 font-medium truncate">${m.class||''}</span></div></div></td>
                                 <td class="p-3 text-center text-pink-600 bg-pink-50/30">${m.avg.toLocaleString()}</td>`;
                             m.recentScores.forEach((s,si) => {
                                 let dh='',ps=si>0?m.recentScores[si-1]:0;
@@ -2467,7 +2532,7 @@
                             ? `<input type="checkbox" class="custom-checkbox" ${appState.kickSelection.has(m.id) ? 'checked' : ''} onchange="window.handleKickSelect('${m.id}')">`
                             : globalIndex}
                     </td>
-                    <td class="py-1.5 px-2 font-bold text-gray-800 flex items-center leading-none">${window.getNicknameIcon(m.role)}<span class="text-sm tracking-tight">${m.name}</span></td>
+                    <td class="py-1.5 px-2 font-bold text-gray-800 flex items-center leading-none">${window.getNicknameIcon(m.role, m)}<span class="text-sm tracking-tight">${m.name}</span></td>
                     <td class="py-1.5 px-2 leading-tight hidden sm:table-cell">
                         <span class="block text-[11px] font-bold text-gray-700">${mainName}</span>
                         <span class="text-[9px] font-medium text-gray-400">${mainRankHtml}</span>
@@ -7316,10 +7381,13 @@
    const rules = autoRankRules[gn] || [];
    return `<div class="space-y-2 mb-4">
    <h4 class="text-xs font-bold text-gray-600">${gn}</h4>
+   <p class="text-[9px] text-gray-400 mb-1">topN: 상위 N명 등수 기반 (예: 5 = TOP 5명), 최소점수: 점수 구간 기반. topN 우선 적용 후 나머지는 점수로.</p>
    <div class="space-y-1" id="autoRankList_${gn.replace(/[^a-zA-Z가-힣]/g,'')}">${rules.map((r, ri) => `
    <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 border border-gray-100">
-   <input type="number" class="cfg-autorule-min w-24 bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold outline-none text-right" value="${r.min}" data-guild="${gn}" data-ri="${ri}" placeholder="최소 점수">
-   <span class="text-gray-300 text-xs">이상 →</span>
+   <input type="number" class="cfg-autorule-topn w-14 bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold outline-none text-center" value="${r.topN || ''}" data-guild="${gn}" data-ri="${ri}" placeholder="topN" title="상위 N명 (등수 기반)">
+   <span class="text-gray-300 text-[9px]">명 /</span>
+   <input type="number" class="cfg-autorule-min w-20 bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold outline-none text-right" value="${r.min !== undefined ? r.min : ''}" data-guild="${gn}" data-ri="${ri}" placeholder="최소점수">
+   <span class="text-gray-300 text-xs">→</span>
    <input class="cfg-autorule-rank flex-1 bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-bold outline-none" value="${r.rank}" data-guild="${gn}" data-ri="${ri}" placeholder="직위명">
    <button onclick="window._cfgRemoveAutoRule('${gn}',${ri})" class="text-gray-300 hover:text-red-400 text-xs"><i class="fas fa-times"></i></button>
    </div>`).join('')}</div>
@@ -7661,6 +7729,14 @@
    document.querySelectorAll('.cfg-exempt-check:checked').forEach(el => cfg.suroExempt.push(el.value));
 
    cfg.autoRankRules = cfg.autoRankRules || {};
+   document.querySelectorAll('.cfg-autorule-topn').forEach(el => {
+   const gn = el.dataset.guild;
+   const ri = parseInt(el.dataset.ri);
+   if (!cfg.autoRankRules[gn]) cfg.autoRankRules[gn] = [];
+   if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
+   const v = parseInt(el.value);
+   cfg.autoRankRules[gn][ri].topN = v > 0 ? v : 0;
+   });
    document.querySelectorAll('.cfg-autorule-min').forEach(el => {
    const gn = el.dataset.guild;
    const ri = parseInt(el.dataset.ri);
@@ -8422,7 +8498,7 @@
    <tr class="hover:bg-pink-50/20 transition-colors">
    <td class="p-2 lg:p-3 text-center text-gray-400 text-[10px]">${globalIdx + 1}</td>
    <td class="p-2 lg:p-3 text-gray-800">
-   <div class="flex items-center">${window.getNicknameIcon(m.role)}<span class="text-[11px] lg:text-xs">${m.name}</span></div>
+   <div class="flex items-center">${window.getNicknameIcon(m.role, m)}<span class="text-[11px] lg:text-xs">${m.name}</span></div>
    </td>
    <td class="p-2 lg:p-3 text-gray-500 text-[10px] hidden sm:table-cell">${m.role}</td>
    <td class="p-2 lg:p-3 text-center ${currentScore === 0 ? 'text-red-400' : 'text-gray-700'} text-[10px] lg:text-xs">${currentScore.toLocaleString()}</td>
