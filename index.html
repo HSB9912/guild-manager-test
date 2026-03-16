@@ -657,35 +657,56 @@
             const latestH = headers.length > 0 ? headers[headers.length - 1] : null;
             if (!latestH) return null;
 
-            // 같은 길드 본캐 전체를 점수순 정렬
+            // 같은 길드 본캐 전체를 점수순 정렬 (순위 계산용)
             const allMembers = appState.members
               .filter(m => m.guild === guild && m.isMain !== false)
               .map(m => ({ name: m.name, score: Math.round(Number(m.suro?.[latestH])) || 0 }))
               .sort((a,b) => b.score - a.score);
 
-            const myIdx = allMembers.findIndex(m => m.name === member.name);
+            // 부캐인 경우: 본캐 이름으로 순위 찾기
+            const isSub = member.isMain === false;
+            let myIdx, myScore;
+            if (isSub) {
+              // 부캐의 본캐 이름으로 찾기
+              const mainName = member.mainCharName || member.name;
+              myIdx = allMembers.findIndex(m => m.name === mainName);
+              myScore = myIdx >= 0 ? allMembers[myIdx].score : 0;
+            } else {
+              myIdx = allMembers.findIndex(m => m.name === member.name);
+              myScore = myIdx >= 0 ? allMembers[myIdx].score : 0;
+            }
             if (myIdx < 0) return null;
-            const myScore = allMembers[myIdx].score;
 
             const rules = SITE_CONFIG?.autoRankRules?.[guild] || [];
-            const topNRules = rules.filter(r => r.topN > 0).sort((a,b) => a.topN - b.topN);
-            const bottomNRules = rules.filter(r => r.bottomN > 0);
-            const scoreRules = rules.filter(r => !r.topN && !r.bottomN).sort((a,b) => b.min - a.min);
+            const SUB_EXCLUDE = ['와플','아인슈페너','부팬케이크','수플레','부케이크','반죽(휴면)'];
+            const filtered = rules.filter(r => !SUB_EXCLUDE.includes(r.rank) && !(r.note && r.note.includes('부캐')));
+            const topNRules = filtered.filter(r => r.topN > 0).sort((a,b) => a.topN - b.topN);
+            const bottomNRules = filtered.filter(r => r.bottomN > 0);
+            const scoreRules = filtered.filter(r => !r.topN && !r.bottomN).sort((a,b) => b.min - a.min);
             const totalMembers = allMembers.length;
 
+            let rank = null;
             // 하위 N명 체크
             for (const r of bottomNRules) {
-              if (myIdx >= totalMembers - (r.bottomN || 0)) return r.rank;
+              if (myIdx >= totalMembers - (r.bottomN || 0)) { rank = r.rank; break; }
             }
-            let cumTop = 0;
-            for (const r of topNRules) {
-              cumTop += (r.topN || 0);
-              if (myIdx < cumTop && myScore > 0) return r.rank;
+            if (!rank) {
+              let cumTop = 0;
+              for (const r of topNRules) {
+                cumTop += (r.topN || 0);
+                if (myIdx < cumTop && myScore > 0) { rank = r.rank; break; }
+              }
             }
-            for (const r of scoreRules) {
-              if (myScore >= (r.min || 0)) return r.rank;
+            if (!rank) {
+              for (const r of scoreRules) {
+                if (myScore >= (r.min || 0)) { rank = r.rank; break; }
+              }
             }
-            return null;
+
+            // 부캐면 와플 추가
+            if (isSub && rank) return rank + ' · 와플';
+            if (isSub && !rank) return '와플';
+            return rank;
         };
 
         function formatRankWithSuffix(rank) {
