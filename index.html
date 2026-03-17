@@ -139,6 +139,9 @@
    <div class="hidden md:block px-2 lg:px-4 py-1 lg:py-1.5 bg-pink-50 text-pink-600 rounded-full text-[9px] lg:text-[11px] font-bold border border-pink-100 shadow-sm">
    ✨ <span id="anniversaryLabel">로딩 중...</span>
    </div>
+   <div id="visitCountBadge" class="hidden px-2 lg:px-3 py-1 lg:py-1.5 bg-blue-50 text-blue-600 rounded-full text-[9px] lg:text-[11px] font-bold border border-blue-100 shadow-sm">
+   👥 오늘 <span id="todayVisitCount">-</span>명
+   </div>
    <button id="darkToggle" onclick="window.toggleDark()" class="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 transition-all border border-gray-100 shadow-sm shrink-0" title="다크모드"><i class="fas fa-adjust text-xs lg:text-base"></i></button>
    <button id="refreshBtn" onclick="fetchMembers()" class="hidden sm:flex w-8 h-8 lg:w-10 lg:h-10 items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 transition-all border border-gray-100 shadow-sm shrink-0"><i class="fas fa-sync-alt text-xs lg:text-base"></i></button>
    <button id="headerLoginBtn" onclick="window._authGoogleLogin()" class="px-2 sm:px-3 py-1.5 bg-pink-500 text-white rounded-xl text-[9px] sm:text-[10px] font-bold hover:bg-pink-600 transition-all shadow-sm whitespace-nowrap"><i class="fas fa-lock mr-0.5 sm:mr-1"></i><span class="hidden sm:inline">관리자</span><span class="sm:hidden">로그인</span></button>
@@ -577,6 +580,24 @@
             if (el) el.innerText = `뚠카롱이 생성된 지 ${anniv.totalDays}일 (${anniv.years}년 ${anniv.remainingDays}일)`;
         };
 
+        window.trackDailyVisit = async () => {
+            const todayKey = 'visited_' + new Date().toISOString().split('T')[0];
+            const el = document.getElementById('todayVisitCount');
+            const badge = document.getElementById('visitCountBadge');
+            try {
+                if (!localStorage.getItem(todayKey)) {
+                    const { data } = await supaDb.rpc('increment_daily_visit');
+                    localStorage.setItem(todayKey, '1');
+                    if (el && data) el.textContent = data;
+                } else {
+                    const today = new Date().toISOString().split('T')[0];
+                    const { data } = await supaDb.from('daily_visits').select('visit_count').eq('visit_date', today).maybeSingle();
+                    if (el && data) el.textContent = data.visit_count;
+                }
+                if (badge && isAdmin()) badge.classList.remove('hidden');
+            } catch(e) { console.warn('visit tracking error:', e); }
+        };
+
         window.calculateTotalSuro = (guildName) => {
             if (!appState.suroHeaders || appState.suroHeaders.length === 0) return 0;
             const lastHeader = appState.suroHeaders[appState.suroHeaders.length - 1];
@@ -934,6 +955,7 @@
                     mobileCountEl.innerHTML = `<span style="background:#fdf2f8;color:#db2777;border:1px solid #fbcfe8;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:900">👥 ${total}</span>`;
                 }
                 window.updateAnniversaryLabel();
+                window.trackDailyVisit();
 
             } catch (e) { 
                 console.error("Fetch Error:", e); 
@@ -4557,11 +4579,17 @@
     try {
       let query = supaDb.from('board_posts').select('*').eq('board_type', bs.tab).order('is_pinned', {ascending: false}).order('created_at', {ascending: false});
       const {data, error} = await query;
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501' || error.message?.includes('permission') || error.message?.includes('policy')) {
+          wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-lock text-2xl mb-3 block text-gray-300"></i>게시판을 보려면 Supabase RLS 정책에서<br><code class="bg-gray-100 px-2 py-0.5 rounded text-[10px]">board_posts</code> 테이블의 SELECT를 anon에 허용해주세요.<br><br><span class="text-[9px] text-gray-300">또는 로그인 후 이용해주세요.</span></div>';
+          return;
+        }
+        throw error;
+      }
       bs.posts = data || [];
       window._boardRenderList(wrap);
     } catch(e) {
-      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + e.message + '</div>';
+      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + (e.message || e) + '</div>';
     }
   };
 
@@ -4625,7 +4653,7 @@
     wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>로딩 중...</div>';
 
     try {
-      supaDb.rpc('increment_view_count', {post_id_input: postId}).catch(() => {});
+      try { await supaDb.rpc('increment_view_count', {post_id_input: postId}); } catch(e2) {}
       const {data: post, error} = await supaDb.from('board_posts').select('*').eq('id', postId).single();
       if (error) throw error;
 
@@ -4694,7 +4722,8 @@
 
       wrap.innerHTML = html;
     } catch(e) {
-      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패</div>';
+      console.error('게시글 로딩 에러:', e);
+      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + (e.message || e) + '</div>';
     }
   };
 
@@ -5600,7 +5629,7 @@
             <span class="text-gray-300 shrink-0">↔</span>
             <span class="text-red-500 font-bold truncate">${h.defender_name}</span><span class="text-gray-400 shrink-0">${h.defender_score.toLocaleString()}</span>
             <span class="text-[8px] text-gray-400 shrink-0 hidden sm:inline">${h.reason}</span>
-            ${isAdmin() ? `<div class="ml-auto flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="window._promoEditHistory(${h.id},'${(h.challenger_name||'').replace(/'/g,"\\'")}',${h.challenger_score},'${(h.defender_name||'').replace(/'/g,"\\'")}',${h.defender_score},'${h.result}','${(h.reason||'').replace(/'/g,"\\'")}')" class="text-indigo-400 hover:text-indigo-600 p-1" title="수정"><i class="fas fa-pen text-[8px]"></i></button><button onclick="window._promoDeleteHistory(${h.id})" class="text-red-400 hover:text-red-600 p-1" title="삭제"><i class="fas fa-trash text-[8px]"></i></button></div>` : ''}
+            ${isAdmin() ? `<div class="ml-auto flex gap-1 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"><button onclick="event.stopPropagation();window._promoEditHistory(${h.id},'${(h.challenger_name||'').replace(/'/g,"\\'")}',${h.challenger_score},'${(h.defender_name||'').replace(/'/g,"\\'")}',${h.defender_score},'${h.result}','${(h.reason||'').replace(/'/g,"\\'")}')" class="text-indigo-400 hover:text-indigo-600 p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center" title="수정"><i class="fas fa-pen text-[9px]"></i></button><button onclick="event.stopPropagation();window._promoDeleteHistory(${h.id})" class="text-red-400 hover:text-red-600 p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center" title="삭제"><i class="fas fa-trash text-[9px]"></i></button></div>` : ''}
           </div>`).join('')}
         </div>`).join('');
     } catch(e) { el.innerHTML = '<p class="text-xs text-red-400">로딩 실패</p>'; }
