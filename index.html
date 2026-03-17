@@ -2959,7 +2959,8 @@
             wrap.innerHTML = html;
             window._sheetUpdateButtons();
 
-            wrap.addEventListener('keydown', (e) => {
+            if (wrap._sheetKeyHandler) wrap.removeEventListener('keydown', wrap._sheetKeyHandler);
+            wrap._sheetKeyHandler = (e) => {
                 if (e.key !== 'Tab') return;
                 const el = document.activeElement;
                 if (!el || !wrap.contains(el)) return;
@@ -2976,7 +2977,8 @@
                 if (!targetTd) return;
                 const targetInput = targetTd.querySelector('input, select');
                 if (targetInput) { targetInput.focus(); if (targetInput.select) targetInput.select(); }
-            });
+            };
+            wrap.addEventListener('keydown', wrap._sheetKeyHandler);
         };
 
         window._sheetRenderSuro = (wrap) => {
@@ -3493,10 +3495,13 @@
                 </div>
             </div>`;
 
-            document.addEventListener('click', (e) => {
-                const menu = document.getElementById('guideBlockMenu');
-                if (menu && !menu.parentElement.contains(e.target)) menu.classList.add('hidden');
-            }, { once: false });
+            if (!window._guideBlockMenuHandler) {
+                window._guideBlockMenuHandler = (e) => {
+                    const menu = document.getElementById('guideBlockMenu');
+                    if (menu && !menu.parentElement?.contains(e.target)) menu.classList.add('hidden');
+                };
+                document.addEventListener('click', window._guideBlockMenuHandler);
+            }
 
             setTimeout(() => {
                 const editor = document.getElementById('guideEditor');
@@ -3703,10 +3708,13 @@
                         `;
                     }, 10);
                 });
-                document.addEventListener('mousedown', (e) => {
-                    const ft = document.getElementById('floatingToolbar');
-                    if (ft && !ft.contains(e.target)) ft.remove();
-                });
+                if (!window._floatingToolbarHandler) {
+                    window._floatingToolbarHandler = (e) => {
+                        const ft = document.getElementById('floatingToolbar');
+                        if (ft && !ft.contains(e.target)) ft.remove();
+                    };
+                    document.addEventListener('mousedown', window._floatingToolbarHandler);
+                }
 
             }, 200);
         };
@@ -4003,7 +4011,7 @@
    container.innerHTML = '<div class="text-center py-8 text-gray-400 text-xs"><i class="fas fa-images mr-1"></i>업로드된 이미지가 없습니다.</div>';
    return;
    }
-   const { data: { publicUrl: baseUrl } } = supaDb.storage.from('guide-images').getPublicUrl('');
+   const baseUrl = supaDb.storage.from('guide-images').getPublicUrl('')?.data?.publicUrl || '';
    const images = data.filter(f => f.name && !f.name.startsWith('.')).map(f => ({
    name: f.name,
    url: baseUrl.replace(/\/$/, '') + '/' + f.name,
@@ -4185,7 +4193,7 @@
 
    try {
    const { data } = await supaDb.storage.from('guide-images').list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
-   const { data: { publicUrl: baseUrl } } = supaDb.storage.from('guide-images').getPublicUrl('');
+   const baseUrl = supaDb.storage.from('guide-images').getPublicUrl('')?.data?.publicUrl || '';
    const images = (data || []).filter(f => f.name && !f.name.startsWith('.'));
    const grid = document.getElementById('imgPickerGrid');
    if (images.length === 0) {
@@ -4617,7 +4625,7 @@
     wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>로딩 중...</div>';
 
     try {
-      supaDb.rpc('increment_view_count', {post_id_input: postId});
+      supaDb.rpc('increment_view_count', {post_id_input: postId}).catch(() => {});
       const {data: post, error} = await supaDb.from('board_posts').select('*').eq('id', postId).single();
       if (error) throw error;
 
@@ -8410,7 +8418,8 @@
    </tbody>
    </table>`;
 
-   container.addEventListener('keydown', (e) => {
+   if (container._suroKeyHandler) container.removeEventListener('keydown', container._suroKeyHandler);
+   container._suroKeyHandler = (e) => {
    if (e.key !== 'Tab') return;
    const el = document.activeElement;
    if (!el || !el.classList.contains('suro-score-input')) return;
@@ -8421,7 +8430,8 @@
    const nextInput = nextTr.querySelector('.suro-score-input');
    if (nextInput) { nextInput.focus(); nextInput.select(); }
    }
-   });
+   };
+   container.addEventListener('keydown', container._suroKeyHandler);
   };
 
   window._suroInputPage = (delta) => {
