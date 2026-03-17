@@ -9,7 +9,7 @@
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
- <style> @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');body{font-family:'Noto Sans KR',sans-serif;}.chart-container{position:relative;width:100%;height:300px;}::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-track{background:#f1f1f1;}::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:#f472b6;}.fade-in{animation:fadeIn 0.3s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}th.sortable{cursor:pointer;user-select:none;transition:background 0.2s;position:relative;}th.sortable:hover{background-color:#fdf2f8 !important;color:#db2777 !important;}.force-hide{display:none !important;}#loadingOverlay{position:fixed;inset:0;background:white;z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;}.nav-item.active{background-color:#fdf2f8;color:#ec4899;box-shadow:inset 4px 0 0 #ec4899;}#msgBox{transition:all 0.3s ease;transform:translateY(100px);opacity:0;pointer-events:none;}#msgBox.show{transform:translateY(0);opacity:1;}.batch-modified{background-color:#fff7ed !important;}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.25rem;text-align:center;font-size:0.75rem;}.calendar-day{padding:0.25rem;border-radius:0.75rem;position:relative;transition:all 0.2s;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:1/1;cursor:pointer;border:1px solid transparent;}@media (min-width:1024px){.calendar-day{min-height:56px;}}.calendar-day:hover{background-color:#f9fafb;border-color:#fbcfe8;}.calendar-day.today{background-color:#ec4899;color:white;font-weight:bold;}.calendar-day.thursday{color:#db2777;background-color:#fdf2f8;border:1px solid #fbcfe8;font-weight:bold;}.calendar-day.not-current{opacity:0.2;pointer-events:none;}.calendar-head{font-size:0.7rem;font-weight:800;color:#9ca3af;text-transform:uppercase;padding-bottom:8px;}.event-dot{width:4px;height:4px;background-color:#ec4899;border-radius:50%;margin-top:2px;}.calendar-day.today .event-dot{background-color:white;}.event-snippet{font-size:10px;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;margin-top:3px;line-height:1.2;font-weight:800;background-color:rgba(236,72,153,0.18);border-radius:4px;padding:2px 4px;}@media (min-width:1024px){.event-snippet{font-size:11px;}}.calendar-day.today .event-snippet{color:white;background-color:rgba(255,255,255,0.2);}.calendar-day.thursday .event-snippet{color:#be123c;background-color:rgba(159,18,57,0.13);}.score-zero{background-color:#fee2e2 !important;color:#ef4444 !important;}.score-cell{transition:background 0.2s;}.score-cell:hover{background-color:#f8fafb;}.custom-checkbox{width:1.25rem;height:1.25rem;border-radius:0.5rem;border:2px solid #e5e7eb;appearance:none;cursor:pointer;transition:all 0.2s;}.custom-checkbox:checked{background-color:#ef4444;border-color:#ef4444;background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}.event-item-active{background-color:#fdf2f8;border-color:#f472b6;color:#db2777;}@media (max-width:768px){.nav-item{min-height:44px;}button,select,input[type="checkbox"]{min-height:36px;}}.no-scrollbar::-webkit-scrollbar{display:none;}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}@supports (padding-top:env(safe-area-inset-top)){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);}}@media (max-width:640px){.calendar-grid{gap:0.125rem;font-size:0.65rem;}.calendar-day{min-height:38px;padding:0.125rem;}.calendar-head{font-size:0.6rem;padding-bottom:4px;}.event-snippet{font-size:8px;padding:0px 1px;}#msgBox{left:1rem;right:1rem;transform:translateX(0) translateY(100px) !important;width:auto;padding:0.75rem 1rem;bottom:calc(4.5rem + env(safe-area-inset-bottom,0px));}#msgBox.show{transform:translateX(0) translateY(0) !important;}}@media (max-width:1024px){.overflow-x-guard{overflow-x:auto;-webkit-overflow-scrolling:touch;}}@media (max-width:768px){table{font-size:0.65rem;}table th,table td{padding:0.5rem 0.375rem !important;}table th{font-size:9px;}}.overflow-y-auto,.overflow-x-auto{-webkit-overflow-scrolling:touch;}.nav-item,button{-webkit-tap-highlight-color:transparent;}@media (max-width:640px){#memberModal > div > div,#deleteModal > div > div,#eventDetailModal > div > div{max-height:90vh;overflow-y:auto;border-radius:1.5rem;}}.stick-head{border-collapse:separate;border-spacing:0;}.stick-head thead th{position:sticky;top:0;z-index:10;background:#f9fafb;}@media (max-width:640px){.analysis-summary-grid{grid-template-columns:1fr !important;}.analysis-mvp-grid{grid-template-columns:repeat(2,1fr) !important;}.analysis-table-wrap table{font-size:0.6rem;}.analysis-table-wrap table th,.analysis-table-wrap table td{padding:0.375rem 0.25rem !important;}}body.dark{background-color:#0f1117;color:#c9cdd4;}body.dark .bg-gray-50,body.dark main{background-color:#0f1117 !important;}body.dark .bg-white{background-color:#1c1f2b !important;color:#c9cdd4;border-color:#2a2d3a !important;}body.dark aside{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark header{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark .border-gray-100,body.dark .border-gray-200,body.dark .border-gray-50{border-color:#2a2d3a !important;}body.dark .text-gray-800,body.dark .text-slate-800{color:#e0e3ea !important;}body.dark .text-gray-700{color:#b8bcc6 !important;}body.dark .text-gray-600{color:#8b90a0 !important;}body.dark .text-gray-500{color:#6b7080 !important;}body.dark .text-gray-400{color:#555a6a !important;}body.dark .text-gray-300{color:#444a5a !important;}body.dark .bg-gray-100{background-color:#22252f !important;}body.dark .bg-gray-50{background-color:#1a1d27 !important;}body.dark input,body.dark select,body.dark textarea{background-color:#22252f !important;color:#c9cdd4 !important;border-color:#333848 !important;}body.dark input::placeholder,body.dark textarea::placeholder{color:#555a6a !important;}body.dark table thead{background-color:#14161e !important;}body.dark table thead th{background-color:#14161e !important;color:#6b7080 !important;border-color:#2a2d3a !important;}body.dark table tbody td{background-color:#1a1d27 !important;border-color:#22252f !important;}body.dark table tbody tr:hover td{background-color:#22252f !important;}body.dark .stick-head thead th{background:#14161e !important;}body.dark .nav-item:hover{background-color:#22252f !important;}body.dark .nav-item.active{background-color:#1e1a2e !important;color:#c084fc !important;box-shadow:inset 4px 0 0 #a855f7 !important;}body.dark .shadow-sm,body.dark .shadow-lg,body.dark .shadow-md,body.dark .shadow-2xl{box-shadow:none !important;}body.dark #loadingOverlay{background:#0f1117 !important;}body.dark .bg-pink-50,body.dark .bg-pink-50\/30{background-color:rgba(168,85,247,0.08) !important;}body.dark .text-pink-600,body.dark .text-pink-500,body.dark .text-pink-400{color:#a78bfa !important;}body.dark .border-pink-100,body.dark .border-pink-50{border-color:#2a2540 !important;}body.dark .bg-red-50,body.dark .bg-red-50\/20{background-color:rgba(239,68,68,0.08) !important;}body.dark .text-red-500,body.dark .text-red-600,body.dark .text-red-400{color:#f87171 !important;}body.dark .text-blue-500,body.dark .text-blue-600,body.dark .text-blue-400{color:#93c5fd !important;}body.dark .text-green-500,body.dark .text-green-600,body.dark .text-green-400{color:#86efac !important;}body.dark .text-amber-500,body.dark .text-amber-600{color:#fbbf24 !important;}body.dark .text-orange-500{color:#fb923c !important;}body.dark .text-purple-600,body.dark .text-purple-500{color:#c084fc !important;}body.dark .bg-pink-500{background-color:#7c3aed !important;}body.dark .bg-gradient-to-br,body.dark .bg-gradient-to-tr,body.dark .bg-gradient-to-r{background:#1a1d27 !important;}body.dark [class*="from-pink"],body.dark [class*="from-rose"],body.dark [class*="from-blue"],body.dark [class*="from-emerald"],body.dark [class*="from-purple"],body.dark [class*="from-yellow"],body.dark [class*="from-amber"],body.dark [class*="from-green"],body.dark [class*="from-red"],body.dark [class*="from-indigo"],body.dark [class*="from-orange"],body.dark [class*="from-cyan"]{background:#1a1d27 !important;}body.dark [class*="border-pink-100"],body.dark [class*="border-rose-100"],body.dark [class*="border-blue-100"],body.dark [class*="border-emerald-100"],body.dark [class*="border-purple-100"],body.dark [class*="border-orange-100"],body.dark [class*="border-amber-100"],body.dark [class*="border-green-100"],body.dark [class*="border-red-100"]{border-color:#2a2d3a !important;}body.dark .bg-white\/40{background-color:rgba(255,255,255,0.05) !important;}body.dark .hover\:bg-pink-50\/30:hover,body.dark .hover\:bg-gray-50:hover{background-color:#22252f !important;}body.dark .hover\:bg-pink-100:hover,body.dark .hover\:bg-gray-100:hover{background-color:#22252f !important;}body.dark th.sortable:hover{background-color:#22252f !important;color:#a78bfa !important;}body.dark .batch-modified{background-color:rgba(251,146,60,0.1) !important;}body.dark .calendar-day{color:#8b90a0;}body.dark .calendar-day:hover{background-color:#22252f;border-color:#333848;}body.dark .calendar-day.today{background-color:#7c3aed;color:white;}body.dark .calendar-day.thursday{background-color:rgba(124,58,237,0.15);color:#c084fc;border-color:rgba(124,58,237,0.3);}body.dark .event-snippet{background-color:rgba(124,58,237,0.15);color:#c9cdd4;}body.dark .calendar-day.today .event-snippet{background-color:rgba(255,255,255,0.15);color:white;}body.dark .bg-green-50{background-color:rgba(34,197,94,0.08) !important;}body.dark .bg-amber-50{background-color:rgba(245,158,11,0.08) !important;}body.dark .bg-blue-50{background-color:rgba(59,130,246,0.08) !important;}body.dark .bg-emerald-50{background-color:rgba(16,185,129,0.08) !important;}body.dark .bg-purple-50{background-color:rgba(168,85,247,0.08) !important;}body.dark [style*="background:#fdf2f8"],body.dark [style*="background:#fff1f2"],body.dark [style*="background:#eef2ff"],body.dark [style*="background:#fefce8"],body.dark [style*="background:#eff6ff"],body.dark [style*="background:#fffbeb"]{background:#22252f !important;border-color:#333848 !important;}body.dark::-webkit-scrollbar-track{background:#14161e;}body.dark::-webkit-scrollbar-thumb{background:#333848;}body.dark::-webkit-scrollbar-thumb:hover{background:#444a5a;}body.dark #authOverlay{background:#0f1117 !important;}body.dark .bg-gradient-to-br.from-pink-50{background:#0f1117 !important;}body.dark .score-zero{background-color:rgba(239,68,68,0.08) !important;color:#f87171 !important;}body.dark .analysis-table-wrap table tbody tr td:nth-child(1),body.dark .analysis-table-wrap table tbody tr td:nth-child(2){background:#1a1d27 !important;}body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(1),body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(2){background:#22252f !important;}body.dark .analysis-table-wrap table thead th:nth-child(1),body.dark .analysis-table-wrap table thead th:nth-child(2){background:#14161e !important;}.mobile-tab{color:#9ca3af;transition:all 0.15s;}.mobile-tab.active{color:#ec4899;}.mobile-tab:active{transform:scale(0.92);}.safe-bottom{padding-bottom:env(safe-area-inset-bottom,0);}@media (max-width:1023px){#contentArea{padding-bottom:80px !important;}}body.font-sm #contentArea{font-size:0.8rem;}body.font-sm #contentArea table{font-size:0.6rem;}body.font-sm #contentArea .text-xs{font-size:0.65rem !important;}body.font-sm #contentArea .text-sm{font-size:0.75rem !important;}body.font-sm header .text-base{font-size:0.85rem !important;}body.font-sm header .text-\[9px\],body.font-sm header .text-\[10px\]{font-size:8px !important;}body.font-lg #contentArea{font-size:1.1rem;}body.font-lg #contentArea table{font-size:0.85rem;}body.font-lg #contentArea .text-xs{font-size:0.85rem !important;}body.font-lg #contentArea .text-sm{font-size:1rem !important;}body.font-lg #contentArea .text-\[10px\]{font-size:0.75rem !important;}body.font-lg #contentArea .text-\[11px\]{font-size:0.8rem !important;}body.font-lg #contentArea .text-\[9px\]{font-size:0.7rem !important;}body.font-lg header .text-base{font-size:1.15rem !important;}body.font-lg header .text-\[9px\]{font-size:11px !important;}body.font-lg header .text-\[10px\]{font-size:12px !important;}body.font-lg nav .text-sm{font-size:1rem !important;}body.font-lg nav .text-\[9px\]{font-size:11px !important;}body.dark #mobileTabBar{background:#14161e !important;border-color:#2a2d3a !important;}body.dark .mobile-tab{color:#6b7280;}body.dark .mobile-tab.active{color:#f472b6;}</style>
+ <style> @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');body{font-family:'Noto Sans KR',sans-serif;}.chart-container{position:relative;width:100%;height:300px;}::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-track{background:#f1f1f1;}::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:#f472b6;}.fade-in{animation:fadeIn 0.3s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}th.sortable{cursor:pointer;user-select:none;transition:background 0.2s;position:relative;}th.sortable:hover{background-color:#fdf2f8 !important;color:#db2777 !important;}.force-hide{display:none !important;}#loadingOverlay{position:fixed;inset:0;background:white;z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;}.nav-item.active{background-color:#fdf2f8;color:#ec4899;box-shadow:inset 4px 0 0 #ec4899;}#msgBox{transition:all 0.3s ease;transform:translateY(100px);opacity:0;pointer-events:none;}#msgBox.show{transform:translateY(0);opacity:1;}.batch-modified{background-color:#fff7ed !important;}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.25rem;text-align:center;font-size:0.75rem;}.calendar-day{padding:0.25rem;border-radius:0.75rem;position:relative;transition:all 0.2s;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:1/1;cursor:pointer;border:1px solid transparent;}@media (min-width:1024px){.calendar-day{min-height:56px;}}.calendar-day:hover{background-color:#f9fafb;border-color:#fbcfe8;}.calendar-day.today{background-color:#ec4899;color:white;font-weight:bold;}.calendar-day.thursday{color:#db2777;background-color:#fdf2f8;border:1px solid #fbcfe8;font-weight:bold;}.calendar-day.not-current{opacity:0.2;pointer-events:none;}.calendar-head{font-size:0.7rem;font-weight:800;color:#9ca3af;text-transform:uppercase;padding-bottom:8px;}.event-dot{width:4px;height:4px;background-color:#ec4899;border-radius:50%;margin-top:2px;}.calendar-day.today .event-dot{background-color:white;}.event-snippet{font-size:10px;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;margin-top:3px;line-height:1.2;font-weight:800;background-color:rgba(236,72,153,0.18);border-radius:4px;padding:2px 4px;}@media (min-width:1024px){.event-snippet{font-size:11px;}}.calendar-day.today .event-snippet{color:white;background-color:rgba(255,255,255,0.2);}.calendar-day.thursday .event-snippet{color:#be123c;background-color:rgba(159,18,57,0.13);}.score-zero{background-color:#fee2e2 !important;color:#ef4444 !important;}.score-cell{transition:background 0.2s;}.score-cell:hover{background-color:#f8fafb;}.custom-checkbox{width:1.25rem;height:1.25rem;border-radius:0.5rem;border:2px solid #e5e7eb;appearance:none;cursor:pointer;transition:all 0.2s;}.custom-checkbox:checked{background-color:#ef4444;border-color:#ef4444;background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}.event-item-active{background-color:#fdf2f8;border-color:#f472b6;color:#db2777;}@media (max-width:768px){.nav-item{min-height:44px;}button,select,input[type="checkbox"]{min-height:36px;}}.no-scrollbar::-webkit-scrollbar{display:none;}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}@supports (padding-top:env(safe-area-inset-top)){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);}}@media (max-width:640px){.calendar-grid{gap:0.125rem;font-size:0.65rem;}.calendar-day{min-height:38px;padding:0.125rem;}.calendar-head{font-size:0.6rem;padding-bottom:4px;}.event-snippet{font-size:8px;padding:0px 1px;}#msgBox{left:1rem;right:1rem;transform:translateX(0) translateY(100px) !important;width:auto;padding:0.75rem 1rem;bottom:calc(4.5rem + env(safe-area-inset-bottom,0px));}#msgBox.show{transform:translateX(0) translateY(0) !important;}}@media (max-width:1024px){.overflow-x-guard{overflow-x:auto;-webkit-overflow-scrolling:touch;}}@media (max-width:768px){table{font-size:0.65rem;}table th,table td{padding:0.5rem 0.375rem !important;}table th{font-size:9px;}}.overflow-y-auto,.overflow-x-auto{-webkit-overflow-scrolling:touch;}.nav-item,button{-webkit-tap-highlight-color:transparent;}@media (max-width:640px){#memberModal > div > div,#deleteModal > div > div,#eventDetailModal > div > div{max-height:90vh;overflow-y:auto;border-radius:1.5rem;}}.stick-head{border-collapse:separate;border-spacing:0;}.stick-head thead th{position:sticky;top:0;z-index:10;background:#f9fafb;}@media (max-width:640px){.analysis-summary-grid{grid-template-columns:1fr !important;}.analysis-mvp-grid{grid-template-columns:repeat(2,1fr) !important;}.analysis-table-wrap table{font-size:0.6rem;}.analysis-table-wrap table th,.analysis-table-wrap table td{padding:0.375rem 0.25rem !important;}}body.dark{background-color:#0f1117;color:#c9cdd4;}body.dark .bg-gray-50,body.dark main{background-color:#0f1117 !important;}body.dark .bg-white{background-color:#1c1f2b !important;color:#c9cdd4;border-color:#2a2d3a !important;}body.dark aside{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark header{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark .border-gray-100,body.dark .border-gray-200,body.dark .border-gray-50{border-color:#2a2d3a !important;}body.dark .text-gray-800,body.dark .text-slate-800{color:#e0e3ea !important;}body.dark .text-gray-700{color:#b8bcc6 !important;}body.dark .text-gray-600{color:#8b90a0 !important;}body.dark .text-gray-500{color:#6b7080 !important;}body.dark .text-gray-400{color:#555a6a !important;}body.dark .text-gray-300{color:#444a5a !important;}body.dark .bg-gray-100{background-color:#22252f !important;}body.dark .bg-gray-50{background-color:#1a1d27 !important;}body.dark input,body.dark select,body.dark textarea{background-color:#22252f !important;color:#c9cdd4 !important;border-color:#333848 !important;}body.dark input::placeholder,body.dark textarea::placeholder{color:#555a6a !important;}body.dark table thead{background-color:#14161e !important;}body.dark table thead th{background-color:#14161e !important;color:#6b7080 !important;border-color:#2a2d3a !important;}body.dark table tbody td{background-color:#1a1d27 !important;border-color:#22252f !important;}body.dark table tbody tr:hover td{background-color:#22252f !important;}body.dark .stick-head thead th{background:#14161e !important;}body.dark .nav-item:hover{background-color:#22252f !important;}body.dark .nav-item.active{background-color:#1e1a2e !important;color:#c084fc !important;box-shadow:inset 4px 0 0 #a855f7 !important;}body.dark .shadow-sm,body.dark .shadow-lg,body.dark .shadow-md,body.dark .shadow-2xl{box-shadow:none !important;}body.dark #loadingOverlay{background:#0f1117 !important;}body.dark .bg-pink-50,body.dark .bg-pink-50\/30{background-color:rgba(168,85,247,0.08) !important;}body.dark .text-pink-600,body.dark .text-pink-500,body.dark .text-pink-400{color:#a78bfa !important;}body.dark .border-pink-100,body.dark .border-pink-50{border-color:#2a2540 !important;}body.dark .bg-red-50,body.dark .bg-red-50\/20{background-color:rgba(239,68,68,0.08) !important;}body.dark .text-red-500,body.dark .text-red-600,body.dark .text-red-400{color:#f87171 !important;}body.dark .text-blue-500,body.dark .text-blue-600,body.dark .text-blue-400{color:#93c5fd !important;}body.dark .text-green-500,body.dark .text-green-600,body.dark .text-green-400{color:#86efac !important;}body.dark .text-amber-500,body.dark .text-amber-600{color:#fbbf24 !important;}body.dark .text-orange-500{color:#fb923c !important;}body.dark .text-purple-600,body.dark .text-purple-500{color:#c084fc !important;}body.dark .bg-pink-500{background-color:#7c3aed !important;}body.dark .bg-gradient-to-br,body.dark .bg-gradient-to-tr,body.dark .bg-gradient-to-r{background:#1a1d27 !important;}body.dark [class*="from-pink"],body.dark [class*="from-rose"],body.dark [class*="from-blue"],body.dark [class*="from-emerald"],body.dark [class*="from-purple"],body.dark [class*="from-yellow"],body.dark [class*="from-amber"],body.dark [class*="from-green"],body.dark [class*="from-red"],body.dark [class*="from-indigo"],body.dark [class*="from-orange"],body.dark [class*="from-cyan"]{background:#1a1d27 !important;}body.dark [class*="border-pink-100"],body.dark [class*="border-rose-100"],body.dark [class*="border-blue-100"],body.dark [class*="border-emerald-100"],body.dark [class*="border-purple-100"],body.dark [class*="border-orange-100"],body.dark [class*="border-amber-100"],body.dark [class*="border-green-100"],body.dark [class*="border-red-100"]{border-color:#2a2d3a !important;}body.dark .bg-white\/40{background-color:rgba(255,255,255,0.05) !important;}body.dark .hover\:bg-pink-50\/30:hover,body.dark .hover\:bg-gray-50:hover{background-color:#22252f !important;}body.dark .hover\:bg-pink-100:hover,body.dark .hover\:bg-gray-100:hover{background-color:#22252f !important;}body.dark th.sortable:hover{background-color:#22252f !important;color:#a78bfa !important;}body.dark .batch-modified{background-color:rgba(251,146,60,0.1) !important;}body.dark .calendar-day{color:#8b90a0;}body.dark .calendar-day:hover{background-color:#22252f;border-color:#333848;}body.dark .calendar-day.today{background-color:#7c3aed;color:white;}body.dark .calendar-day.thursday{background-color:rgba(124,58,237,0.15);color:#c084fc;border-color:rgba(124,58,237,0.3);}body.dark .event-snippet{background-color:rgba(124,58,237,0.15);color:#c9cdd4;}body.dark .calendar-day.today .event-snippet{background-color:rgba(255,255,255,0.15);color:white;}body.dark .bg-green-50{background-color:rgba(34,197,94,0.08) !important;}body.dark .bg-amber-50{background-color:rgba(245,158,11,0.08) !important;}body.dark .bg-blue-50{background-color:rgba(59,130,246,0.08) !important;}body.dark .bg-emerald-50{background-color:rgba(16,185,129,0.08) !important;}body.dark .bg-purple-50{background-color:rgba(168,85,247,0.08) !important;}body.dark [style*="background:#fdf2f8"],body.dark [style*="background:#fff1f2"],body.dark [style*="background:#eef2ff"],body.dark [style*="background:#fefce8"],body.dark [style*="background:#eff6ff"],body.dark [style*="background:#fffbeb"]{background:#22252f !important;border-color:#333848 !important;}body.dark::-webkit-scrollbar-track{background:#14161e;}body.dark::-webkit-scrollbar-thumb{background:#333848;}body.dark::-webkit-scrollbar-thumb:hover{background:#444a5a;}body.dark #authOverlay{background:#0f1117 !important;}body.dark .bg-gradient-to-br.from-pink-50{background:#0f1117 !important;}body.dark .score-zero{background-color:rgba(239,68,68,0.08) !important;color:#f87171 !important;}body.dark .analysis-table-wrap table tbody tr td:nth-child(1),body.dark .analysis-table-wrap table tbody tr td:nth-child(2){background:#1a1d27 !important;}body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(1),body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(2){background:#22252f !important;}body.dark .analysis-table-wrap table thead th:nth-child(1),body.dark .analysis-table-wrap table thead th:nth-child(2){background:#14161e !important;}.mobile-tab{color:#9ca3af;transition:all 0.15s;}.mobile-tab.active{color:#ec4899;}.mobile-tab:active{transform:scale(0.92);}.safe-bottom{padding-bottom:env(safe-area-inset-bottom,0);}@media (max-width:1023px){#contentArea{padding-bottom:80px !important;}}body.font-sm #contentArea{font-size:0.8rem;}body.font-sm #contentArea table{font-size:0.6rem;}body.font-sm #contentArea .text-xs{font-size:0.65rem !important;}body.font-sm #contentArea .text-sm{font-size:0.75rem !important;}body.font-sm header .text-base{font-size:0.85rem !important;}body.font-sm header .text-\[9px\],body.font-sm header .text-\[10px\]{font-size:8px !important;}body.font-lg #contentArea{font-size:1.1rem;}body.font-lg #contentArea table{font-size:0.85rem;}body.font-lg #contentArea .text-xs{font-size:0.85rem !important;}body.font-lg #contentArea .text-sm{font-size:1rem !important;}body.font-lg #contentArea .text-\[10px\]{font-size:0.75rem !important;}body.font-lg #contentArea .text-\[11px\]{font-size:0.8rem !important;}body.font-lg #contentArea .text-\[9px\]{font-size:0.7rem !important;}body.font-lg header .text-base{font-size:1.15rem !important;}body.font-lg header .text-\[9px\]{font-size:11px !important;}body.font-lg header .text-\[10px\]{font-size:12px !important;}body.font-lg nav .text-sm{font-size:1rem !important;}body.font-lg nav .text-\[9px\]{font-size:11px !important;}body.dark #mobileTabBar{background:#14161e !important;border-color:#2a2d3a !important;}body.dark .mobile-tab{color:#6b7280;}.board-content p,.board-content div{margin-bottom:0.25em;}.board-content br+br{display:block;content:'';margin-top:0.5em;}.board-content a{color:#ec4899;text-decoration:underline;}.board-content img{max-width:100%;border-radius:0.75rem;margin:0.5rem 0;}.board-content ul,.board-content ol{padding-left:1.5em;margin:0.5em 0;}.board-content blockquote{border-left:3px solid #e5e7eb;padding-left:1em;color:#6b7280;margin:0.5em 0;}body.dark .board-content a{color:#f472b6;}body.dark .board-content blockquote{border-color:#333848;color:#8b90a0;}body.dark .mobile-tab.active{color:#f472b6;}body.dark #promoEditModal > div > div,body.dark #promoAddHistModal > div > div{background-color:#1c1f2b !important;border-color:#2a2d3a !important;}body.dark #promoEditModal .bg-indigo-50,body.dark #promoAddHistModal .bg-green-50{background-color:#1a1d27 !important;border-color:#2a2d3a !important;}body.dark #promoEditModal h3,body.dark #promoAddHistModal h3{color:#a5b4fc !important;}body.dark .group:hover .group-hover\:opacity-100{opacity:1;}</style>
 </head>
 <body class="bg-gray-50 text-slate-800 h-screen overflow-hidden flex font-medium">
 
@@ -885,9 +885,12 @@
                         id: p.id, date: p.date, name: p.name, points: p.points, reason: p.reason || ''
                     }));
                 } else {
-                    appState.penaltyHistory = penalties.map((p, idx) => ({
-                        name: '비공개', points: p.points, reason: '비공개', date: '-', _uid: idx
-                    }));
+                    const _penaltyNameMap = {};
+                    let _penaltyIdx = 1;
+                    appState.penaltyHistory = penalties.map((p) => {
+                        if (!_penaltyNameMap[p.name]) _penaltyNameMap[p.name] = '벌점자 ' + (_penaltyIdx++);
+                        return { name: _penaltyNameMap[p.name], points: p.points, reason: '비공개', date: '-' };
+                    });
                 }
 
                 appState.events = events.map(e => ({
@@ -1056,8 +1059,6 @@
                 return false;
             }
         };
-
-        window.router = (tab) => {
 
         window.autoAssignRoles = () => {
             const excludeRoles = ['마카롱', '다쿠아즈'];
@@ -1307,6 +1308,8 @@
             window.showLoading(false);
             window._pendingRoleChanges = null;
         };
+
+        window.router = (tab) => {
             appState.activeTab = tab;
             const content = document.getElementById('contentArea'); if(!content) return;
             content.innerHTML = '';
@@ -2617,19 +2620,11 @@
         window.renderPenalty = (container) => {
             const memberOptions = appState.members.map(m => `<option value="${m.name}">${m.name} (${m.guild})</option>`).sort();
 
-            // 합산 계산
+            // 합산 계산 (관리자: 실제 이름, 비관리자: 마스킹된 이름 — 동일 인물은 같은 키)
             const penaltyCounts = {};
-            if (isAdmin()) {
-                appState.penaltyHistory.forEach(h => {
-                    penaltyCounts[h.name] = (penaltyCounts[h.name] || 0) + Number(h.points);
-                });
-            } else {
-                // 일반 유저: _uid로 구분해서 각 건별로
-                appState.penaltyHistory.forEach(h => {
-                    const key = '벌점자 ' + (h._uid + 1);
-                    penaltyCounts[key] = Number(h.points);
-                });
-            }
+            appState.penaltyHistory.forEach(h => {
+                penaltyCounts[h.name] = (penaltyCounts[h.name] || 0) + Number(h.points);
+            });
             const activePenalties = Object.entries(penaltyCounts).filter(([name, pts]) => pts > 0).sort((a,b) => b[1] - a[1]);
 
             const penaltyRows = [...appState.penaltyHistory].reverse().map(h => {
@@ -2690,13 +2685,23 @@
                         </div>
                         <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 flex-wrap">
                             ${activePenalties.length > 0 
-                                ? activePenalties.map(([name, pts]) => `
-                                    <div class="flex items-center gap-2 ${pts >= 10 ? 'bg-red-500 text-white' : 'bg-red-50 border border-red-100'} pl-2 pr-4 py-1.5 rounded-full shrink-0">
+                                ? activePenalties.map(([name, pts]) => {
+                                    const isExpelled = (window._expelledList || []).includes(name);
+                                    if (pts >= 10 && isExpelled) {
+                                        return `<div class="flex items-center gap-2 bg-gray-400 text-white pl-2 pr-${isAdmin() ? '2' : '4'} py-1.5 rounded-full shrink-0">
+                                            <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xs shadow-sm"><i class="fas fa-check text-[10px]"></i></div>
+                                            <span class="text-xs font-bold text-white line-through">${name}</span>
+                                            <span class="text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">추방완료</span>
+                                            ${isAdmin() ? `<button onclick="window._undoExpelled('${name.replace(/'/g,"\\'")}')" class="w-6 h-6 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all ml-1" title="추방완료 취소"><i class="fas fa-undo text-[9px]"></i></button>` : ''}
+                                        </div>`;
+                                    }
+                                    return `<div class="flex items-center gap-2 ${pts >= 10 ? 'bg-red-500 text-white' : 'bg-red-50 border border-red-100'} pl-2 pr-${pts >= 10 && isAdmin() ? '2' : '4'} py-1.5 rounded-full shrink-0">
                                         <div class="w-7 h-7 rounded-full ${pts >= 10 ? 'bg-white/20' : 'bg-white'} flex items-center justify-center ${pts >= 10 ? 'text-white' : 'text-red-500'} font-bold text-xs shadow-sm">${pts}</div>
                                         <span class="text-xs font-bold ${pts >= 10 ? 'text-white' : 'text-red-600'}">${name}</span>
                                         ${pts >= 10 ? '<span class="text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">추방 대상</span>' : ''}
-                                    </div>
-                                  `).join('')
+                                        ${pts >= 10 && isAdmin() ? `<button onclick="window._markExpelled('${name.replace(/'/g,"\\'")}')" class="w-6 h-6 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all ml-1" title="추방완료 처리"><i class="fas fa-gavel text-[9px]"></i></button>` : ''}
+                                    </div>`;
+                                }).join('')
                                 : '<p class="text-xs text-gray-300 font-bold italic w-full">현재 벌점자가 없습니다.</p>'
                             }
                         </div>
@@ -2754,6 +2759,42 @@
             } else if (btn) {
                 btn.disabled = false; btn.innerText = "벌점 저장";
             }
+        };
+
+        // 추방완료 목록 로드
+        window._expelledList = [];
+        window._loadExpelledList = async () => {
+            try {
+                const {data} = await supaDb.from('penalty_expelled').select('name');
+                window._expelledList = (data || []).map(d => d.name);
+            } catch(e) { window._expelledList = []; }
+        };
+        window._loadExpelledList();
+
+        window._markExpelled = async (name) => {
+            if (!confirm(`"${name}" 님을 추방완료 처리하시겠습니까?`)) return;
+            try {
+                const {error} = await supaDb.from('penalty_expelled').upsert({name: name, expelled_at: new Date().toISOString()}, {onConflict: 'name'});
+                if (error) throw error;
+                await supaDb.from('operation_history').insert({
+                    date: window.getKSTDateStr(), category: '추방', name: name,
+                    content: '벌점 10점 이상 추방완료 처리'
+                });
+                window._expelledList.push(name);
+                window.showMsg(name + ' 추방완료 처리됨', 'success');
+                window.renderPenalty(document.getElementById('contentArea'));
+            } catch(e) { window.showMsg('처리 실패: ' + e.message, 'error'); }
+        };
+
+        window._undoExpelled = async (name) => {
+            if (!confirm(`"${name}" 님의 추방완료를 취소하시겠습니까?`)) return;
+            try {
+                const {error} = await supaDb.from('penalty_expelled').delete().eq('name', name);
+                if (error) throw error;
+                window._expelledList = window._expelledList.filter(n => n !== name);
+                window.showMsg(name + ' 추방완료 취소됨', 'success');
+                window.renderPenalty(document.getElementById('contentArea'));
+            } catch(e) { window.showMsg('취소 실패: ' + e.message, 'error'); }
         };
 
         window.renderSheet = (container) => {
@@ -4230,6 +4271,41 @@
   const BOARD_PER_PAGE = 10;
   const BOARD_STORAGE_URL = SUPABASE_URL + '/storage/v1/object/public/board-images/';
 
+  window._sanitizeBoardHTML = (html) => {
+    if (!html) return '';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const ALLOWED_TAGS = new Set(['b','i','u','s','em','strong','br','p','div','span','ul','ol','li','h1','h2','h3','h4','h5','h6','blockquote','pre','code','hr','a','img','table','thead','tbody','tr','th','td','sub','sup','mark','del','ins']);
+    const ALLOWED_ATTRS = new Set(['style','href','src','alt','class','target','colspan','rowspan','width','height']);
+    const sanitize = (node) => {
+      const children = [...node.childNodes];
+      children.forEach(child => {
+        if (child.nodeType === 3) return;
+        if (child.nodeType === 1) {
+          if (!ALLOWED_TAGS.has(child.tagName.toLowerCase())) {
+            while (child.firstChild) child.parentNode.insertBefore(child.firstChild, child);
+            child.parentNode.removeChild(child);
+            return;
+          }
+          [...child.attributes].forEach(attr => {
+            if (!ALLOWED_ATTRS.has(attr.name.toLowerCase())) child.removeAttribute(attr.name);
+          });
+          if (child.tagName === 'A') child.setAttribute('target', '_blank');
+          const style = child.getAttribute('style');
+          if (style) {
+            const clean = style.replace(/expression|javascript|vbscript/gi, '');
+            child.setAttribute('style', clean);
+          }
+          sanitize(child);
+        } else {
+          child.parentNode.removeChild(child);
+        }
+      });
+    };
+    sanitize(doc.body);
+    return doc.body.innerHTML;
+  };
+
   // ============ 수로 보상 ============
   const REWARD_TIERS = [
     { grade: '크라운', rank: '1등', ratio: 0.28, pool: 100, benefit: '부캐길드 전체면제' },
@@ -4572,7 +4648,7 @@
           </div>
         </div>
 
-        <div class="p-4 lg:p-5 text-[12px] lg:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">${post.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="p-4 lg:p-5 text-[12px] lg:text-sm text-gray-700 leading-relaxed break-words board-content">${window._sanitizeBoardHTML(post.content)}</div>
 
         ${imgs.length > 0 ? `<div class="px-4 pb-4 flex flex-wrap gap-2">${imgs.map(url => `<img src="${url}" class="rounded-xl border border-gray-100 max-h-60 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open('${url}','_blank')">`).join('')}</div>` : ''}
 
@@ -5167,7 +5243,7 @@
     const headers = appState.suroHeaders || [];
     if (headers.length === 0) return [];
     const latestH = headers[headers.length - 1];
-    return appState.members.filter(m => m.guild === guildName && m.isMain).map(m => ({
+    return appState.members.filter(m => m.guild === guildName).map(m => ({
       ...m, score: Math.round(Number(m.suro?.[latestH])) || 0,
     }));
   };
@@ -5181,7 +5257,7 @@
 
   window._getBottom10 = () => {
     const g1 = window._getLatestWeekScores('뚠카롱').sort((a,b) => b.score - a.score);
-    return g1.slice(-10).reverse();
+    return g1.slice(-10);
   };
 
   window.renderPromotion = async (container) => {
@@ -5235,20 +5311,20 @@
         </div>
       </div>
 
-      <div class="flex gap-1.5">
+      <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
         ${['ranking','admin_match','history'].map(t => {
           const labels = {ranking:'승급 대기자',admin_match:'트레이드 실행',history:'승강 이력'};
           const icons = {ranking:'fa-list-ol',admin_match:'fa-exchange-alt',history:'fa-history'};
           const show = t === 'admin_match' || t === 'history' ? isAdmin() : true;
-          return show ? `<button onclick="window._promoSubTab='${t}';window.renderPromotion(document.getElementById('contentArea'))" class="px-3 py-1 rounded-xl text-[10px] font-bold transition-all ${st===t?'bg-indigo-500 text-white shadow':'bg-gray-100 text-gray-500 hover:bg-gray-200'}"><i class="fas ${icons[t]} mr-1"></i>${labels[t]}</button>` : '';
+          return show ? `<button onclick="window._promoSubTab='${t}';window.renderPromotion(document.getElementById('contentArea'))" class="px-3 py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${st===t?'bg-indigo-500 text-white shadow':'bg-gray-100 text-gray-500 hover:bg-gray-200'}"><i class="fas ${icons[t]} mr-1"></i>${labels[t]}</button>` : '';
         }).join('')}
       </div>
 
       ${st === 'ranking' ? `
       ${isAdmin() ? `<div class="flex gap-2 relative">
-        <input type="text" id="promoAddName" class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold outline-none" placeholder="승급 신청자 닉네임" oninput="window._promoAutocomplete(this.value)" autocomplete="off">
-        <div id="promoAutocompleteList" class="hidden absolute top-full left-0 right-16 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-40 overflow-y-auto"></div>
-        <button onclick="window._promoAddByAdmin()" class="px-4 py-2 bg-green-500 text-white rounded-xl text-[10px] font-bold shadow hover:bg-green-600 shrink-0"><i class="fas fa-plus mr-1"></i>추가</button>
+        <input type="text" id="promoAddName" class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all" placeholder="2기 닉네임 검색 후 추가" oninput="window._promoAutocomplete(this.value)" autocomplete="off">
+        <div id="promoAutocompleteList" class="hidden absolute top-full left-0 right-16 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto"></div>
+        <button onclick="window._promoAddByAdmin()" class="px-4 py-2.5 bg-green-500 text-white rounded-xl text-[10px] sm:text-xs font-bold shadow hover:bg-green-600 shrink-0 transition-all active:scale-95"><i class="fas fa-plus mr-1"></i>추가</button>
       </div>` : ''}
 
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -5261,7 +5337,7 @@
         <div class="overflow-auto">
         <table class="w-full text-[10px] lg:text-xs border-collapse stick-head">
           <thead class="bg-gray-50 text-[8px] font-bold text-gray-400 uppercase">
-            <tr><th class="py-1.5 px-2 text-center w-8">#</th><th class="py-1.5 px-2 text-left">닉네임</th><th class="py-1.5 px-2 text-left">직업</th><th class="py-1.5 px-2 text-right">점수</th><th class="py-1.5 px-2 text-right">컷 대비</th><th class="py-1.5 px-2 text-center">상태</th>${isAdmin()?'<th class="py-1.5 px-2 w-8"></th>':''}</tr>
+            <tr><th class="py-1.5 px-2 text-center w-8">#</th><th class="py-1.5 px-2 text-left">닉네임</th><th class="py-1.5 px-2 text-left">직업</th><th class="py-1.5 px-2 text-right">점수</th><th class="py-1.5 px-2 text-right">컷 대비</th><th class="py-1.5 px-2 text-center">상태</th>${isAdmin()?'<th class="py-1.5 px-2 w-16 text-center">관리</th>':''}</tr>
           </thead>
           <tbody class="font-bold text-gray-600">
             ${challengers.map((ch, i) => {
@@ -5279,7 +5355,7 @@
                 <td class="py-1.5 px-2 text-right text-indigo-600">${ch.score.toLocaleString()}</td>
                 <td class="py-1.5 px-2 text-right ${diff>=0?'text-green-500':'text-red-400'}">${diff>=0?'+':''}${diff.toLocaleString()}</td>
                 <td class="py-1.5 px-2 text-center"><span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full ${bc}">${badge}</span></td>
-                ${isAdmin()?`<td class="py-1.5 px-2 text-center"><button onclick="window._promoRemove(${ch.id})" class="text-red-400 hover:text-red-600"><i class="fas fa-times text-[9px]"></i></button></td>`:''}
+                ${isAdmin()?`<td class="py-1.5 px-2 text-center whitespace-nowrap"><button onclick="window._promoEdit(${ch.id},'${ch.name.replace(/'/g,"\\'")}')" class="text-indigo-400 hover:text-indigo-600 mr-1 p-1" title="수정"><i class="fas fa-pen text-[9px]"></i></button><button onclick="window._promoRemove(${ch.id})" class="text-red-400 hover:text-red-600 p-1" title="삭제"><i class="fas fa-times text-[9px]"></i></button></td>`:''}
               </tr>`;
             }).join('')}
           </tbody>
@@ -5289,11 +5365,11 @@
 
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
         <h3 class="text-[10px] font-bold text-gray-800 mb-2"><i class="fas fa-shield-alt mr-1 text-red-400"></i>1기 강등 방어자 (하위 10명)</h3>
-        <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
-          ${bottom10.map((d, i) => `<div class="bg-red-50 rounded-lg p-1.5 text-center border border-red-100">
-            <div class="text-[8px] text-red-400">${g1Total - i}등</div>
-            <div class="text-[9px] font-bold text-gray-800 truncate">${d.name}</div>
-            <div class="text-[9px] text-red-500 font-bold">${d.score.toLocaleString()}</div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-1.5">
+          ${bottom10.map((d, i) => `<div class="bg-red-50 rounded-xl p-2 text-center border border-red-100 hover:border-red-200 transition-all">
+            <div class="text-[8px] text-red-400 font-bold">${g1Total - 9 + i}등</div>
+            <div class="text-[10px] sm:text-[9px] font-bold text-gray-800 truncate">${d.name}</div>
+            <div class="text-[10px] sm:text-[9px] text-red-500 font-black">${d.score.toLocaleString()}</div>
           </div>`).join('')}
         </div>
       </div>
@@ -5303,12 +5379,12 @@
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
         <h3 class="text-xs font-bold text-gray-800 mb-3"><i class="fas fa-exchange-alt mr-2 text-indigo-500"></i>매칭 프리뷰 (${matches.filter(m=>m.result==='promoted').length}건 성사)</h3>
         ${matches.length === 0 ? '<p class="text-xs text-gray-400 text-center py-4">매칭 대상 없음</p>' : `
-        <div class="space-y-1.5">
-          ${matches.map(m => `<div class="flex items-center gap-2 p-2.5 rounded-xl text-[10px] ${m.result==='promoted'?'bg-green-50 border border-green-200':'bg-gray-50 border border-gray-100'}">
-            <div class="flex-1 text-center"><span class="text-[8px] text-purple-500 font-bold block">2기</span><span class="font-bold text-gray-800">${m.challenger.name}</span><span class="block text-indigo-600">${m.challenger.score.toLocaleString()}</span></div>
-            <span class="${m.result==='promoted'?'text-green-500':'text-gray-300'}">🔄</span>
-            <div class="flex-1 text-center"><span class="text-[8px] text-red-500 font-bold block">1기</span><span class="font-bold text-gray-800">${m.defender.name}</span><span class="block text-red-500">${m.defender.score.toLocaleString()}</span></div>
-            <div class="shrink-0"><span class="text-[8px] font-bold px-1.5 py-0.5 rounded-lg ${m.result==='promoted'?'bg-green-500 text-white':'bg-gray-200 text-gray-500'}">${m.result==='promoted'?'✅':'❌'}</span><div class="text-[7px] text-gray-400 mt-0.5">${m.reason}</div></div>
+        <div class="space-y-2">
+          ${matches.map(m => `<div class="flex items-center gap-2 p-3 rounded-xl text-[10px] sm:text-xs ${m.result==='promoted'?'bg-green-50 border border-green-200':'bg-gray-50 border border-gray-100'} transition-all">
+            <div class="flex-1 text-center min-w-0"><span class="text-[8px] text-purple-500 font-bold block">도전자 (2기)</span><span class="font-bold text-gray-800 truncate block">${m.challenger.name}</span><span class="block text-indigo-600 font-black">${m.challenger.score.toLocaleString()}</span></div>
+            <div class="flex flex-col items-center shrink-0"><span class="${m.result==='promoted'?'text-green-500':'text-gray-300'} text-lg">⚔️</span><span class="text-[8px] font-bold px-2 py-0.5 rounded-lg mt-1 ${m.result==='promoted'?'bg-green-500 text-white':'bg-gray-200 text-gray-500'}">${m.result==='promoted'?'승격':'실패'}</span></div>
+            <div class="flex-1 text-center min-w-0"><span class="text-[8px] text-red-500 font-bold block">방어자 (1기)</span><span class="font-bold text-gray-800 truncate block">${m.defender.name}</span><span class="block text-red-500 font-black">${m.defender.score.toLocaleString()}</span></div>
+            <div class="shrink-0 text-right hidden sm:block"><div class="text-[8px] text-gray-400">${m.reason}</div></div>
           </div>`).join('')}
         </div>
         ${matches.some(m=>m.result==='promoted') ? `<button onclick="window._promoExecuteTrade()" id="promoExecBtn" class="w-full mt-3 py-2.5 bg-indigo-500 text-white rounded-2xl font-bold text-xs shadow-lg hover:bg-indigo-600"><i class="fas fa-check-double mr-2"></i>일괄 승강 적용 (${matches.filter(m=>m.result==='promoted').length}건)</button>` : ''}`}
@@ -5317,18 +5393,24 @@
 
       ${st === 'history' ? `
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="p-2.5 border-b border-gray-100"><h3 class="text-xs font-bold text-gray-800"><i class="fas fa-history mr-1 text-indigo-400"></i>승강 이력</h3></div>
+        <div class="p-2.5 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-xs font-bold text-gray-800"><i class="fas fa-history mr-1 text-indigo-400"></i>승강 이력</h3>
+          ${isAdmin() ? `<button onclick="window._promoAddHistory()" class="text-[9px] font-bold text-indigo-500 hover:text-indigo-700 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-all"><i class="fas fa-plus mr-1"></i>수동 추가</button>` : ''}
+        </div>
         <div id="promoHistoryList" class="p-2 text-center text-gray-400 text-xs">로딩 중...</div>
       </div>
       ` : ''}
     </div>`;
 
     if (st === 'history') window._promoLoadHistory();
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#promoAddName') && !e.target.closest('#promoAutocompleteList')) {
-        document.getElementById('promoAutocompleteList')?.classList.add('hidden');
-      }
-    }, { once: true });
+    if (!window._promoClickHandlerSet) {
+      window._promoClickHandlerSet = true;
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#promoAddName') && !e.target.closest('#promoAutocompleteList')) {
+          document.getElementById('promoAutocompleteList')?.classList.add('hidden');
+        }
+      });
+    }
   };
 
   window._promoAutocomplete = (val) => {
@@ -5359,8 +5441,12 @@
 
   window._promoRemove = async (id) => {
     if (!confirm('이 신청을 제거하시겠습니까?')) return;
-    await supaDb.from('promotion_applicants').delete().eq('id', id);
-    window.renderPromotion(document.getElementById('contentArea'));
+    try {
+      const {error} = await supaDb.from('promotion_applicants').delete().eq('id', id);
+      if (error) throw error;
+      window.showMsg('신청 삭제 완료', 'success');
+      window.renderPromotion(document.getElementById('contentArea'));
+    } catch(e) { window.showMsg('삭제 실패: ' + e.message, 'error'); }
   };
 
   window._promoSaveCutline = async (score) => {
@@ -5422,16 +5508,178 @@
       const grouped = {};
       data.forEach(h => { if (!grouped[h.week_label]) grouped[h.week_label] = []; grouped[h.week_label].push(h); });
       el.innerHTML = Object.entries(grouped).map(([week, items]) => `
-        <div class="mb-2"><div class="text-[9px] font-bold text-indigo-500 px-2 py-1 bg-indigo-50 rounded-lg mb-1">${week}</div>
-          ${items.map(h => `<div class="flex items-center gap-2 px-2 py-1 text-[10px] border-b border-gray-50">
-            <span class="${h.result==='promoted'?'text-green-500':'text-red-400'} font-bold">${h.result==='promoted'?'✅':'❌'}</span>
-            <span class="text-purple-600 font-bold">${h.challenger_name}</span><span class="text-gray-400">${h.challenger_score.toLocaleString()}</span>
-            <span class="text-gray-300">↔</span>
-            <span class="text-red-500 font-bold">${h.defender_name}</span><span class="text-gray-400">${h.defender_score.toLocaleString()}</span>
-            <span class="ml-auto text-[8px] text-gray-400">${h.reason}</span>
+        <div class="mb-3"><div class="text-[9px] font-bold text-indigo-500 px-2 py-1 bg-indigo-50 rounded-lg mb-1 flex items-center justify-between"><span>${week}</span><span class="text-gray-400">${items.length}건</span></div>
+          ${items.map(h => `<div class="flex items-center gap-2 px-2 py-1.5 text-[10px] border-b border-gray-50 hover:bg-gray-50/50 group">
+            <span class="${h.result==='promoted'?'text-green-500':'text-red-400'} font-bold shrink-0">${h.result==='promoted'?'✅':'❌'}</span>
+            <span class="text-purple-600 font-bold truncate">${h.challenger_name}</span><span class="text-gray-400 shrink-0">${h.challenger_score.toLocaleString()}</span>
+            <span class="text-gray-300 shrink-0">↔</span>
+            <span class="text-red-500 font-bold truncate">${h.defender_name}</span><span class="text-gray-400 shrink-0">${h.defender_score.toLocaleString()}</span>
+            <span class="text-[8px] text-gray-400 shrink-0 hidden sm:inline">${h.reason}</span>
+            ${isAdmin() ? `<div class="ml-auto flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="window._promoEditHistory(${h.id},'${(h.challenger_name||'').replace(/'/g,"\\'")}',${h.challenger_score},'${(h.defender_name||'').replace(/'/g,"\\'")}',${h.defender_score},'${h.result}','${(h.reason||'').replace(/'/g,"\\'")}')" class="text-indigo-400 hover:text-indigo-600 p-1" title="수정"><i class="fas fa-pen text-[8px]"></i></button><button onclick="window._promoDeleteHistory(${h.id})" class="text-red-400 hover:text-red-600 p-1" title="삭제"><i class="fas fa-trash text-[8px]"></i></button></div>` : ''}
           </div>`).join('')}
         </div>`).join('');
     } catch(e) { el.innerHTML = '<p class="text-xs text-red-400">로딩 실패</p>'; }
+  };
+
+  // 신청자 닉네임 수정
+  window._promoEdit = async (id, currentName) => {
+    const newName = prompt('신청자 닉네임 수정:', currentName);
+    if (!newName || newName.trim() === currentName) return;
+    const trimmed = newName.trim();
+    const member = appState.members.find(m => m.name === trimmed);
+    if (!member) return window.showMsg('존재하지 않는 멤버: ' + trimmed, 'error');
+    if (member.guild !== '뚱카롱') return window.showMsg(trimmed + '은(는) 뚱카롱 소속이 아닙니다', 'error');
+    try {
+      const {error} = await supaDb.from('promotion_applicants').update({name: trimmed, member_id: member.id}).eq('id', id);
+      if (error) throw error;
+      window.showMsg(currentName + ' → ' + trimmed + ' 수정 완료', 'success');
+      window.renderPromotion(document.getElementById('contentArea'));
+    } catch(e) { window.showMsg('수정 실패: ' + e.message, 'error'); }
+  };
+
+  // 이력 삭제
+  window._promoDeleteHistory = async (id) => {
+    if (!confirm('이 승강 이력을 삭제하시겠습니까?\n(실제 길드 소속 변경은 되돌리지 않습니다)')) return;
+    try {
+      const {error} = await supaDb.from('promotion_history').delete().eq('id', id);
+      if (error) throw error;
+      window.showMsg('이력 삭제 완료', 'success');
+      window._promoLoadHistory();
+    } catch(e) { window.showMsg('삭제 실패: ' + e.message, 'error'); }
+  };
+
+  // 이력 수정 모달
+  window._promoEditHistory = (id, chName, chScore, dfName, dfScore, result, reason) => {
+    const modal = document.createElement('div');
+    modal.id = 'promoEditModal';
+    modal.className = 'fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 backdrop-blur-sm fade-in font-bold p-4';
+    modal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-100">
+        <div class="p-4 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-indigo-700"><i class="fas fa-pen mr-2"></i>승강 이력 수정</h3>
+          <button onclick="document.getElementById('promoEditModal')?.remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-purple-500 uppercase tracking-widest">도전자 (2기)</label>
+              <input id="_peChName" type="text" value="${chName}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100">
+              <input id="_peChScore" type="number" value="${chScore}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 mt-1" placeholder="점수">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-red-500 uppercase tracking-widest">방어자 (1기)</label>
+              <input id="_peDfName" type="text" value="${dfName}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100">
+              <input id="_peDfScore" type="number" value="${dfScore}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 mt-1" placeholder="점수">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">결과</label>
+              <select id="_peResult" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none">
+                <option value="promoted" ${result==='promoted'?'selected':''}>승격</option>
+                <option value="failed" ${result==='failed'?'selected':''}>실패</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">사유</label>
+              <input id="_peReason" type="text" value="${reason}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100">
+            </div>
+          </div>
+          <button onclick="window._promoSaveEditHistory(${id})" class="w-full py-3 bg-indigo-500 text-white rounded-xl font-bold text-xs shadow-lg hover:bg-indigo-600 transition-all mt-2"><i class="fas fa-save mr-2"></i>저장</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  };
+
+  window._promoSaveEditHistory = async (id) => {
+    const chName = document.getElementById('_peChName')?.value?.trim();
+    const chScore = parseInt(document.getElementById('_peChScore')?.value) || 0;
+    const dfName = document.getElementById('_peDfName')?.value?.trim();
+    const dfScore = parseInt(document.getElementById('_peDfScore')?.value) || 0;
+    const result = document.getElementById('_peResult')?.value;
+    const reason = document.getElementById('_peReason')?.value?.trim() || '';
+    if (!chName || !dfName) return window.showMsg('닉네임을 입력하세요', 'error');
+    try {
+      const {error} = await supaDb.from('promotion_history').update({
+        challenger_name: chName, challenger_score: chScore,
+        defender_name: dfName, defender_score: dfScore,
+        result, reason
+      }).eq('id', id);
+      if (error) throw error;
+      document.getElementById('promoEditModal')?.remove();
+      window.showMsg('이력 수정 완료', 'success');
+      window._promoLoadHistory();
+    } catch(e) { window.showMsg('수정 실패: ' + e.message, 'error'); }
+  };
+
+  // 이력 수동 추가
+  window._promoAddHistory = () => {
+    const modal = document.createElement('div');
+    modal.id = 'promoAddHistModal';
+    modal.className = 'fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 backdrop-blur-sm fade-in font-bold p-4';
+    modal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-100">
+        <div class="p-4 bg-green-50 border-b border-green-100 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-green-700"><i class="fas fa-plus mr-2"></i>승강 이력 수동 추가</h3>
+          <button onclick="document.getElementById('promoAddHistModal')?.remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="space-y-1">
+            <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">주차 라벨</label>
+            <input id="_paWeek" type="text" value="${window.getSuroPeriodHeader?.() || ''}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-purple-500 uppercase tracking-widest">도전자 (2기)</label>
+              <input id="_paChName" type="text" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100" placeholder="닉네임">
+              <input id="_paChScore" type="number" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100 mt-1" placeholder="점수" value="0">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-red-500 uppercase tracking-widest">방어자 (1기)</label>
+              <input id="_paDfName" type="text" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100" placeholder="닉네임">
+              <input id="_paDfScore" type="number" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100 mt-1" placeholder="점수" value="0">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">결과</label>
+              <select id="_paResult" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none">
+                <option value="promoted">승격</option>
+                <option value="failed">실패</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">사유</label>
+              <input id="_paReason" type="text" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100" placeholder="사유">
+            </div>
+          </div>
+          <button onclick="window._promoSaveAddHistory()" class="w-full py-3 bg-green-500 text-white rounded-xl font-bold text-xs shadow-lg hover:bg-green-600 transition-all mt-2"><i class="fas fa-save mr-2"></i>추가</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  };
+
+  window._promoSaveAddHistory = async () => {
+    const weekLabel = document.getElementById('_paWeek')?.value?.trim();
+    const chName = document.getElementById('_paChName')?.value?.trim();
+    const chScore = parseInt(document.getElementById('_paChScore')?.value) || 0;
+    const dfName = document.getElementById('_paDfName')?.value?.trim();
+    const dfScore = parseInt(document.getElementById('_paDfScore')?.value) || 0;
+    const result = document.getElementById('_paResult')?.value;
+    const reason = document.getElementById('_paReason')?.value?.trim() || '';
+    if (!weekLabel || !chName || !dfName) return window.showMsg('필수 항목을 입력하세요', 'error');
+    try {
+      const {error} = await supaDb.from('promotion_history').insert({
+        week_label: weekLabel, challenger_name: chName, challenger_score: chScore,
+        defender_name: dfName, defender_score: dfScore, result, reason
+      });
+      if (error) throw error;
+      document.getElementById('promoAddHistModal')?.remove();
+      window.showMsg('이력 추가 완료', 'success');
+      window._promoLoadHistory();
+    } catch(e) { window.showMsg('추가 실패: ' + e.message, 'error'); }
   };
 
     // ============ 뚠뚠 버디 ============
@@ -5972,20 +6220,27 @@
 
       <!-- 길드별 인원 -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
-        <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-users mr-2 text-pink-400"></i>길드별 인원</h3>
-        <div class="space-y-2">
+        <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-users mr-2 text-pink-400"></i>길드별 인원 <span class="text-[9px] text-gray-400 font-bold ml-1">MAX 200명</span></h3>
+        <div class="space-y-2.5">
           ${guilds.map(g => {
+            const MAX_GUILD = 200;
             const cnt = guildCounts[g.name] || 0;
-            const pct = totalCount > 0 ? (cnt / totalCount * 100) : 0;
+            const pct = (cnt / MAX_GUILD * 100);
+            const isFull = cnt >= MAX_GUILD;
+            const isNearFull = cnt >= MAX_GUILD * 0.95;
             const colors = {'뚠카롱':'bg-pink-400','뚱카롱':'bg-rose-500','밤카롱':'bg-indigo-400','별카롱':'bg-amber-400','달카롱':'bg-blue-400','꿀카롱':'bg-orange-400'};
-            return `<div class="flex items-center gap-3">
-              <span class="text-[10px] font-bold text-gray-600 w-14 shrink-0">${g.name.replace('카롱','')}</span>
+            const barColor = isFull ? 'bg-red-500' : (colors[g.name]||'bg-pink-300');
+            return `<div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[10px] font-bold text-gray-600">${g.name}</span>
+                <span class="text-[10px] font-bold ${isFull ? 'text-red-500' : isNearFull ? 'text-amber-500' : 'text-gray-500'}">${cnt}<span class="text-gray-300">/${MAX_GUILD}</span> ${isFull ? '<i class="fas fa-exclamation-circle text-red-400 ml-0.5"></i>' : ''}</span>
+              </div>
               <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-                <div class="h-full ${colors[g.name]||'bg-pink-300'} rounded-full flex items-center justify-end pr-2 transition-all" style="width:${Math.max(pct,5)}%">
-                  <span class="text-[9px] font-black text-white">${cnt}</span>
+                <div class="h-full ${barColor} rounded-full flex items-center ${pct > 15 ? 'justify-end pr-2' : 'justify-start pl-2'} transition-all" style="width:${Math.max(Math.min(pct,100),3)}%">
+                  <span class="text-[9px] font-black text-white">${pct.toFixed(0)}%</span>
                 </div>
               </div>
-              <span class="text-[9px] font-bold text-gray-400 w-10 text-right">${pct.toFixed(0)}%</span>
+              <div class="text-[8px] text-gray-400 mt-0.5 text-right">${isFull ? '정원 초과' : '잔여 ' + (MAX_GUILD - cnt) + '자리'}</div>
             </div>`;
           }).join('')}
         </div>
@@ -9785,6 +10040,10 @@
    });
   };
 
+  window._homeGuideCache = null;
+  window._homeGuideCacheTime = 0;
+  const HOME_CACHE_TTL = 60000; // 1분 캐시
+
   window.renderHome = async (container) => {
    const guilds = SITE_CONFIG?.guilds || [{name:'뚠카롱'},{name:'뚱카롱'},{name:'밤카롱'},{name:'별카롱'},{name:'달카롱'},{name:'꿀카롱'}];
    const guildColors = {'뚠카롱':'#ec4899','뚱카롱':'#e11d48','밤카롱':'#6366f1','별카롱':'#ca8a04','달카롱':'#2563eb','꿀카롱':'#d97706'};
@@ -9799,14 +10058,30 @@
    };
 
    let noticeHtml = '', introHtml = '', ranksHtml = '', linksHtml = '';
-   const guideData = {};
-   try {
-   const { data: allGuides } = await supaDb.from('guide_pages').select('*').order('id');
-   if (allGuides) allGuides.forEach(p => guideData[p.slug] = replacePlaceholders(p.content || ''));
+   let guideData;
+   const now = Date.now();
+   if (window._homeGuideCache && (now - window._homeGuideCacheTime) < HOME_CACHE_TTL) {
+     guideData = {};
+     Object.entries(window._homeGuideCache).forEach(([slug, content]) => {
+       guideData[slug] = replacePlaceholders(content);
+     });
+   } else {
+     guideData = {};
+     try {
+       const { data: allGuides } = await supaDb.from('guide_pages').select('*').order('id');
+       if (allGuides) {
+         window._homeGuideCache = {};
+         allGuides.forEach(p => {
+           window._homeGuideCache[p.slug] = p.content || '';
+           guideData[p.slug] = replacePlaceholders(p.content || '');
+         });
+         window._homeGuideCacheTime = now;
+       }
+     } catch(e) { console.error('Guide load error:', e); }
+   }
    introHtml = guideData['intro'] || '';
    ranksHtml = guideData['ranks'] || '';
    linksHtml = guideData['links'] || '';
-   } catch(e) { console.error('Guide load error:', e); }
 
    const defaultHomeTabs = [
      { slug: 'notice1', label: '공지 1', icon: 'fa-bullhorn' },
@@ -9855,7 +10130,7 @@
      ${visibleTabs.map(t => `<button onclick="window._homeGuideTab='${t.slug}';document.querySelectorAll('.hg-tab-btn').forEach(b=>b.className=b.className.replace(/bg-pink-500 text-white shadow/g,'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'));this.className=this.className.replace(/bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400/g,'bg-pink-500 text-white shadow');document.querySelectorAll('.hg-tab-content').forEach(c=>c.classList.add('hidden'));document.getElementById('hg-${t.slug}')?.classList.remove('hidden')" class="hg-tab-btn px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shrink-0 ${t.slug===firstTab?'bg-pink-500 text-white shadow':'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'} hover:opacity-90"><i class="fas ${t.icon} mr-1"></i>${t.label}</button>`).join('')}
      <span class="ml-auto shrink-0">${editBtn}</span>
    </div>
-   ${visibleTabs.map(t => `<div id="hg-${t.slug}" class="hg-tab-content p-5 ${t.slug!==firstTab?'hidden':''}"><div class="home-guide-content">${guideData[t.slug]}</div></div>`).join('')}
+   ${visibleTabs.map(t => `<div id="hg-${t.slug}" class="hg-tab-content p-5 ${t.slug!==firstTab?'hidden':''}"><div class="home-guide-content" id="hgc-${t.slug}"></div></div>`).join('')}
    </div>` : ''}
 
    ${eventsHtml ? `<div class="bg-white dark:bg-gray-800 rounded-2xl p-5">
@@ -9863,8 +10138,18 @@
    <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">${eventsHtml}</div>
    </div>` : ''}
    </div>`;
+   // 가이드 콘텐츠를 Tailwind CDN MutationObserver 일시 차단 후 주입 → 재컴파일 방지
+   const _tw = window.tailwind;
+   if (_tw && _tw.config) {
+     const _obs = document.querySelector('style[data-tailwind]');
+     // Tailwind CDN 내부 observer를 직접 건드리기 어려우므로,
+     // 콘텐츠 주입 후 스타일 재적용이 안정적으로 이뤄지도록 setTimeout 사용
+   }
    setTimeout(() => {
-   // border 후처리 제거됨 (가이드 콘텐츠 스타일 보존)
+     visibleTabs.forEach(t => {
+       const el = document.getElementById('hgc-' + t.slug);
+       if (el && !el.innerHTML) el.innerHTML = guideData[t.slug] || '';
+     });
    }, 50);
   };
 
