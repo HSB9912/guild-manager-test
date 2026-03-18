@@ -7378,7 +7378,13 @@
    // 수로 면제 체크박스
    const exemptHtml = allRoleNames.map(rn => {
      const em = (roleDisplay[rn]||{}).emoji||'';
-     return '<label class="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100 cursor-pointer hover:bg-pink-50"><input type="checkbox" class="cfg-exempt-check custom-checkbox" value="'+rn+'" '+(suroExempt.includes(rn)?'checked':'')+'><span class="text-xs font-bold">'+em+' '+rn+'</span></label>';
+     const checked = suroExempt.includes(rn);
+     return '<label class="flex items-center gap-3 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100 cursor-pointer hover:bg-pink-50 transition-all">'
+       +'<div class="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all '+(checked?'bg-pink-500 border-pink-500':'border-gray-300 bg-white')+'">'
+       +(checked?'<i class="fas fa-check text-white text-[9px]"></i>':'')
+       +'</div>'
+       +'<input type="checkbox" class="cfg-exempt-check sr-only" value="'+rn+'" '+(checked?'checked':'')+' onchange="this.closest(\'label\').querySelector(\'div\').className=\'w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all \'+(this.checked?\'bg-pink-500 border-pink-500\':\'border-gray-300 bg-white\');this.closest(\'label\').querySelector(\'i\')?this.closest(\'label\').querySelector(\'i\').className=(this.checked?\'fas fa-check text-white text-[9px]\':\'hidden\'):null">'
+       +'<span class="text-xs font-bold">'+em+' '+rn+'</span></label>';
    }).join('');
 
    // 직위 배정 규칙 (길드별 탭)
@@ -7495,7 +7501,7 @@
    +'<div class="space-y-1" id="cfgRoleList">'+rolesHtml+'</div></div>'
 
    +'<div class="mb-6"><h4 class="text-xs lg:text-sm text-gray-600 mb-2 flex items-center gap-2"><i class="fas fa-shield-alt text-pink-400 text-[10px]"></i>수로 면제 직위</h4>'
-   +'<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5">'+exemptHtml+'</div></div>'
+   +'<div class="flex flex-col gap-1">'+exemptHtml+'</div></div>'
 
    +'<div class="mb-6"><h4 class="text-xs lg:text-sm text-gray-600 mb-1 flex items-center gap-2"><i class="fas fa-magic text-pink-400 text-[10px]"></i>직위 커트라인 & 자동 배정</h4>'
    +'<p class="text-[8px] text-gray-400 mb-2">topN: 상위 N명, btmN: 하위 N명, 최소점수: 점수 구간</p>'
