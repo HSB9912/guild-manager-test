@@ -9,7 +9,7 @@
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
- <style> @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');body{font-family:'Noto Sans KR',sans-serif;}.chart-container{position:relative;width:100%;height:300px;}::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-track{background:#f1f1f1;}::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:#f472b6;}.fade-in{animation:fadeIn 0.3s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}th.sortable{cursor:pointer;user-select:none;transition:background 0.2s;position:relative;}th.sortable:hover{background-color:#fdf2f8 !important;color:#db2777 !important;}.force-hide{display:none !important;}#loadingOverlay{position:fixed;inset:0;background:white;z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;}.nav-item.active{background-color:#fdf2f8;color:#ec4899;box-shadow:inset 4px 0 0 #ec4899;}#msgBox{transition:all 0.3s ease;transform:translateY(100px);opacity:0;pointer-events:none;}#msgBox.show{transform:translateY(0);opacity:1;}.batch-modified{background-color:#fff7ed !important;}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.25rem;text-align:center;font-size:0.75rem;}.calendar-day{padding:0.25rem;border-radius:0.75rem;position:relative;transition:all 0.2s;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:1/1;cursor:pointer;border:1px solid transparent;}@media (min-width:1024px){.calendar-day{min-height:56px;}}.calendar-day:hover{background-color:#f9fafb;border-color:#fbcfe8;}.calendar-day.today{background-color:#ec4899;color:white;font-weight:bold;}.calendar-day.thursday{color:#db2777;background-color:#fdf2f8;border:1px solid #fbcfe8;font-weight:bold;}.calendar-day.not-current{opacity:0.2;pointer-events:none;}.calendar-head{font-size:0.7rem;font-weight:800;color:#9ca3af;text-transform:uppercase;padding-bottom:8px;}.event-dot{width:4px;height:4px;background-color:#ec4899;border-radius:50%;margin-top:2px;}.calendar-day.today .event-dot{background-color:white;}.event-snippet{font-size:10px;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;margin-top:3px;line-height:1.2;font-weight:800;background-color:rgba(236,72,153,0.18);border-radius:4px;padding:2px 4px;}@media (min-width:1024px){.event-snippet{font-size:11px;}}.calendar-day.today .event-snippet{color:white;background-color:rgba(255,255,255,0.2);}.calendar-day.thursday .event-snippet{color:#be123c;background-color:rgba(159,18,57,0.13);}.score-zero{background-color:#fee2e2 !important;color:#ef4444 !important;}.score-cell{transition:background 0.2s;}.score-cell:hover{background-color:#f8fafb;}.custom-checkbox{width:1.25rem;height:1.25rem;border-radius:0.5rem;border:2px solid #e5e7eb;appearance:none;cursor:pointer;transition:all 0.2s;}.custom-checkbox:checked{background-color:#ef4444;border-color:#ef4444;background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}.event-item-active{background-color:#fdf2f8;border-color:#f472b6;color:#db2777;}@media (max-width:768px){.nav-item{min-height:44px;}button,select,input[type="checkbox"]{min-height:36px;}}.no-scrollbar::-webkit-scrollbar{display:none;}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}@supports (padding-top:env(safe-area-inset-top)){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);}}@media (max-width:640px){.calendar-grid{gap:0.125rem;font-size:0.65rem;}.calendar-day{min-height:38px;padding:0.125rem;}.calendar-head{font-size:0.6rem;padding-bottom:4px;}.event-snippet{font-size:8px;padding:0px 1px;}#msgBox{left:1rem;right:1rem;transform:translateX(0) translateY(100px) !important;width:auto;padding:0.75rem 1rem;bottom:calc(4.5rem + env(safe-area-inset-bottom,0px));}#msgBox.show{transform:translateX(0) translateY(0) !important;}}@media (max-width:1024px){.overflow-x-guard{overflow-x:auto;-webkit-overflow-scrolling:touch;}}@media (max-width:768px){table{font-size:0.65rem;}table th,table td{padding:0.5rem 0.375rem !important;}table th{font-size:9px;}}.overflow-y-auto,.overflow-x-auto{-webkit-overflow-scrolling:touch;}.nav-item,button{-webkit-tap-highlight-color:transparent;}@media (max-width:640px){#memberModal > div > div,#deleteModal > div > div,#eventDetailModal > div > div{max-height:90vh;overflow-y:auto;border-radius:1.5rem;}}.stick-head{border-collapse:separate;border-spacing:0;}.stick-head thead th{position:sticky;top:0;z-index:10;background:#f9fafb;}@media (max-width:640px){.analysis-summary-grid{grid-template-columns:1fr !important;}.analysis-mvp-grid{grid-template-columns:repeat(2,1fr) !important;}.analysis-table-wrap table{font-size:0.6rem;}.analysis-table-wrap table th,.analysis-table-wrap table td{padding:0.375rem 0.25rem !important;}}body.dark{background-color:#0f1117;color:#c9cdd4;}body.dark .bg-gray-50,body.dark main{background-color:#0f1117 !important;}body.dark .bg-white{background-color:#1c1f2b !important;color:#c9cdd4;border-color:#2a2d3a !important;}body.dark aside{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark header{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark .border-gray-100,body.dark .border-gray-200,body.dark .border-gray-50{border-color:#2a2d3a !important;}body.dark .text-gray-800,body.dark .text-slate-800{color:#e0e3ea !important;}body.dark .text-gray-700{color:#b8bcc6 !important;}body.dark .text-gray-600{color:#8b90a0 !important;}body.dark .text-gray-500{color:#6b7080 !important;}body.dark .text-gray-400{color:#555a6a !important;}body.dark .text-gray-300{color:#444a5a !important;}body.dark .bg-gray-100{background-color:#22252f !important;}body.dark .bg-gray-50{background-color:#1a1d27 !important;}body.dark input,body.dark select,body.dark textarea{background-color:#22252f !important;color:#c9cdd4 !important;border-color:#333848 !important;}body.dark input::placeholder,body.dark textarea::placeholder{color:#555a6a !important;}body.dark table thead{background-color:#14161e !important;}body.dark table thead th{background-color:#14161e !important;color:#6b7080 !important;border-color:#2a2d3a !important;}body.dark table tbody td{background-color:#1a1d27 !important;border-color:#22252f !important;}body.dark table tbody tr:hover td{background-color:#22252f !important;}body.dark .stick-head thead th{background:#14161e !important;}body.dark .nav-item:hover{background-color:#22252f !important;}body.dark .nav-item.active{background-color:#1e1a2e !important;color:#c084fc !important;box-shadow:inset 4px 0 0 #a855f7 !important;}body.dark .shadow-sm,body.dark .shadow-lg,body.dark .shadow-md,body.dark .shadow-2xl{box-shadow:none !important;}body.dark #loadingOverlay{background:#0f1117 !important;}body.dark .bg-pink-50,body.dark .bg-pink-50\/30{background-color:rgba(168,85,247,0.08) !important;}body.dark .text-pink-600,body.dark .text-pink-500,body.dark .text-pink-400{color:#a78bfa !important;}body.dark .border-pink-100,body.dark .border-pink-50{border-color:#2a2540 !important;}body.dark .bg-red-50,body.dark .bg-red-50\/20{background-color:rgba(239,68,68,0.08) !important;}body.dark .text-red-500,body.dark .text-red-600,body.dark .text-red-400{color:#f87171 !important;}body.dark .text-blue-500,body.dark .text-blue-600,body.dark .text-blue-400{color:#93c5fd !important;}body.dark .text-green-500,body.dark .text-green-600,body.dark .text-green-400{color:#86efac !important;}body.dark .text-amber-500,body.dark .text-amber-600{color:#fbbf24 !important;}body.dark .text-orange-500{color:#fb923c !important;}body.dark .text-purple-600,body.dark .text-purple-500{color:#c084fc !important;}body.dark .bg-pink-500{background-color:#7c3aed !important;}body.dark .bg-gradient-to-br,body.dark .bg-gradient-to-tr,body.dark .bg-gradient-to-r{background:#1a1d27 !important;}body.dark [class*="from-pink"],body.dark [class*="from-rose"],body.dark [class*="from-blue"],body.dark [class*="from-emerald"],body.dark [class*="from-purple"],body.dark [class*="from-yellow"],body.dark [class*="from-amber"],body.dark [class*="from-green"],body.dark [class*="from-red"],body.dark [class*="from-indigo"],body.dark [class*="from-orange"],body.dark [class*="from-cyan"]{background:#1a1d27 !important;}body.dark [class*="border-pink-100"],body.dark [class*="border-rose-100"],body.dark [class*="border-blue-100"],body.dark [class*="border-emerald-100"],body.dark [class*="border-purple-100"],body.dark [class*="border-orange-100"],body.dark [class*="border-amber-100"],body.dark [class*="border-green-100"],body.dark [class*="border-red-100"]{border-color:#2a2d3a !important;}body.dark .bg-white\/40{background-color:rgba(255,255,255,0.05) !important;}body.dark .hover\:bg-pink-50\/30:hover,body.dark .hover\:bg-gray-50:hover{background-color:#22252f !important;}body.dark .hover\:bg-pink-100:hover,body.dark .hover\:bg-gray-100:hover{background-color:#22252f !important;}body.dark th.sortable:hover{background-color:#22252f !important;color:#a78bfa !important;}body.dark .batch-modified{background-color:rgba(251,146,60,0.1) !important;}body.dark .calendar-day{color:#8b90a0;}body.dark .calendar-day:hover{background-color:#22252f;border-color:#333848;}body.dark .calendar-day.today{background-color:#7c3aed;color:white;}body.dark .calendar-day.thursday{background-color:rgba(124,58,237,0.15);color:#c084fc;border-color:rgba(124,58,237,0.3);}body.dark .event-snippet{background-color:rgba(124,58,237,0.15);color:#c9cdd4;}body.dark .calendar-day.today .event-snippet{background-color:rgba(255,255,255,0.15);color:white;}body.dark .bg-green-50{background-color:rgba(34,197,94,0.08) !important;}body.dark .bg-amber-50{background-color:rgba(245,158,11,0.08) !important;}body.dark .bg-blue-50{background-color:rgba(59,130,246,0.08) !important;}body.dark .bg-emerald-50{background-color:rgba(16,185,129,0.08) !important;}body.dark .bg-purple-50{background-color:rgba(168,85,247,0.08) !important;}body.dark [style*="background:#fdf2f8"],body.dark [style*="background:#fff1f2"],body.dark [style*="background:#eef2ff"],body.dark [style*="background:#fefce8"],body.dark [style*="background:#eff6ff"],body.dark [style*="background:#fffbeb"]{background:#22252f !important;border-color:#333848 !important;}body.dark::-webkit-scrollbar-track{background:#14161e;}body.dark::-webkit-scrollbar-thumb{background:#333848;}body.dark::-webkit-scrollbar-thumb:hover{background:#444a5a;}body.dark #authOverlay{background:#0f1117 !important;}body.dark .bg-gradient-to-br.from-pink-50{background:#0f1117 !important;}body.dark .score-zero{background-color:rgba(239,68,68,0.08) !important;color:#f87171 !important;}body.dark .analysis-table-wrap table tbody tr td:nth-child(1),body.dark .analysis-table-wrap table tbody tr td:nth-child(2){background:#1a1d27 !important;}body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(1),body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(2){background:#22252f !important;}body.dark .analysis-table-wrap table thead th:nth-child(1),body.dark .analysis-table-wrap table thead th:nth-child(2){background:#14161e !important;}.mobile-tab{color:#9ca3af;transition:all 0.15s;}.mobile-tab.active{color:#ec4899;}.mobile-tab:active{transform:scale(0.92);}.safe-bottom{padding-bottom:env(safe-area-inset-bottom,0);}@media (max-width:1023px){#contentArea{padding-bottom:80px !important;}}body.font-sm #contentArea{font-size:0.8rem;}body.font-sm #contentArea table{font-size:0.6rem;}body.font-sm #contentArea .text-xs{font-size:0.65rem !important;}body.font-sm #contentArea .text-sm{font-size:0.75rem !important;}body.font-sm header .text-base{font-size:0.85rem !important;}body.font-sm header .text-\[9px\],body.font-sm header .text-\[10px\]{font-size:8px !important;}body.font-lg #contentArea{font-size:1.1rem;}body.font-lg #contentArea table{font-size:0.85rem;}body.font-lg #contentArea .text-xs{font-size:0.85rem !important;}body.font-lg #contentArea .text-sm{font-size:1rem !important;}body.font-lg #contentArea .text-\[10px\]{font-size:0.75rem !important;}body.font-lg #contentArea .text-\[11px\]{font-size:0.8rem !important;}body.font-lg #contentArea .text-\[9px\]{font-size:0.7rem !important;}body.font-lg header .text-base{font-size:1.15rem !important;}body.font-lg header .text-\[9px\]{font-size:11px !important;}body.font-lg header .text-\[10px\]{font-size:12px !important;}body.font-lg nav .text-sm{font-size:1rem !important;}body.font-lg nav .text-\[9px\]{font-size:11px !important;}body.dark #mobileTabBar{background:#14161e !important;border-color:#2a2d3a !important;}body.dark .mobile-tab{color:#6b7280;}body.dark .mobile-tab.active{color:#f472b6;}</style>
+ <style> @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');body{font-family:'Noto Sans KR',sans-serif;}.chart-container{position:relative;width:100%;height:300px;}::-webkit-scrollbar{width:8px;height:8px;}::-webkit-scrollbar-track{background:#f1f1f1;}::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:#f472b6;}.fade-in{animation:fadeIn 0.3s ease-out;}@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}th.sortable{cursor:pointer;user-select:none;transition:background 0.2s;position:relative;}th.sortable:hover{background-color:#fdf2f8 !important;color:#db2777 !important;}.force-hide{display:none !important;}#loadingOverlay{position:fixed;inset:0;background:white;z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;}.nav-item.active{background-color:#fdf2f8;color:#ec4899;box-shadow:inset 4px 0 0 #ec4899;}#msgBox{transition:all 0.3s ease;transform:translateY(100px);opacity:0;pointer-events:none;}#msgBox.show{transform:translateY(0);opacity:1;}.batch-modified{background-color:#fff7ed !important;}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.25rem;text-align:center;font-size:0.75rem;}.calendar-day{padding:0.25rem;border-radius:0.75rem;position:relative;transition:all 0.2s;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:1/1;cursor:pointer;border:1px solid transparent;}@media (min-width:1024px){.calendar-day{min-height:56px;}}.calendar-day:hover{background-color:#f9fafb;border-color:#fbcfe8;}.calendar-day.today{background-color:#ec4899;color:white;font-weight:bold;}.calendar-day.thursday{color:#db2777;background-color:#fdf2f8;border:1px solid #fbcfe8;font-weight:bold;}.calendar-day.not-current{opacity:0.2;pointer-events:none;}.calendar-head{font-size:0.7rem;font-weight:800;color:#9ca3af;text-transform:uppercase;padding-bottom:8px;}.event-dot{width:4px;height:4px;background-color:#ec4899;border-radius:50%;margin-top:2px;}.calendar-day.today .event-dot{background-color:white;}.event-snippet{font-size:10px;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;margin-top:3px;line-height:1.2;font-weight:800;background-color:rgba(236,72,153,0.18);border-radius:4px;padding:2px 4px;}@media (min-width:1024px){.event-snippet{font-size:11px;}}.calendar-day.today .event-snippet{color:white;background-color:rgba(255,255,255,0.2);}.calendar-day.thursday .event-snippet{color:#be123c;background-color:rgba(159,18,57,0.13);}.score-zero{background-color:#fee2e2 !important;color:#ef4444 !important;}.score-cell{transition:background 0.2s;}.score-cell:hover{background-color:#f8fafb;}.custom-checkbox{width:1.25rem;height:1.25rem;border-radius:0.5rem;border:2px solid #e5e7eb;appearance:none;cursor:pointer;transition:all 0.2s;}.custom-checkbox:checked{background-color:#ef4444;border-color:#ef4444;background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}.event-item-active{background-color:#fdf2f8;border-color:#f472b6;color:#db2777;}@media (max-width:768px){.nav-item{min-height:44px;}button,select,input[type="checkbox"]{min-height:36px;}}.no-scrollbar::-webkit-scrollbar{display:none;}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}@supports (padding-top:env(safe-area-inset-top)){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);}}@media (max-width:640px){.calendar-grid{gap:0.125rem;font-size:0.65rem;}.calendar-day{min-height:38px;padding:0.125rem;}.calendar-head{font-size:0.6rem;padding-bottom:4px;}.event-snippet{font-size:8px;padding:0px 1px;}#msgBox{left:1rem;right:1rem;transform:translateX(0) translateY(100px) !important;width:auto;padding:0.75rem 1rem;bottom:calc(4.5rem + env(safe-area-inset-bottom,0px));}#msgBox.show{transform:translateX(0) translateY(0) !important;}#visitCountBadge{display:none !important;}#headerUserName{max-width:52px;}}@media (max-width:1024px){.overflow-x-guard{overflow-x:auto;-webkit-overflow-scrolling:touch;}}@media (max-width:768px){table{font-size:0.65rem;}table th,table td{padding:0.5rem 0.375rem !important;}table th{font-size:9px;}}.overflow-y-auto,.overflow-x-auto{-webkit-overflow-scrolling:touch;}.nav-item,button{-webkit-tap-highlight-color:transparent;}@media (max-width:640px){#memberModal > div > div,#deleteModal > div > div,#eventDetailModal > div > div{max-height:90vh;overflow-y:auto;border-radius:1.5rem;}}.stick-head{border-collapse:separate;border-spacing:0;}.stick-head thead th{position:sticky;top:0;z-index:10;background:#f9fafb;}@media (max-width:640px){.analysis-summary-grid{grid-template-columns:1fr !important;}.analysis-mvp-grid{grid-template-columns:repeat(2,1fr) !important;}.analysis-table-wrap table{font-size:0.6rem;}.analysis-table-wrap table th,.analysis-table-wrap table td{padding:0.375rem 0.25rem !important;}}body.dark{background-color:#0f1117;color:#c9cdd4;}body.dark .bg-gray-50,body.dark main{background-color:#0f1117 !important;}body.dark .bg-white{background-color:#1c1f2b !important;color:#c9cdd4;border-color:#2a2d3a !important;}body.dark aside{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark header{background-color:#14161e !important;border-color:#2a2d3a !important;}body.dark .border-gray-100,body.dark .border-gray-200,body.dark .border-gray-50{border-color:#2a2d3a !important;}body.dark .text-gray-800,body.dark .text-slate-800{color:#e0e3ea !important;}body.dark .text-gray-700{color:#b8bcc6 !important;}body.dark .text-gray-600{color:#8b90a0 !important;}body.dark .text-gray-500{color:#6b7080 !important;}body.dark .text-gray-400{color:#555a6a !important;}body.dark .text-gray-300{color:#444a5a !important;}body.dark .bg-gray-100{background-color:#22252f !important;}body.dark .bg-gray-50{background-color:#1a1d27 !important;}body.dark input,body.dark select,body.dark textarea{background-color:#22252f !important;color:#c9cdd4 !important;border-color:#333848 !important;}body.dark input::placeholder,body.dark textarea::placeholder{color:#555a6a !important;}body.dark table thead{background-color:#14161e !important;}body.dark table thead th{background-color:#14161e !important;color:#6b7080 !important;border-color:#2a2d3a !important;}body.dark table tbody td{background-color:#1a1d27 !important;border-color:#22252f !important;}body.dark table tbody tr:hover td{background-color:#22252f !important;}body.dark .stick-head thead th{background:#14161e !important;}body.dark .nav-item:hover{background-color:#22252f !important;}body.dark .nav-item.active{background-color:#1e1a2e !important;color:#c084fc !important;box-shadow:inset 4px 0 0 #a855f7 !important;}body.dark .shadow-sm,body.dark .shadow-lg,body.dark .shadow-md,body.dark .shadow-2xl{box-shadow:none !important;}body.dark #loadingOverlay{background:#0f1117 !important;}body.dark .bg-pink-50,body.dark .bg-pink-50\/30{background-color:rgba(168,85,247,0.08) !important;}body.dark .text-pink-600,body.dark .text-pink-500,body.dark .text-pink-400{color:#a78bfa !important;}body.dark .border-pink-100,body.dark .border-pink-50{border-color:#2a2540 !important;}body.dark .bg-red-50,body.dark .bg-red-50\/20{background-color:rgba(239,68,68,0.08) !important;}body.dark .text-red-500,body.dark .text-red-600,body.dark .text-red-400{color:#f87171 !important;}body.dark .text-blue-500,body.dark .text-blue-600,body.dark .text-blue-400{color:#93c5fd !important;}body.dark .text-green-500,body.dark .text-green-600,body.dark .text-green-400{color:#86efac !important;}body.dark .text-amber-500,body.dark .text-amber-600{color:#fbbf24 !important;}body.dark .text-orange-500{color:#fb923c !important;}body.dark .text-purple-600,body.dark .text-purple-500{color:#c084fc !important;}body.dark .bg-pink-500{background-color:#7c3aed !important;}body.dark .bg-gradient-to-br,body.dark .bg-gradient-to-tr,body.dark .bg-gradient-to-r{background:#1a1d27 !important;}body.dark [class*="from-pink"],body.dark [class*="from-rose"],body.dark [class*="from-blue"],body.dark [class*="from-emerald"],body.dark [class*="from-purple"],body.dark [class*="from-yellow"],body.dark [class*="from-amber"],body.dark [class*="from-green"],body.dark [class*="from-red"],body.dark [class*="from-indigo"],body.dark [class*="from-orange"],body.dark [class*="from-cyan"]{background:#1a1d27 !important;}body.dark [class*="border-pink-100"],body.dark [class*="border-rose-100"],body.dark [class*="border-blue-100"],body.dark [class*="border-emerald-100"],body.dark [class*="border-purple-100"],body.dark [class*="border-orange-100"],body.dark [class*="border-amber-100"],body.dark [class*="border-green-100"],body.dark [class*="border-red-100"]{border-color:#2a2d3a !important;}body.dark .bg-white\/40{background-color:rgba(255,255,255,0.05) !important;}body.dark .hover\:bg-pink-50\/30:hover,body.dark .hover\:bg-gray-50:hover{background-color:#22252f !important;}body.dark .hover\:bg-pink-100:hover,body.dark .hover\:bg-gray-100:hover{background-color:#22252f !important;}body.dark th.sortable:hover{background-color:#22252f !important;color:#a78bfa !important;}body.dark .batch-modified{background-color:rgba(251,146,60,0.1) !important;}body.dark .calendar-day{color:#8b90a0;}body.dark .calendar-day:hover{background-color:#22252f;border-color:#333848;}body.dark .calendar-day.today{background-color:#7c3aed;color:white;}body.dark .calendar-day.thursday{background-color:rgba(124,58,237,0.15);color:#c084fc;border-color:rgba(124,58,237,0.3);}body.dark .event-snippet{background-color:rgba(124,58,237,0.15);color:#c9cdd4;}body.dark .calendar-day.today .event-snippet{background-color:rgba(255,255,255,0.15);color:white;}body.dark .bg-green-50{background-color:rgba(34,197,94,0.08) !important;}body.dark .bg-amber-50{background-color:rgba(245,158,11,0.08) !important;}body.dark .bg-blue-50{background-color:rgba(59,130,246,0.08) !important;}body.dark .bg-emerald-50{background-color:rgba(16,185,129,0.08) !important;}body.dark .bg-purple-50{background-color:rgba(168,85,247,0.08) !important;}body.dark [style*="background:#fdf2f8"],body.dark [style*="background:#fff1f2"],body.dark [style*="background:#eef2ff"],body.dark [style*="background:#fefce8"],body.dark [style*="background:#eff6ff"],body.dark [style*="background:#fffbeb"]{background:#22252f !important;border-color:#333848 !important;}body.dark::-webkit-scrollbar-track{background:#14161e;}body.dark::-webkit-scrollbar-thumb{background:#333848;}body.dark::-webkit-scrollbar-thumb:hover{background:#444a5a;}body.dark #authOverlay{background:#0f1117 !important;}body.dark .bg-gradient-to-br.from-pink-50{background:#0f1117 !important;}body.dark .score-zero{background-color:rgba(239,68,68,0.08) !important;color:#f87171 !important;}body.dark .analysis-table-wrap table tbody tr td:nth-child(1),body.dark .analysis-table-wrap table tbody tr td:nth-child(2){background:#1a1d27 !important;}body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(1),body.dark .analysis-table-wrap table tbody tr:hover td:nth-child(2){background:#22252f !important;}body.dark .analysis-table-wrap table thead th:nth-child(1),body.dark .analysis-table-wrap table thead th:nth-child(2){background:#14161e !important;}.mobile-tab{color:#9ca3af;transition:all 0.15s;}.mobile-tab.active{color:#ec4899;}.mobile-tab:active{transform:scale(0.92);}.safe-bottom{padding-bottom:env(safe-area-inset-bottom,0);}@media (max-width:1023px){#contentArea{padding-bottom:80px !important;}}body.font-sm #contentArea{font-size:0.8rem;}body.font-sm #contentArea table{font-size:0.6rem;}body.font-sm #contentArea .text-xs{font-size:0.65rem !important;}body.font-sm #contentArea .text-sm{font-size:0.75rem !important;}body.font-sm header .text-base{font-size:0.85rem !important;}body.font-sm header .text-\[9px\],body.font-sm header .text-\[10px\]{font-size:8px !important;}body.font-lg #contentArea{font-size:1.1rem;}body.font-lg #contentArea table{font-size:0.85rem;}body.font-lg #contentArea .text-xs{font-size:0.85rem !important;}body.font-lg #contentArea .text-sm{font-size:1rem !important;}body.font-lg #contentArea .text-\[10px\]{font-size:0.75rem !important;}body.font-lg #contentArea .text-\[11px\]{font-size:0.8rem !important;}body.font-lg #contentArea .text-\[9px\]{font-size:0.7rem !important;}body.font-lg header .text-base{font-size:1.15rem !important;}body.font-lg header .text-\[9px\]{font-size:11px !important;}body.font-lg header .text-\[10px\]{font-size:12px !important;}body.font-lg nav .text-sm{font-size:1rem !important;}body.font-lg nav .text-\[9px\]{font-size:11px !important;}body.dark #mobileTabBar{background:#14161e !important;border-color:#2a2d3a !important;}body.dark .mobile-tab{color:#6b7280;}.home-guide-content{word-break:break-word;overflow-wrap:break-word;}.home-guide-content div,.home-guide-content span,.home-guide-content p{max-width:100%;box-sizing:border-box;}.home-guide-content [style*="grid"]{overflow:hidden;}@media (max-width:640px){.home-guide-content [style*="grid-template-columns: repeat"]{grid-template-columns:1fr !important;}.home-guide-content [style*="grid-template-columns:repeat"]{grid-template-columns:1fr !important;}.home-guide-content [style*="grid-template-columns: 1fr 1fr"]{grid-template-columns:1fr !important;}}.board-content p,.board-content div{margin-bottom:0.25em;}.board-content br+br{display:block;content:'';margin-top:0.5em;}.board-content a{color:#ec4899;text-decoration:underline;}.board-content img{max-width:100%;border-radius:0.75rem;margin:0.5rem 0;}.board-content ul,.board-content ol{padding-left:1.5em;margin:0.5em 0;}.board-content blockquote{border-left:3px solid #e5e7eb;padding-left:1em;color:#6b7280;margin:0.5em 0;}body.dark .board-content a{color:#f472b6;}body.dark .board-content blockquote{border-color:#333848;color:#8b90a0;}body.dark .mobile-tab.active{color:#f472b6;}body.dark #promoEditModal > div > div,body.dark #promoAddHistModal > div > div{background-color:#1c1f2b !important;border-color:#2a2d3a !important;}body.dark #promoEditModal .bg-indigo-50,body.dark #promoAddHistModal .bg-green-50{background-color:#1a1d27 !important;border-color:#2a2d3a !important;}body.dark #promoEditModal h3,body.dark #promoAddHistModal h3{color:#a5b4fc !important;}body.dark .group:hover .group-hover\:opacity-100{opacity:1;}</style>
 </head>
 <body class="bg-gray-50 text-slate-800 h-screen overflow-hidden flex font-medium">
 
@@ -139,6 +139,9 @@
    <div class="hidden md:block px-2 lg:px-4 py-1 lg:py-1.5 bg-pink-50 text-pink-600 rounded-full text-[9px] lg:text-[11px] font-bold border border-pink-100 shadow-sm">
    ✨ <span id="anniversaryLabel">로딩 중...</span>
    </div>
+   <div id="visitCountBadge" class="hidden px-2 lg:px-3 py-1 lg:py-1.5 bg-blue-50 text-blue-600 rounded-full text-[9px] lg:text-[11px] font-bold border border-blue-100 shadow-sm">
+   👥 오늘 <span id="todayVisitCount">-</span>명
+   </div>
    <button id="darkToggle" onclick="window.toggleDark()" class="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 transition-all border border-gray-100 shadow-sm shrink-0" title="다크모드"><i class="fas fa-adjust text-xs lg:text-base"></i></button>
    <button id="refreshBtn" onclick="fetchMembers()" class="hidden sm:flex w-8 h-8 lg:w-10 lg:h-10 items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 transition-all border border-gray-100 shadow-sm shrink-0"><i class="fas fa-sync-alt text-xs lg:text-base"></i></button>
    <button id="headerLoginBtn" onclick="window._authGoogleLogin()" class="px-2 sm:px-3 py-1.5 bg-pink-500 text-white rounded-xl text-[9px] sm:text-[10px] font-bold hover:bg-pink-600 transition-all shadow-sm whitespace-nowrap"><i class="fas fa-lock mr-0.5 sm:mr-1"></i><span class="hidden sm:inline">관리자</span><span class="sm:hidden">로그인</span></button>
@@ -264,9 +267,8 @@
   // ── R2 이미지 스토리지 설정 ──
   const R2_WORKER_URL = 'https://guild-images.hongsb9912.workers.dev';
   const R2_PUBLIC_URL = 'https://pub-ee3a7d1dfe0a442b96336f0c81289a46.r2.dev';
-  const R2_API_KEY = 'guild-manager-r2-key-2026'; // Worker 환경변수 API_KEY와 동일하게 설정
+  const R2_API_KEY = 'guild-manager-r2-key-2026';
 
-  // R2 업로드 헬퍼
   window._r2Upload = async (bucket, filename, file) => {
     const res = await fetch(`${R2_WORKER_URL}/upload/${bucket}/${filename}`, {
       method: 'POST',
@@ -277,7 +279,6 @@
     return (await res.json()).url;
   };
 
-  // R2 삭제 헬퍼
   window._r2Delete = async (bucket, filename) => {
     const res = await fetch(`${R2_WORKER_URL}/delete/${bucket}/${filename}`, {
       method: 'DELETE',
@@ -286,7 +287,6 @@
     if (!res.ok) throw new Error('R2 삭제 실패: ' + res.status);
   };
 
-  // R2 목록 헬퍼
   window._r2List = async (bucket) => {
     const res = await fetch(`${R2_WORKER_URL}/list/${bucket}`);
     if (!res.ok) throw new Error('R2 목록 조회 실패: ' + res.status);
@@ -609,6 +609,24 @@
             if (el) el.innerText = `뚠카롱이 생성된 지 ${anniv.totalDays}일 (${anniv.years}년 ${anniv.remainingDays}일)`;
         };
 
+        window.trackDailyVisit = async () => {
+            const todayKey = 'visited_' + new Date().toISOString().split('T')[0];
+            const el = document.getElementById('todayVisitCount');
+            const badge = document.getElementById('visitCountBadge');
+            try {
+                if (!localStorage.getItem(todayKey)) {
+                    const { data } = await supaDb.rpc('increment_daily_visit');
+                    localStorage.setItem(todayKey, '1');
+                    if (el && data) el.textContent = data;
+                } else {
+                    const today = new Date().toISOString().split('T')[0];
+                    const { data } = await supaDb.from('daily_visits').select('visit_count').eq('visit_date', today).maybeSingle();
+                    if (el && data) el.textContent = data.visit_count;
+                }
+                if (badge && isAdmin()) badge.classList.remove('hidden');
+            } catch(e) { console.warn('visit tracking error:', e); }
+        };
+
         window.calculateTotalSuro = (guildName) => {
             if (!appState.suroHeaders || appState.suroHeaders.length === 0) return 0;
             const lastHeader = appState.suroHeaders[appState.suroHeaders.length - 1];
@@ -917,9 +935,12 @@
                         id: p.id, date: p.date, name: p.name, points: p.points, reason: p.reason || ''
                     }));
                 } else {
-                    appState.penaltyHistory = penalties.map((p, idx) => ({
-                        name: '비공개', points: p.points, reason: '비공개', date: '-', _uid: idx
-                    }));
+                    const _penaltyNameMap = {};
+                    let _penaltyIdx = 1;
+                    appState.penaltyHistory = penalties.map((p) => {
+                        if (!_penaltyNameMap[p.name]) _penaltyNameMap[p.name] = '벌점자 ' + (_penaltyIdx++);
+                        return { name: _penaltyNameMap[p.name], points: p.points, reason: '비공개', date: '-' };
+                    });
                 }
 
                 appState.events = events.map(e => ({
@@ -963,6 +984,7 @@
                     mobileCountEl.innerHTML = `<span style="background:#fdf2f8;color:#db2777;border:1px solid #fbcfe8;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:900">👥 ${total}</span>`;
                 }
                 window.updateAnniversaryLabel();
+                window.trackDailyVisit();
 
             } catch (e) { 
                 console.error("Fetch Error:", e); 
@@ -1010,7 +1032,9 @@
                     case 'save_members': {
                         let current = [], pg = 0;
                         while (true) {
-                            const { data: b } = await supaDb.from('members').select('id, name').range(pg * 1000, (pg + 1) * 1000 - 1);
+                            const { data: b, error: bErr } = await supaDb.from('members').select('id, name').range(pg * 1000, (pg + 1) * 1000 - 1);
+                            if (bErr) throw bErr;
+                            if (!b) break;
                             current = current.concat(b);
                             if (b.length < 1000) break;
                             pg++;
@@ -1042,7 +1066,7 @@
                         const { error } = await supaDb.from('bail_history').insert({
                             date: data.date || new Date().toISOString().split('T')[0],
                             payer: data.payer, receiver: data.receiver,
-                            amount: parseInt(data.amount), memo: data.memo || ''
+                            amount: parseInt(data.amount) || 0, memo: data.memo || ''
                         });
                         if (error) throw error;
                         success = true; break;
@@ -1050,7 +1074,7 @@
                     case 'save_penalty': {
                         const { error } = await supaDb.from('penalty_history').insert({
                             date: data.date, name: data.name,
-                            points: parseInt(data.points), reason: data.reason || ''
+                            points: parseInt(data.points) || 0, reason: data.reason || ''
                         });
                         if (error) throw error;
                         success = true; break;
@@ -1062,8 +1086,9 @@
                             });
                             if (error) throw error;
                         } else {
-                            const { data: existing } = await supaDb.from('events')
-                                .select('id').eq('date', data.date).eq('title', data.originalTitle).single();
+                            const { data: existing, error: existErr } = await supaDb.from('events')
+                                .select('id').eq('date', data.date).eq('title', data.originalTitle).maybeSingle();
+                            if (existErr) throw existErr;
                             if (existing) {
                                 await supaDb.from('events').update({ title: data.title, content: data.content || '' }).eq('id', existing.id);
                             }
@@ -1088,8 +1113,6 @@
                 return false;
             }
         };
-
-        window.router = (tab) => {
 
         window.autoAssignRoles = () => {
             const excludeRoles = ['마카롱', '다쿠아즈'];
@@ -1339,6 +1362,8 @@
             window.showLoading(false);
             window._pendingRoleChanges = null;
         };
+
+        window.router = (tab) => {
             appState.activeTab = tab;
             const content = document.getElementById('contentArea'); if(!content) return;
             content.innerHTML = '';
@@ -1589,6 +1614,7 @@
         window.selectEventForEdit = (eventObj) => {
             appState.currentEditingEvent = eventObj;
             const listContainer = document.getElementById('eventListForDate');
+            if (!listContainer) return;
             Array.from(listContainer.children).forEach(child => {
                 child.classList.remove('event-item-active');
                 if (child.innerText.includes(eventObj.title)) child.classList.add('event-item-active');
@@ -1604,10 +1630,11 @@
             appState.currentEditingEvent = null;
             document.getElementById('eventTitleInput').value = "";
             document.getElementById('eventContentInput').value = "";
-            document.getElementById('btnDeleteEvent').classList.add('hidden'); 
+            document.getElementById('btnDeleteEvent').classList.add('hidden');
             document.getElementById('btnSaveEvent').classList.add('col-span-2');
 
             const listContainer = document.getElementById('eventListForDate');
+            if (!listContainer) return;
             Array.from(listContainer.children).forEach(child => child.classList.remove('event-item-active'));
         };
 
@@ -1964,7 +1991,7 @@
                         return `<div class="flex justify-between items-center text-[10px] leading-none bg-white/40 rounded px-1.5 py-1">
                             <div class="flex items-center gap-1.5 overflow-hidden">
                                 <span class="font-black text-${colorBase}-500 inline-block w-2.5 text-center">${idx+1}</span>
-                                <span class="font-bold text-gray-800 truncate" style="max-width: 60px;" title="${m.name}">${m.name}</span>
+                                <span class="font-bold text-gray-800 truncate" style="max-width: 80px;" title="${m.name}">${m.name}</span>
                             </div>
                             <span class="font-black text-${colorBase}-600 shrink-0">${displayVal}</span>
                         </div>`;
@@ -2405,7 +2432,7 @@
             container.innerHTML = `
             <div class="flex flex-col gap-2 lg:gap-3 fade-in h-full">
                 <div class="bg-white p-3 lg:p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-3 shrink-0">
-                    <div class="flex overflow-x-auto no-scrollbar w-full gap-1.5 lg:gap-2 shrink-0 pb-0.5">
+                    <div class="flex flex-wrap lg:flex-nowrap lg:overflow-x-auto no-scrollbar w-full gap-1.5 lg:gap-2 shrink-0 pb-0.5">
                         <button onclick="window.filterByGuild('all')" class="shrink-0 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl text-[10px] lg:text-xs font-bold transition-all flex items-center gap-1.5 ${appState.filters.guild === 'all' ? 'bg-gray-800 text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}">전체<span class="inline-flex items-center justify-center min-w-[18px] h-[16px] px-1 rounded-md text-[9px] font-black ${appState.filters.guild === 'all' ? 'bg-white/20 text-white' : 'bg-gray-200/60 text-gray-400'}">${appState.members.length}</span></button>
                         ${appState.guilds.map(g => { const gc = appState.members.filter(m => m.guild === g.name).length; const gColors = {'뚠카롱':['bg-pink-500','bg-pink-400/20'],'뚱카롱':['bg-rose-600','bg-rose-400/20'],'밤카롱':['bg-indigo-500','bg-indigo-400/20'],'별카롱':['bg-amber-500','bg-amber-400/20'],'달카롱':['bg-blue-500','bg-blue-400/20'],'꿀카롱':['bg-orange-500','bg-orange-400/20']}; const [activeBg, activeBadge] = gColors[g.name] || ['bg-pink-500','bg-pink-400/20']; return `<button onclick="window.filterByGuild('${g.name}')" class="shrink-0 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl text-[10px] lg:text-xs font-bold transition-all flex items-center gap-1.5 ${appState.filters.guild === g.name ? activeBg + ' text-white shadow-md' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}">${g.name}<span class="inline-flex items-center justify-center min-w-[18px] h-[16px] px-1 rounded-md text-[9px] font-black ${appState.filters.guild === g.name ? 'bg-white/25 text-white' : 'bg-gray-200/60 text-gray-400'}">${gc}</span></button>`; }).join('')}
                     </div>
@@ -2462,17 +2489,17 @@
             filtered.sort((a, b) => smartCompare(a, b, appState.filters.sortField, appState.filters.sortOrder));
 
             const totalItems = filtered.length;
-            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-            if (appState.pagination.members > totalPages && totalPages > 0) appState.pagination.members = totalPages;
-            if (appState.pagination.members < 1) appState.pagination.members = 1;
-
-            const pageData = filtered.slice((appState.pagination.members - 1) * ITEMS_PER_PAGE, appState.pagination.members * ITEMS_PER_PAGE);
+            const pageData = filtered;
             const sortIcon = (f) => appState.filters.sortField === f ? (appState.filters.sortOrder === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>') : '';
 
             let html = `<div class="overflow-auto flex-1 relative -webkit-overflow-scrolling-touch"><table class="w-full text-left text-[10px] lg:text-xs whitespace-nowrap"><thead class="bg-gray-50 text-[9px] lg:text-[10px] font-bold text-gray-500 border-b border-gray-100 shadow-sm"><tr><th class="py-2 px-2 text-center w-8 lg:w-12">${appState.isKickMode ? '선택' : 'No.'}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th><th class="py-2 px-2 sortable hidden sm:table-cell" onclick="window.handleSort('mainInfo')">본캐${sortIcon('mainInfo')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th><th class="py-2 px-2 sortable hidden sm:table-cell" onclick="window.handleSort('role')">직위${sortIcon('role')}</th><th class="py-2 px-2 sortable hidden md:table-cell" onclick="window.handleSort('class')">직업${sortIcon('class')}</th>${isAdmin() ? '<th class="py-2 px-2 text-right">관리</th>' : ''}</tr></thead><tbody class="divide-y divide-gray-50 text-gray-600 font-bold">`;
 
             pageData.forEach((m, idx) => {
-                const globalIndex = (appState.pagination.members - 1) * ITEMS_PER_PAGE + idx + 1;
+                const globalIndex = idx + 1;
+                // 17명마다 구분선
+                if (idx > 0 && idx % ITEMS_PER_PAGE === 0) {
+                    html += `<tr><td colspan="7" class="py-0"><div class="border-t-2 border-dashed border-pink-200 mx-2 relative"><span class="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-white px-2 text-[9px] font-bold text-pink-300">${idx}명</span></div></td></tr>`;
+                }
                 const mainName = m.isMain ? m.name : (m.mainCharName || '-'); 
                 const mainMem = appState.members.find(x => x.name === mainName);
                 const mainRankHtml = mainMem ? formatRankWithSuffix(mainMem.role) : '-';
@@ -2538,12 +2565,7 @@
                 </tr>`;
             });
             html += `</tbody></table></div>`;
-
-            html += `<div class="p-3 border-t border-gray-100 flex justify-center items-center gap-4 bg-gray-50/50 relative z-20">
-                <button onclick="changePage('members', -1)" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 hover:bg-pink-50 hover:text-pink-500 hover:border-pink-200 disabled:opacity-30 disabled:hover:bg-white" ${appState.pagination.members <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left text-[10px]"></i></button>
-                <span class="text-xs font-bold text-gray-500">${appState.pagination.members} / ${totalPages || 1}</span>
-                <button onclick="changePage('members', 1)" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-500 hover:bg-pink-50 hover:text-pink-500 hover:border-pink-200 disabled:opacity-30 disabled:hover:bg-white" ${appState.pagination.members >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right text-[10px]"></i></button>
-            </div>`;
+            html += `<div class="py-2 text-center text-[9px] text-gray-300 font-bold">총 ${totalItems}명</div>`;
 
             container.innerHTML = html;
         };
@@ -2649,19 +2671,11 @@
         window.renderPenalty = (container) => {
             const memberOptions = appState.members.map(m => `<option value="${m.name}">${m.name} (${m.guild})</option>`).sort();
 
-            // 합산 계산
+            // 합산 계산 (관리자: 실제 이름, 비관리자: 마스킹된 이름 — 동일 인물은 같은 키)
             const penaltyCounts = {};
-            if (isAdmin()) {
-                appState.penaltyHistory.forEach(h => {
-                    penaltyCounts[h.name] = (penaltyCounts[h.name] || 0) + Number(h.points);
-                });
-            } else {
-                // 일반 유저: _uid로 구분해서 각 건별로
-                appState.penaltyHistory.forEach(h => {
-                    const key = '벌점자 ' + (h._uid + 1);
-                    penaltyCounts[key] = Number(h.points);
-                });
-            }
+            appState.penaltyHistory.forEach(h => {
+                penaltyCounts[h.name] = (penaltyCounts[h.name] || 0) + Number(h.points);
+            });
             const activePenalties = Object.entries(penaltyCounts).filter(([name, pts]) => pts > 0).sort((a,b) => b[1] - a[1]);
 
             const penaltyRows = [...appState.penaltyHistory].reverse().map(h => {
@@ -2676,7 +2690,7 @@
                     <td class="p-3 font-mono text-gray-400 text-[10px]">${displayDate}</td>
                     <td class="p-3 text-gray-700">${h.name}</td>
                     <td class="p-3 text-red-500 font-bold">${pts}점</td>
-                    <td class="p-3 text-gray-500 text-[11px]">${h.reason || ''}</td>
+                    <td class="p-3 text-gray-500 text-[11px] whitespace-normal break-words max-w-[200px]" title="${(h.reason || '').replace(/"/g, '&quot;')}">${h.reason || ''}</td>
                     ${isAdmin() ? `<td class="p-3 text-right"><button onclick="window.deletePenalty(${h.id})" class="text-[9px] text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button></td>` : ''}
                 </tr>
             `}).join('');
@@ -2722,13 +2736,23 @@
                         </div>
                         <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 flex-wrap">
                             ${activePenalties.length > 0 
-                                ? activePenalties.map(([name, pts]) => `
-                                    <div class="flex items-center gap-2 ${pts >= 10 ? 'bg-red-500 text-white' : 'bg-red-50 border border-red-100'} pl-2 pr-4 py-1.5 rounded-full shrink-0">
+                                ? activePenalties.map(([name, pts]) => {
+                                    const isExpelled = (window._expelledList || []).includes(name);
+                                    if (pts >= 10 && isExpelled) {
+                                        return `<div class="flex items-center gap-2 bg-gray-400 text-white pl-2 pr-${isAdmin() ? '2' : '4'} py-1.5 rounded-full shrink-0">
+                                            <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xs shadow-sm"><i class="fas fa-check text-[10px]"></i></div>
+                                            <span class="text-xs font-bold text-white line-through">${name}</span>
+                                            <span class="text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">추방완료</span>
+                                            ${isAdmin() ? `<button onclick="window._undoExpelled('${name.replace(/'/g,"\\'")}')" class="w-6 h-6 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all ml-1" title="추방완료 취소"><i class="fas fa-undo text-[9px]"></i></button>` : ''}
+                                        </div>`;
+                                    }
+                                    return `<div class="flex items-center gap-2 ${pts >= 10 ? 'bg-red-500 text-white' : 'bg-red-50 border border-red-100'} pl-2 pr-${pts >= 10 && isAdmin() ? '2' : '4'} py-1.5 rounded-full shrink-0">
                                         <div class="w-7 h-7 rounded-full ${pts >= 10 ? 'bg-white/20' : 'bg-white'} flex items-center justify-center ${pts >= 10 ? 'text-white' : 'text-red-500'} font-bold text-xs shadow-sm">${pts}</div>
                                         <span class="text-xs font-bold ${pts >= 10 ? 'text-white' : 'text-red-600'}">${name}</span>
                                         ${pts >= 10 ? '<span class="text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">추방 대상</span>' : ''}
-                                    </div>
-                                  `).join('')
+                                        ${pts >= 10 && isAdmin() ? `<button onclick="window._markExpelled('${name.replace(/'/g,"\\'")}')" class="w-6 h-6 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all ml-1" title="추방완료 처리"><i class="fas fa-gavel text-[9px]"></i></button>` : ''}
+                                    </div>`;
+                                }).join('')
                                 : '<p class="text-xs text-gray-300 font-bold italic w-full">현재 벌점자가 없습니다.</p>'
                             }
                         </div>
@@ -2786,6 +2810,42 @@
             } else if (btn) {
                 btn.disabled = false; btn.innerText = "벌점 저장";
             }
+        };
+
+        // 추방완료 목록 로드
+        window._expelledList = [];
+        window._loadExpelledList = async () => {
+            try {
+                const {data} = await supaDb.from('penalty_expelled').select('name');
+                window._expelledList = (data || []).map(d => d.name);
+            } catch(e) { window._expelledList = []; }
+        };
+        window._loadExpelledList();
+
+        window._markExpelled = async (name) => {
+            if (!confirm(`"${name}" 님을 추방완료 처리하시겠습니까?`)) return;
+            try {
+                const {error} = await supaDb.from('penalty_expelled').upsert({name: name, expelled_at: new Date().toISOString()}, {onConflict: 'name'});
+                if (error) throw error;
+                await supaDb.from('operation_history').insert({
+                    date: window.getKSTDateStr(), category: '추방', name: name,
+                    content: '벌점 10점 이상 추방완료 처리'
+                });
+                window._expelledList.push(name);
+                window.showMsg(name + ' 추방완료 처리됨', 'success');
+                window.renderPenalty(document.getElementById('contentArea'));
+            } catch(e) { window.showMsg('처리 실패: ' + e.message, 'error'); }
+        };
+
+        window._undoExpelled = async (name) => {
+            if (!confirm(`"${name}" 님의 추방완료를 취소하시겠습니까?`)) return;
+            try {
+                const {error} = await supaDb.from('penalty_expelled').delete().eq('name', name);
+                if (error) throw error;
+                window._expelledList = window._expelledList.filter(n => n !== name);
+                window.showMsg(name + ' 추방완료 취소됨', 'success');
+                window.renderPenalty(document.getElementById('contentArea'));
+            } catch(e) { window.showMsg('취소 실패: ' + e.message, 'error'); }
         };
 
         window.renderSheet = (container) => {
@@ -2950,7 +3010,8 @@
             wrap.innerHTML = html;
             window._sheetUpdateButtons();
 
-            wrap.addEventListener('keydown', (e) => {
+            if (wrap._sheetKeyHandler) wrap.removeEventListener('keydown', wrap._sheetKeyHandler);
+            wrap._sheetKeyHandler = (e) => {
                 if (e.key !== 'Tab') return;
                 const el = document.activeElement;
                 if (!el || !wrap.contains(el)) return;
@@ -2967,7 +3028,8 @@
                 if (!targetTd) return;
                 const targetInput = targetTd.querySelector('input, select');
                 if (targetInput) { targetInput.focus(); if (targetInput.select) targetInput.select(); }
-            });
+            };
+            wrap.addEventListener('keydown', wrap._sheetKeyHandler);
         };
 
         window._sheetRenderSuro = (wrap) => {
@@ -3135,7 +3197,9 @@
 
                     let { data: period } = await supaDb.from('suro_periods').select('id').eq('period_label', periodLabel).maybeSingle();
                     if (!period) {
-                        const { data: np } = await supaDb.from('suro_periods').insert({ period_label: periodLabel, start_date: '', end_date: '' }).select().single();
+                        const { data: np, error: npErr } = await supaDb.from('suro_periods').insert({ period_label: periodLabel, start_date: '', end_date: '' }).select().single();
+                        if (npErr) throw npErr;
+                        if (!np) throw new Error(`수로 기간 생성 실패: ${periodLabel}`);
                         period = np;
                     }
 
@@ -3484,10 +3548,13 @@
                 </div>
             </div>`;
 
-            document.addEventListener('click', (e) => {
-                const menu = document.getElementById('guideBlockMenu');
-                if (menu && !menu.parentElement.contains(e.target)) menu.classList.add('hidden');
-            }, { once: false });
+            if (!window._guideBlockMenuHandler) {
+                window._guideBlockMenuHandler = (e) => {
+                    const menu = document.getElementById('guideBlockMenu');
+                    if (menu && !menu.parentElement?.contains(e.target)) menu.classList.add('hidden');
+                };
+                document.addEventListener('click', window._guideBlockMenuHandler);
+            }
 
             setTimeout(() => {
                 const editor = document.getElementById('guideEditor');
@@ -3646,9 +3713,7 @@
                         try {
                             const ext = file.name.split('.').pop().toLowerCase();
                             const safeName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-                            const resized = await window._resizeImage(file, 800, 0.75);
-                            const finalName = safeName.replace(/\.[^.]+$/, '.webp');
-                            const publicUrl = await window._r2Upload('guide-images', finalName, resized);
+                            const publicUrl = await window._r2Upload('guide-images', safeName, file);
                             const imgHtml = `<div style="margin:12px 0;text-align:center"><img src="${publicUrl}" style="max-width:100%;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)" alt="이미지"></div>`;
                             editor.focus();
                             document.execCommand('insertHTML', false, imgHtml);
@@ -3694,10 +3759,13 @@
                         `;
                     }, 10);
                 });
-                document.addEventListener('mousedown', (e) => {
-                    const ft = document.getElementById('floatingToolbar');
-                    if (ft && !ft.contains(e.target)) ft.remove();
-                });
+                if (!window._floatingToolbarHandler) {
+                    window._floatingToolbarHandler = (e) => {
+                        const ft = document.getElementById('floatingToolbar');
+                        if (ft && !ft.contains(e.target)) ft.remove();
+                    };
+                    document.addEventListener('mousedown', window._floatingToolbarHandler);
+                }
 
             }, 200);
         };
@@ -4034,9 +4102,7 @@
    if (bar) bar.style.width = `${Math.round((uploaded / files.length) * 100)}%`;
 
    try {
-   const resized = await window._resizeImage(file, 800, 0.75);
-   const finalName = safeName.replace(/\.[^.]+$/, '.webp');
-   await window._r2Upload('guide-images', finalName, resized);
+   await window._r2Upload('guide-images', safeName, file);
    uploaded++;
    } catch(e) {
    window.showMsg(`업로드 실패 (${file.name}): ${e.message}`, 'error');
@@ -4139,9 +4205,7 @@
    try {
    const ext = file.name.split('.').pop().toLowerCase();
    const safeName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-   const resized = await window._resizeImage(file, 800, 0.75);
-   const finalName = safeName.replace(/\.[^.]+$/, '.webp');
-   const publicUrl = await window._r2Upload('guide-images', finalName, resized);
+   const publicUrl = await window._r2Upload('guide-images', safeName, file);
    window._applyImageToTarget(targetEl, publicUrl);
    window.showMsg('이미지 삽입 완료!', 'success');
    } catch(e) {
@@ -4255,6 +4319,41 @@
   window._boardState = { tab: 'notice', page: 1, posts: [], viewingPost: null, composing: false };
   const BOARD_PER_PAGE = 10;
   const BOARD_STORAGE_URL = R2_PUBLIC_URL + '/board-images/';
+
+  window._sanitizeBoardHTML = (html) => {
+    if (!html) return '';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const ALLOWED_TAGS = new Set(['b','i','u','s','em','strong','br','p','div','span','ul','ol','li','h1','h2','h3','h4','h5','h6','blockquote','pre','code','hr','a','img','table','thead','tbody','tr','th','td','sub','sup','mark','del','ins']);
+    const ALLOWED_ATTRS = new Set(['style','href','src','alt','class','target','colspan','rowspan','width','height']);
+    const sanitize = (node) => {
+      const children = [...node.childNodes];
+      children.forEach(child => {
+        if (child.nodeType === 3) return;
+        if (child.nodeType === 1) {
+          if (!ALLOWED_TAGS.has(child.tagName.toLowerCase())) {
+            while (child.firstChild) child.parentNode.insertBefore(child.firstChild, child);
+            child.parentNode.removeChild(child);
+            return;
+          }
+          [...child.attributes].forEach(attr => {
+            if (!ALLOWED_ATTRS.has(attr.name.toLowerCase())) child.removeAttribute(attr.name);
+          });
+          if (child.tagName === 'A') child.setAttribute('target', '_blank');
+          const style = child.getAttribute('style');
+          if (style) {
+            const clean = style.replace(/expression|javascript|vbscript/gi, '');
+            child.setAttribute('style', clean);
+          }
+          sanitize(child);
+        } else {
+          child.parentNode.removeChild(child);
+        }
+      });
+    };
+    sanitize(doc.body);
+    return doc.body.innerHTML;
+  };
 
   // ============ 수로 보상 ============
   const REWARD_TIERS = [
@@ -4499,11 +4598,17 @@
     try {
       let query = supaDb.from('board_posts').select('*').eq('board_type', bs.tab).order('is_pinned', {ascending: false}).order('created_at', {ascending: false});
       const {data, error} = await query;
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501' || error.message?.includes('permission') || error.message?.includes('policy')) {
+          wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-lock text-2xl mb-3 block text-gray-300"></i>게시판을 보려면 Supabase RLS 정책에서<br><code class="bg-gray-100 px-2 py-0.5 rounded text-[10px]">board_posts</code> 테이블의 SELECT를 anon에 허용해주세요.<br><br><span class="text-[9px] text-gray-300">또는 로그인 후 이용해주세요.</span></div>';
+          return;
+        }
+        throw error;
+      }
       bs.posts = data || [];
       window._boardRenderList(wrap);
     } catch(e) {
-      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + e.message + '</div>';
+      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + (e.message || e) + '</div>';
     }
   };
 
@@ -4567,7 +4672,7 @@
     wrap.innerHTML = '<div class="p-8 text-center text-gray-400 text-xs font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>로딩 중...</div>';
 
     try {
-      supaDb.rpc('increment_view_count', {post_id_input: postId});
+      try { await supaDb.rpc('increment_view_count', {post_id_input: postId}); } catch(e2) {}
       const {data: post, error} = await supaDb.from('board_posts').select('*').eq('id', postId).single();
       if (error) throw error;
 
@@ -4598,7 +4703,7 @@
           </div>
         </div>
 
-        <div class="p-4 lg:p-5 text-[12px] lg:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">${post.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="p-4 lg:p-5 text-[12px] lg:text-sm text-gray-700 leading-relaxed break-words board-content">${window._sanitizeBoardHTML(post.content)}</div>
 
         ${imgs.length > 0 ? `<div class="px-4 pb-4 flex flex-wrap gap-2">${imgs.map(url => `<img src="${url}" class="rounded-xl border border-gray-100 max-h-60 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.open('${url}','_blank')">`).join('')}</div>` : ''}
 
@@ -4636,7 +4741,8 @@
 
       wrap.innerHTML = html;
     } catch(e) {
-      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패</div>';
+      console.error('게시글 로딩 에러:', e);
+      wrap.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">로딩 실패: ' + (e.message || e) + '</div>';
     }
   };
 
@@ -4660,8 +4766,8 @@
       } else {
         const {error: insErr} = await supaDb.from('board_likes').insert({post_id: postId, user_email: CURRENT_USER.email});
         if (insErr) throw insErr;
-        const {error: upErr} = await supaDb.from('board_posts').update({like_count: (parseInt(document.getElementById('boardLikeCount')?.textContent)||0) + 1}).eq('id', postId);
-        if (upErr) throw upErr;
+        const {error: upErr2} = await supaDb.from('board_posts').update({like_count: (parseInt(document.getElementById('boardLikeCount')?.textContent)||0) + 1}).eq('id', postId);
+        if (upErr2) throw upErr2;
       }
       window._boardViewPost(postId);
     } catch(e) { window.showMsg('추천 실패: ' + e.message, 'error'); console.error('Like error:', e); }
@@ -4770,10 +4876,8 @@
         for (const file of files) {
           const ext = file.name.split('.').pop();
           const path = Date.now() + '_' + Math.random().toString(36).substring(2,8) + '.' + ext;
-          const resized = await window._resizeImage(file, 1200, 0.8);
-          const finalPath = path.replace(/\.[^.]+$/, '.webp');
-          const uploadedUrl = await window._r2Upload('board-images', finalPath, resized);
-          imageUrls.push(uploadedUrl);
+          await window._r2Upload('board-images', path, file);
+          imageUrls.push(BOARD_STORAGE_URL + path);
         }
       } else if (editId) {
         const {data: existing} = await supaDb.from('board_posts').select('images').eq('id', editId).single();
@@ -5189,13 +5293,20 @@
   window._statsSubTab = 'guild';
   // ============ 승강제 시스템 ============
   window._promoSubTab = 'ranking';
+  window._promoSelectedPeriod = null; // null = 최신 주차
+
+  window._getPromoHeader = () => {
+    const headers = appState.suroHeaders || [];
+    if (headers.length === 0) return '';
+    if (window._promoSelectedPeriod && headers.includes(window._promoSelectedPeriod)) return window._promoSelectedPeriod;
+    return headers[headers.length - 1];
+  };
 
   window._getLatestWeekScores = (guildName) => {
-    const headers = appState.suroHeaders || [];
-    if (headers.length === 0) return [];
-    const latestH = headers[headers.length - 1];
-    return appState.members.filter(m => m.guild === guildName && m.isMain).map(m => ({
-      ...m, score: Math.round(Number(m.suro?.[latestH])) || 0,
+    const h = window._getPromoHeader();
+    if (!h) return [];
+    return appState.members.filter(m => m.guild === guildName).map(m => ({
+      ...m, score: Math.round(Number(m.suro?.[h])) || 0,
     }));
   };
 
@@ -5208,7 +5319,7 @@
 
   window._getBottom10 = () => {
     const g1 = window._getLatestWeekScores('뚠카롱').sort((a,b) => b.score - a.score);
-    return g1.slice(-10).reverse();
+    return g1.slice(-10);
   };
 
   window.renderPromotion = async (container) => {
@@ -5220,62 +5331,101 @@
     } catch(e) {}
 
     const headers = appState.suroHeaders || [];
-    const latestH = headers[headers.length - 1] || '';
+    const selectedH = window._getPromoHeader();
     const cutline = window._get180Cutline();
     const bottom10 = window._getBottom10();
     const g1Total = window._getLatestWeekScores('뚠카롱').length;
 
     const challengers = applicants.map(a => {
       const m = appState.members.find(x => x.name === a.name);
-      return { ...a, score: m ? (Math.round(Number(m.suro?.[latestH])) || 0) : 0, member: m };
+      return { ...a, score: m ? (Math.round(Number(m.suro?.[selectedH])) || 0) : 0, member: m };
     }).sort((a,b) => b.score - a.score);
 
-    const matchLen = Math.min(challengers.length, bottom10.length);
+    // 매칭: 승격 조건 충족하는 도전자만 매칭 대상
+    const qualifiedChallengers = challengers.filter(ch => {
+      if (ch.score <= 0) return false;
+      if (ch.score > cutline) return true;
+      // 방어자 중 0점이 있으면 매칭 가능
+      const worstDefender = bottom10.length > 0 ? bottom10[bottom10.length - 1] : null;
+      if (worstDefender && worstDefender.score === 0) return true;
+      // 5000점 격차 가능성 체크
+      if (bottom10.some(df => ch.score >= df.score + 5000)) return true;
+      return false;
+    });
+
+    const matchLen = Math.min(qualifiedChallengers.length, bottom10.length);
     const matches = [];
+    const usedDefenders = new Set();
     for (let i = 0; i < matchLen; i++) {
-      const ch = challengers[i]; const df = bottom10[i];
-      let result = 'failed', reason = '';
-      if (df.score === 0 && ch.score > 0) { result = 'promoted'; reason = '방어자 0점 (자동)'; }
-      else if (ch.score > cutline) { result = 'promoted'; reason = '180등 컷 돌파'; }
-      else if (ch.score >= df.score + 5000) { result = 'promoted'; reason = '5,000점 격차'; }
-      else { reason = '조건 미달'; }
-      matches.push({ challenger: ch, defender: df, result, reason, rank: i + 1 });
+      const ch = qualifiedChallengers[i];
+      // 최적 방어자 매칭: 0점 방어자 우선 → 5000점 격차 가능한 방어자 → 컷라인 돌파
+      let bestDf = null, bestResult = '', bestReason = '';
+      for (const df of bottom10) {
+        if (usedDefenders.has(df.name)) continue;
+        if (df.score === 0 && ch.score > 0) { bestDf = df; bestResult = 'promoted'; bestReason = '방어자 0점 (자동)'; break; }
+      }
+      if (!bestDf) {
+        for (const df of [...bottom10].reverse()) {
+          if (usedDefenders.has(df.name)) continue;
+          if (ch.score >= df.score + 5000) { bestDf = df; bestResult = 'promoted'; bestReason = '5,000점 격차'; break; }
+        }
+      }
+      if (!bestDf && ch.score > cutline) {
+        for (const df of [...bottom10].reverse()) {
+          if (usedDefenders.has(df.name)) continue;
+          bestDf = df; bestResult = 'promoted'; bestReason = '180등 컷 돌파'; break;
+        }
+      }
+      if (bestDf) {
+        usedDefenders.add(bestDf.name);
+        matches.push({ challenger: ch, defender: bestDf, result: bestResult, reason: bestReason, rank: matches.length + 1 });
+      }
     }
+
+    // 대기자 중 조건 미달인 사람 목록 (프리뷰 표시용)
+    const waitingList = challengers.filter(ch => !matches.find(m => m.challenger.name === ch.name));
 
     const g2Members = appState.members.filter(m => m.guild === '뚱카롱' && m.isMain).map(m => m.name).sort();
 
+    const getShortPeriod = (h) => { const m = h.match(/(\d{2}-\d{2}-\d{2}\([^)]+\))\s*~/); return m ? m[1] : h.substring(0, 15); };
+
     container.innerHTML = `
     <div class="flex flex-col gap-2 fade-in h-full overflow-y-auto no-scrollbar">
-      <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-4 text-white">
-        <div class="flex items-center gap-3 flex-wrap">
-          <span class="text-2xl">⚔️</span>
-          <div class="flex-1">
-            <h2 class="text-base font-black">뚠카롱 1기 ↔ 2기 승강제</h2>
-            <p class="text-[10px] opacity-80">매주 목요일 수로 초기화 기준 · 1:1 매칭 트레이드</p>
-            <p class="text-[9px] opacity-60 mt-1">※ 컷라인 돌파 시 수로 초기화 또는 자리 발생 시 순차 승강</p>
+      <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-3 text-white">
+        <div class="flex items-center gap-2">
+          <span class="text-xl shrink-0">⚔️</span>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-sm font-black leading-tight">뚠카롱 1기 ↔ 2기 승강제</h2>
+            <p class="text-[9px] opacity-70 hidden sm:block">목요일 수로 마감 후 관리자가 점수 기입 → 승강 실행</p>
           </div>
           <div class="text-right shrink-0">
-            <div class="text-[9px] opacity-70">승격 기준 컷라인</div>
-            <div class="text-xl font-black">${cutline.toLocaleString()}점</div>
-            <div class="text-[8px] opacity-60">최근 주차 1기 ${Math.min(180, g1Total)}등 점수</div>
+            <div class="text-[8px] opacity-70">컷라인</div>
+            <div class="text-base font-black leading-tight">${cutline.toLocaleString()}점</div>
+            <div class="text-[8px] opacity-60">${Math.min(180, g1Total)}등 기준</div>
           </div>
         </div>
+        ${isAdmin() ? `<div class="mt-2 flex items-center gap-2">
+          <span class="text-[9px] opacity-70 shrink-0">주차:</span>
+          <select onchange="window._promoSelectedPeriod=this.value;window.renderPromotion(document.getElementById('contentArea'))" class="bg-white/20 border border-white/30 rounded-lg px-2 py-1 text-[10px] font-bold outline-none text-white flex-1" style="background:rgba(255,255,255,0.15)">
+            ${[...headers].reverse().map(h => `<option value="${h}" ${h === selectedH ? 'selected' : ''} style="color:#1f2937">${getShortPeriod(h)}</option>`).join('')}
+          </select>
+        </div>` : `<div class="mt-1"><span class="text-[9px] opacity-60">기준: ${getShortPeriod(selectedH)}</span></div>`}
       </div>
 
-      <div class="flex gap-1.5">
+      <div class="flex gap-1.5 overflow-x-auto no-scrollbar">
         ${['ranking','admin_match','history'].map(t => {
           const labels = {ranking:'승급 대기자',admin_match:'트레이드 실행',history:'승강 이력'};
           const icons = {ranking:'fa-list-ol',admin_match:'fa-exchange-alt',history:'fa-history'};
           const show = t === 'admin_match' || t === 'history' ? isAdmin() : true;
-          return show ? `<button onclick="window._promoSubTab='${t}';window.renderPromotion(document.getElementById('contentArea'))" class="px-3 py-1 rounded-xl text-[10px] font-bold transition-all ${st===t?'bg-indigo-500 text-white shadow':'bg-gray-100 text-gray-500 hover:bg-gray-200'}"><i class="fas ${icons[t]} mr-1"></i>${labels[t]}</button>` : '';
+          return show ? `<button onclick="window._promoSubTab='${t}';window.renderPromotion(document.getElementById('contentArea'))" class="flex-1 px-2 py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap text-center border ${st===t?'bg-indigo-500 text-white shadow border-indigo-500':'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}"><i class="fas ${icons[t]} mr-1"></i>${labels[t]}</button>` : '';
         }).join('')}
       </div>
 
       ${st === 'ranking' ? `
       ${isAdmin() ? `<div class="flex gap-2 relative">
-        <input type="text" id="promoAddName" class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold outline-none" placeholder="승급 신청자 닉네임" oninput="window._promoAutocomplete(this.value)" autocomplete="off">
-        <div id="promoAutocompleteList" class="hidden absolute top-full left-0 right-16 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-40 overflow-y-auto"></div>
-        <button onclick="window._promoAddByAdmin()" class="px-4 py-2 bg-green-500 text-white rounded-xl text-[10px] font-bold shadow hover:bg-green-600 shrink-0"><i class="fas fa-plus mr-1"></i>추가</button>
+        <input type="text" id="promoAddName" class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all" placeholder="2기 닉네임 검색 후 추가" oninput="window._promoAutocomplete(this.value)" autocomplete="off">
+        <div id="promoAutocompleteList" class="hidden absolute top-full left-0 right-16 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto"></div>
+        <button onclick="window._promoAddByAdmin()" class="px-4 py-2.5 bg-green-500 text-white rounded-xl text-[10px] sm:text-xs font-bold shadow hover:bg-green-600 shrink-0 transition-all active:scale-95"><i class="fas fa-plus mr-1"></i>추가</button>
       </div>` : ''}
 
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -5288,7 +5438,7 @@
         <div class="overflow-auto">
         <table class="w-full text-[10px] lg:text-xs border-collapse stick-head">
           <thead class="bg-gray-50 text-[8px] font-bold text-gray-400 uppercase">
-            <tr><th class="py-1.5 px-2 text-center w-8">#</th><th class="py-1.5 px-2 text-left">닉네임</th><th class="py-1.5 px-2 text-left">직업</th><th class="py-1.5 px-2 text-right">점수</th><th class="py-1.5 px-2 text-right">컷 대비</th><th class="py-1.5 px-2 text-center">상태</th>${isAdmin()?'<th class="py-1.5 px-2 w-8"></th>':''}</tr>
+            <tr><th class="py-1.5 px-1.5 text-center w-7">#</th><th class="py-1.5 px-1.5 text-left">닉네임</th><th class="py-1.5 px-1.5 text-left hidden sm:table-cell">직업</th><th class="py-1.5 px-1.5 text-right">점수</th><th class="py-1.5 px-1.5 text-right hidden sm:table-cell">컷 대비</th><th class="py-1.5 px-1.5 text-center">상태</th>${isAdmin()?'<th class="py-1.5 px-1.5 w-14 text-center">관리</th>':''}</tr>
           </thead>
           <tbody class="font-bold text-gray-600">
             ${challengers.map((ch, i) => {
@@ -5300,13 +5450,13 @@
               else if (rank <= 10 && match) { badge = '조건 미달'; bc = 'bg-yellow-100 text-yellow-600'; }
               else { badge = '대기'; bc = 'bg-gray-100 text-gray-400'; }
               return `<tr class="border-b border-gray-50 hover:bg-indigo-50/30">
-                <td class="py-1.5 px-2 text-center font-black ${rank<=3?'text-amber-500':''}">${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</td>
-                <td class="py-1.5 px-2 text-gray-800">${ch.name}</td>
-                <td class="py-1.5 px-2 text-gray-400 text-[9px]">${ch.member?.class||''}</td>
-                <td class="py-1.5 px-2 text-right text-indigo-600">${ch.score.toLocaleString()}</td>
-                <td class="py-1.5 px-2 text-right ${diff>=0?'text-green-500':'text-red-400'}">${diff>=0?'+':''}${diff.toLocaleString()}</td>
-                <td class="py-1.5 px-2 text-center"><span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full ${bc}">${badge}</span></td>
-                ${isAdmin()?`<td class="py-1.5 px-2 text-center"><button onclick="window._promoRemove(${ch.id})" class="text-red-400 hover:text-red-600"><i class="fas fa-times text-[9px]"></i></button></td>`:''}
+                <td class="py-1.5 px-1.5 text-center font-black ${rank<=3?'text-amber-500':''}">${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</td>
+                <td class="py-1.5 px-1.5 text-gray-800 max-w-[80px] truncate">${ch.name}</td>
+                <td class="py-1.5 px-1.5 text-gray-400 text-[9px] hidden sm:table-cell">${ch.member?.class||''}</td>
+                <td class="py-1.5 px-1.5 text-right text-indigo-600">${ch.score.toLocaleString()}</td>
+                <td class="py-1.5 px-1.5 text-right hidden sm:table-cell ${diff>=0?'text-green-500':'text-red-400'}">${diff>=0?'+':''}${diff.toLocaleString()}</td>
+                <td class="py-1.5 px-1.5 text-center"><span class="text-[8px] font-bold px-1 py-0.5 rounded-full ${bc}">${badge}</span></td>
+                ${isAdmin()?`<td class="py-1.5 px-1 text-center whitespace-nowrap"><button onclick="window._promoEdit(${ch.id},'${ch.name.replace(/'/g,"\\'")}')" class="text-indigo-400 hover:text-indigo-600 mr-0.5 p-1" title="수정"><i class="fas fa-pen text-[9px]"></i></button><button onclick="window._promoRemove(${ch.id})" class="text-red-400 hover:text-red-600 p-1" title="삭제"><i class="fas fa-times text-[9px]"></i></button></td>`:''}
               </tr>`;
             }).join('')}
           </tbody>
@@ -5316,11 +5466,11 @@
 
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
         <h3 class="text-[10px] font-bold text-gray-800 mb-2"><i class="fas fa-shield-alt mr-1 text-red-400"></i>1기 강등 방어자 (하위 10명)</h3>
-        <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
-          ${bottom10.map((d, i) => `<div class="bg-red-50 rounded-lg p-1.5 text-center border border-red-100">
-            <div class="text-[8px] text-red-400">${g1Total - i}등</div>
-            <div class="text-[9px] font-bold text-gray-800 truncate">${d.name}</div>
-            <div class="text-[9px] text-red-500 font-bold">${d.score.toLocaleString()}</div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-1.5">
+          ${bottom10.map((d, i) => `<div class="bg-red-50 rounded-xl p-2 text-center border border-red-100 hover:border-red-200 transition-all">
+            <div class="text-[8px] text-red-400 font-bold">${g1Total - 9 + i}등</div>
+            <div class="text-[10px] sm:text-[9px] font-bold text-gray-800 truncate" title="${d.name}">${d.name}</div>
+            <div class="text-[10px] sm:text-[9px] text-red-500 font-black">${d.score.toLocaleString()}</div>
           </div>`).join('')}
         </div>
       </div>
@@ -5328,34 +5478,51 @@
 
       ${st === 'admin_match' ? `
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
-        <h3 class="text-xs font-bold text-gray-800 mb-3"><i class="fas fa-exchange-alt mr-2 text-indigo-500"></i>매칭 프리뷰 (${matches.filter(m=>m.result==='promoted').length}건 성사)</h3>
-        ${matches.length === 0 ? '<p class="text-xs text-gray-400 text-center py-4">매칭 대상 없음</p>' : `
-        <div class="space-y-1.5">
-          ${matches.map(m => `<div class="flex items-center gap-2 p-2.5 rounded-xl text-[10px] ${m.result==='promoted'?'bg-green-50 border border-green-200':'bg-gray-50 border border-gray-100'}">
-            <div class="flex-1 text-center"><span class="text-[8px] text-purple-500 font-bold block">2기</span><span class="font-bold text-gray-800">${m.challenger.name}</span><span class="block text-indigo-600">${m.challenger.score.toLocaleString()}</span></div>
-            <span class="${m.result==='promoted'?'text-green-500':'text-gray-300'}">🔄</span>
-            <div class="flex-1 text-center"><span class="text-[8px] text-red-500 font-bold block">1기</span><span class="font-bold text-gray-800">${m.defender.name}</span><span class="block text-red-500">${m.defender.score.toLocaleString()}</span></div>
-            <div class="shrink-0"><span class="text-[8px] font-bold px-1.5 py-0.5 rounded-lg ${m.result==='promoted'?'bg-green-500 text-white':'bg-gray-200 text-gray-500'}">${m.result==='promoted'?'✅':'❌'}</span><div class="text-[7px] text-gray-400 mt-0.5">${m.reason}</div></div>
-          </div>`).join('')}
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold text-gray-800"><i class="fas fa-exchange-alt mr-2 text-indigo-500"></i>승격 매칭 (${matches.length}건)</h3>
+          <span class="text-[9px] text-gray-400">기준: ${getShortPeriod(selectedH)}</span>
         </div>
-        ${matches.some(m=>m.result==='promoted') ? `<button onclick="window._promoExecuteTrade()" id="promoExecBtn" class="w-full mt-3 py-2.5 bg-indigo-500 text-white rounded-2xl font-bold text-xs shadow-lg hover:bg-indigo-600"><i class="fas fa-check-double mr-2"></i>일괄 승강 적용 (${matches.filter(m=>m.result==='promoted').length}건)</button>` : ''}`}
+        ${matches.length === 0 ? '<div class="p-6 text-center"><p class="text-xs text-gray-400 font-bold mb-1">승격 조건을 충족하는 도전자가 없습니다</p><p class="text-[9px] text-gray-300">조건: 180등 컷라인 돌파 / 방어자 0점 / 5,000점 격차</p></div>' : `
+        <p class="text-[9px] text-gray-400 mb-2">↓ 게임에서 아래 순서대로 길드 이동하세요</p>
+        <div class="space-y-2">
+          ${matches.map((m, i) => `<div class="flex items-center gap-2 p-3 rounded-xl text-[10px] sm:text-xs bg-green-50 border border-green-200">
+            <span class="text-[9px] font-black text-gray-400 shrink-0">${i+1}</span>
+            <div class="flex-1 min-w-0"><div class="text-[8px] text-purple-500 font-bold">2기 → 1기</div><div class="font-black text-gray-800 truncate">${m.challenger.name}</div><div class="text-indigo-600 font-bold">${m.challenger.score.toLocaleString()}점</div></div>
+            <span class="text-lg shrink-0">⇄</span>
+            <div class="flex-1 min-w-0 text-right"><div class="text-[8px] text-red-500 font-bold">1기 → 2기</div><div class="font-black text-gray-800 truncate">${m.defender.name}</div><div class="text-red-500 font-bold">${m.defender.score.toLocaleString()}점</div></div>
+          </div>`).join('')}
+        </div>`}
       </div>
+      ${waitingList.length > 0 ? `
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
+        <h3 class="text-[10px] font-bold text-gray-500 mb-2"><i class="fas fa-clock mr-1 text-gray-400"></i>조건 미달 대기자 (${waitingList.length}명)</h3>
+        <div class="flex flex-wrap gap-1.5">
+          ${waitingList.map(ch => `<span class="text-[9px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-500">${ch.name} <span class="text-gray-400">${ch.score.toLocaleString()}점</span></span>`).join('')}
+        </div>
+        <p class="text-[8px] text-gray-400 mt-2">※ 조건 미달 시 대기 유지 · 다음 주차에 재평가됩니다</p>
+      </div>` : ''}
       ` : ''}
 
       ${st === 'history' ? `
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="p-2.5 border-b border-gray-100"><h3 class="text-xs font-bold text-gray-800"><i class="fas fa-history mr-1 text-indigo-400"></i>승강 이력</h3></div>
+        <div class="p-2.5 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="text-xs font-bold text-gray-800"><i class="fas fa-history mr-1 text-indigo-400"></i>승강 이력</h3>
+          ${isAdmin() ? `<button onclick="window._promoAddHistory()" class="text-[9px] font-bold text-indigo-500 hover:text-indigo-700 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-all"><i class="fas fa-plus mr-1"></i>수동 추가</button>` : ''}
+        </div>
         <div id="promoHistoryList" class="p-2 text-center text-gray-400 text-xs">로딩 중...</div>
       </div>
       ` : ''}
     </div>`;
 
     if (st === 'history') window._promoLoadHistory();
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#promoAddName') && !e.target.closest('#promoAutocompleteList')) {
-        document.getElementById('promoAutocompleteList')?.classList.add('hidden');
-      }
-    }, { once: true });
+    if (!window._promoClickHandlerSet) {
+      window._promoClickHandlerSet = true;
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#promoAddName') && !e.target.closest('#promoAutocompleteList')) {
+          document.getElementById('promoAutocompleteList')?.classList.add('hidden');
+        }
+      });
+    }
   };
 
   window._promoAutocomplete = (val) => {
@@ -5376,7 +5543,7 @@
     if (!member) return window.showMsg('존재하지 않는 멤버: ' + name, 'error');
     if (member.guild !== '뚱카롱') return window.showMsg(name + '은(는) 뚱카롱 소속이 아닙니다', 'error');
     try {
-      const {error} = await supaDb.from('promotion_applicants').insert({member_id: member.id, name: name});
+      const {error} = await supaDb.from('promotion_applicants').upsert({member_id: member.id, name: name, status: 'waiting', promoted_at: null}, {onConflict: 'member_id'});
       if (error) throw error;
       document.getElementById('promoAddName').value = '';
       window.showMsg(name + ' 승급 신청 추가!', 'success');
@@ -5386,8 +5553,12 @@
 
   window._promoRemove = async (id) => {
     if (!confirm('이 신청을 제거하시겠습니까?')) return;
-    await supaDb.from('promotion_applicants').delete().eq('id', id);
-    window.renderPromotion(document.getElementById('contentArea'));
+    try {
+      const {error} = await supaDb.from('promotion_applicants').delete().eq('id', id);
+      if (error) throw error;
+      window.showMsg('신청 삭제 완료', 'success');
+      window.renderPromotion(document.getElementById('contentArea'));
+    } catch(e) { window.showMsg('삭제 실패: ' + e.message, 'error'); }
   };
 
   window._promoSaveCutline = async (score) => {
@@ -5399,44 +5570,62 @@
   };
 
   window._promoExecuteTrade = async () => {
-    if (!confirm('승강을 실행하시겠습니까?')) return;
+    if (!confirm('승격 조건을 충족한 매칭만 실행됩니다.\n진행하시겠습니까?')) return;
     const btn = document.getElementById('promoExecBtn');
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>처리 중...'; }
-    const headers = appState.suroHeaders || [];
-    const latestH = headers[headers.length - 1] || '';
+    const selectedH = window._getPromoHeader();
     const cutline = window._get180Cutline();
     const bottom10 = window._getBottom10();
     let applicants = [];
     try { const {data} = await supaDb.from('promotion_applicants').select('*').eq('status','waiting'); applicants = data || []; } catch(e) {}
     const challengers = applicants.map(a => {
       const m = appState.members.find(x => x.name === a.name);
-      return { ...a, score: m ? (Math.round(Number(m.suro?.[latestH])) || 0) : 0, member: m };
+      return { ...a, score: m ? (Math.round(Number(m.suro?.[selectedH])) || 0) : 0, member: m };
     }).sort((a,b) => b.score - a.score);
-    const matchLen = Math.min(challengers.length, bottom10.length);
-    const weekLabel = window.getSuroPeriodHeader();
+
+    // 프리뷰와 동일한 매칭 로직 (승격 조건 충족만)
+    const usedDf = new Set();
+    const weekLabel = selectedH;
     let ok = 0;
-    for (let i = 0; i < matchLen; i++) {
-      const ch = challengers[i]; const df = bottom10[i];
-      let result = 'failed', reason = '';
-      if (df.score === 0 && ch.score > 0) { result = 'promoted'; reason = '방어자 0점'; }
-      else if (ch.score > cutline) { result = 'promoted'; reason = '180등 컷 돌파'; }
-      else if (ch.score >= df.score + 5000) { result = 'promoted'; reason = '5,000점 격차'; }
-      else { reason = '조건 미달'; }
-      await supaDb.from('promotion_history').insert({ week_label: weekLabel, challenger_name: ch.name, challenger_score: ch.score, defender_name: df.name, defender_score: df.score, result, reason });
-      if (result === 'promoted') {
-        if (ch.member) await supaDb.from('members').update({guild:'뚠카롱'}).eq('id', ch.member.id);
-        const dfM = appState.members.find(m => m.name === df.name);
-        if (dfM) await supaDb.from('members').update({guild:'뚱카롱'}).eq('id', dfM.id);
-        await supaDb.from('promotion_applicants').update({status:'promoted', promoted_at: new Date().toISOString()}).eq('id', ch.id);
-        await supaDb.from('operation_history').insert([
-          {date: window.getKSTDateStr(), category:'승강-승격', name: ch.name, content: `뚱카롱→뚠카롱 (${ch.score.toLocaleString()}점, ${reason})`},
-          {date: window.getKSTDateStr(), category:'승강-강등', name: df.name, content: `뚠카롱→뚱카롱 (${df.score.toLocaleString()}점)`},
-        ]);
-        ok++;
+    for (const ch of challengers) {
+      if (ch.score <= 0) continue;
+      let bestDf = null, bestReason = '';
+      // 0점 방어자 우선
+      for (const df of bottom10) {
+        if (usedDf.has(df.name)) continue;
+        if (df.score === 0) { bestDf = df; bestReason = '방어자 0점'; break; }
       }
+      // 5000점 격차
+      if (!bestDf) {
+        for (const df of [...bottom10].reverse()) {
+          if (usedDf.has(df.name)) continue;
+          if (ch.score >= df.score + 5000) { bestDf = df; bestReason = '5,000점 격차'; break; }
+        }
+      }
+      // 컷라인 돌파
+      if (!bestDf && ch.score > cutline) {
+        for (const df of [...bottom10].reverse()) {
+          if (usedDf.has(df.name)) continue;
+          bestDf = df; bestReason = '180등 컷 돌파'; break;
+        }
+      }
+      if (!bestDf) continue; // 조건 미달 → 건너뜀 (이력 안 남김)
+
+      usedDf.add(bestDf.name);
+      // 승격 이력만 기록
+      await supaDb.from('promotion_history').insert({ week_label: weekLabel, challenger_name: ch.name, challenger_score: ch.score, defender_name: bestDf.name, defender_score: bestDf.score, result: 'promoted', reason: bestReason });
+      if (ch.member) await supaDb.from('members').update({guild:'뚠카롱'}).eq('id', ch.member.id);
+      const dfM = appState.members.find(m => m.name === bestDf.name);
+      if (dfM) await supaDb.from('members').update({guild:'뚱카롱'}).eq('id', dfM.id);
+      await supaDb.from('promotion_applicants').update({status:'promoted', promoted_at: new Date().toISOString()}).eq('id', ch.id);
+      await supaDb.from('operation_history').insert([
+        {date: window.getKSTDateStr(), category:'승강-승격', name: ch.name, content: `뚱카롱→뚠카롱 (${ch.score.toLocaleString()}점, ${bestReason}, 기준: ${weekLabel})`},
+        {date: window.getKSTDateStr(), category:'승강-강등', name: bestDf.name, content: `뚠카롱→뚱카롱 (${bestDf.score.toLocaleString()}점)`},
+      ]);
+      ok++;
     }
     await window.fetchMembers();
-    window.showMsg(`승강 완료! ${ok}건 교체`, 'success');
+    window.showMsg(ok > 0 ? `승강 완료! ${ok}건 교체` : '승격 조건을 충족하는 매칭이 없습니다.', ok > 0 ? 'success' : 'info');
     window.renderPromotion(document.getElementById('contentArea'));
   };
 
@@ -5449,16 +5638,182 @@
       const grouped = {};
       data.forEach(h => { if (!grouped[h.week_label]) grouped[h.week_label] = []; grouped[h.week_label].push(h); });
       el.innerHTML = Object.entries(grouped).map(([week, items]) => `
-        <div class="mb-2"><div class="text-[9px] font-bold text-indigo-500 px-2 py-1 bg-indigo-50 rounded-lg mb-1">${week}</div>
-          ${items.map(h => `<div class="flex items-center gap-2 px-2 py-1 text-[10px] border-b border-gray-50">
-            <span class="${h.result==='promoted'?'text-green-500':'text-red-400'} font-bold">${h.result==='promoted'?'✅':'❌'}</span>
-            <span class="text-purple-600 font-bold">${h.challenger_name}</span><span class="text-gray-400">${h.challenger_score.toLocaleString()}</span>
-            <span class="text-gray-300">↔</span>
-            <span class="text-red-500 font-bold">${h.defender_name}</span><span class="text-gray-400">${h.defender_score.toLocaleString()}</span>
-            <span class="ml-auto text-[8px] text-gray-400">${h.reason}</span>
+        <div class="mb-3"><div class="text-[9px] font-bold text-indigo-500 px-2 py-1 bg-indigo-50 rounded-lg mb-1 flex items-center justify-between"><span>${week}</span><span class="text-gray-400">${items.length}건</span></div>
+          ${items.map(h => `<div class="flex items-center gap-2 px-2 py-1.5 text-[10px] border-b border-gray-50 hover:bg-gray-50/50 group">
+            <span class="${h.result==='promoted'?'text-green-500':'text-red-400'} font-bold shrink-0">${h.result==='promoted'?'✅':'❌'}</span>
+            <span class="text-purple-600 font-bold truncate">${h.challenger_name}</span><span class="text-gray-400 shrink-0">${h.challenger_score.toLocaleString()}</span>
+            <span class="text-gray-300 shrink-0">↔</span>
+            <span class="text-red-500 font-bold truncate">${h.defender_name}</span><span class="text-gray-400 shrink-0">${h.defender_score.toLocaleString()}</span>
+            <span class="text-[8px] text-gray-400 shrink-0 hidden sm:inline">${h.reason}</span>
+            ${isAdmin() ? `<div class="ml-auto flex gap-1 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"><button onclick="event.stopPropagation();window._promoEditHistory('${h.id}','${(h.challenger_name||'').replace(/'/g,"\\'")}',${h.challenger_score},'${(h.defender_name||'').replace(/'/g,"\\'")}',${h.defender_score},'${h.result}','${(h.reason||'').replace(/'/g,"\\'")}')" class="text-indigo-400 hover:text-indigo-600 p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center" title="수정"><i class="fas fa-pen text-[9px]"></i></button><button onclick="event.stopPropagation();window._promoDeleteHistory('${h.id}')" class="text-red-400 hover:text-red-600 p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center" title="삭제"><i class="fas fa-trash text-[9px]"></i></button></div>` : ''}
           </div>`).join('')}
         </div>`).join('');
     } catch(e) { el.innerHTML = '<p class="text-xs text-red-400">로딩 실패</p>'; }
+  };
+
+  // 신청자 닉네임 수정
+  window._promoEdit = async (id, currentName) => {
+    const newName = prompt('신청자 닉네임 수정:', currentName);
+    if (!newName || newName.trim() === currentName) return;
+    const trimmed = newName.trim();
+    const member = appState.members.find(m => m.name === trimmed);
+    if (!member) return window.showMsg('존재하지 않는 멤버: ' + trimmed, 'error');
+    if (member.guild !== '뚱카롱') return window.showMsg(trimmed + '은(는) 뚱카롱 소속이 아닙니다', 'error');
+    try {
+      const {error} = await supaDb.from('promotion_applicants').update({name: trimmed, member_id: member.id}).eq('id', id);
+      if (error) throw error;
+      window.showMsg(currentName + ' → ' + trimmed + ' 수정 완료', 'success');
+      window.renderPromotion(document.getElementById('contentArea'));
+    } catch(e) { window.showMsg('수정 실패: ' + e.message, 'error'); }
+  };
+
+  // 이력 삭제
+  window._promoDeleteHistory = async (id) => {
+    if (!confirm('이 승강 이력을 삭제하시겠습니까?\n(실제 길드 소속 변경은 되돌리지 않습니다)')) return;
+    try {
+      const {data, error} = await supaDb.from('promotion_history').delete().eq('id', id).select();
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        window.showMsg('삭제 권한이 없습니다. Supabase RLS 정책을 확인하세요.', 'error');
+        return;
+      }
+      window.showMsg('이력 삭제 완료', 'success');
+      window._promoLoadHistory();
+    } catch(e) { window.showMsg('삭제 실패: ' + e.message, 'error'); }
+  };
+
+  // 이력 수정 모달
+  window._promoEditHistory = (id, chName, chScore, dfName, dfScore, result, reason) => {
+    const modal = document.createElement('div');
+    modal.id = 'promoEditModal';
+    modal.className = 'fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 backdrop-blur-sm fade-in font-bold p-4';
+    modal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-100">
+        <div class="p-4 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-indigo-700"><i class="fas fa-pen mr-2"></i>승강 이력 수정</h3>
+          <button onclick="document.getElementById('promoEditModal')?.remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-purple-500 uppercase tracking-widest">도전자 (2기)</label>
+              <input id="_peChName" type="text" value="${chName}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100">
+              <input id="_peChScore" type="number" value="${chScore}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 mt-1" placeholder="점수">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-red-500 uppercase tracking-widest">방어자 (1기)</label>
+              <input id="_peDfName" type="text" value="${dfName}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100">
+              <input id="_peDfScore" type="number" value="${dfScore}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 mt-1" placeholder="점수">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">결과</label>
+              <select id="_peResult" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none">
+                <option value="promoted" ${result==='promoted'?'selected':''}>승격</option>
+                <option value="failed" ${result==='failed'?'selected':''}>실패</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">사유</label>
+              <input id="_peReason" type="text" value="${reason}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100">
+            </div>
+          </div>
+          <button onclick="window._promoSaveEditHistory(${id})" class="w-full py-3 bg-indigo-500 text-white rounded-xl font-bold text-xs shadow-lg hover:bg-indigo-600 transition-all mt-2"><i class="fas fa-save mr-2"></i>저장</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  };
+
+  window._promoSaveEditHistory = async (id) => {
+    const chName = document.getElementById('_peChName')?.value?.trim();
+    const chScore = parseInt(document.getElementById('_peChScore')?.value) || 0;
+    const dfName = document.getElementById('_peDfName')?.value?.trim();
+    const dfScore = parseInt(document.getElementById('_peDfScore')?.value) || 0;
+    const result = document.getElementById('_peResult')?.value;
+    const reason = document.getElementById('_peReason')?.value?.trim() || '';
+    if (!chName || !dfName) return window.showMsg('닉네임을 입력하세요', 'error');
+    try {
+      const {error} = await supaDb.from('promotion_history').update({
+        challenger_name: chName, challenger_score: chScore,
+        defender_name: dfName, defender_score: dfScore,
+        result, reason
+      }).eq('id', id);
+      if (error) throw error;
+      document.getElementById('promoEditModal')?.remove();
+      window.showMsg('이력 수정 완료', 'success');
+      window._promoLoadHistory();
+    } catch(e) { window.showMsg('수정 실패: ' + e.message, 'error'); }
+  };
+
+  // 이력 수동 추가
+  window._promoAddHistory = () => {
+    const modal = document.createElement('div');
+    modal.id = 'promoAddHistModal';
+    modal.className = 'fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 backdrop-blur-sm fade-in font-bold p-4';
+    modal.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-100">
+        <div class="p-4 bg-green-50 border-b border-green-100 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-green-700"><i class="fas fa-plus mr-2"></i>승강 이력 수동 추가</h3>
+          <button onclick="document.getElementById('promoAddHistModal')?.remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="space-y-1">
+            <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">주차 라벨</label>
+            <input id="_paWeek" type="text" value="${window.getSuroPeriodHeader?.() || ''}" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-purple-500 uppercase tracking-widest">도전자 (2기)</label>
+              <input id="_paChName" type="text" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100" placeholder="닉네임">
+              <input id="_paChScore" type="number" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100 mt-1" placeholder="점수" value="0">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-red-500 uppercase tracking-widest">방어자 (1기)</label>
+              <input id="_paDfName" type="text" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100" placeholder="닉네임">
+              <input id="_paDfScore" type="number" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100 mt-1" placeholder="점수" value="0">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">결과</label>
+              <select id="_paResult" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none">
+                <option value="promoted">승격</option>
+                <option value="failed">실패</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">사유</label>
+              <input id="_paReason" type="text" class="w-full border border-gray-100 bg-gray-50 rounded-xl p-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-100" placeholder="사유">
+            </div>
+          </div>
+          <button onclick="window._promoSaveAddHistory()" class="w-full py-3 bg-green-500 text-white rounded-xl font-bold text-xs shadow-lg hover:bg-green-600 transition-all mt-2"><i class="fas fa-save mr-2"></i>추가</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  };
+
+  window._promoSaveAddHistory = async () => {
+    const weekLabel = document.getElementById('_paWeek')?.value?.trim();
+    const chName = document.getElementById('_paChName')?.value?.trim();
+    const chScore = parseInt(document.getElementById('_paChScore')?.value) || 0;
+    const dfName = document.getElementById('_paDfName')?.value?.trim();
+    const dfScore = parseInt(document.getElementById('_paDfScore')?.value) || 0;
+    const result = document.getElementById('_paResult')?.value;
+    const reason = document.getElementById('_paReason')?.value?.trim() || '';
+    if (!weekLabel || !chName || !dfName) return window.showMsg('필수 항목을 입력하세요', 'error');
+    try {
+      const {error} = await supaDb.from('promotion_history').insert({
+        week_label: weekLabel, challenger_name: chName, challenger_score: chScore,
+        defender_name: dfName, defender_score: dfScore, result, reason
+      });
+      if (error) throw error;
+      document.getElementById('promoAddHistModal')?.remove();
+      window.showMsg('이력 추가 완료', 'success');
+      window._promoLoadHistory();
+    } catch(e) { window.showMsg('추가 실패: ' + e.message, 'error'); }
   };
 
     // ============ 뚠뚠 버디 ============
@@ -5671,18 +6026,36 @@
         ${team.reward_choice === 'B' && isAdmin() ? `
         <div class="bg-purple-50 rounded-2xl border border-purple-200 p-4">
           <p class="text-sm font-bold text-purple-700 mb-3 text-center">🎰 B보상 칠흑 가챠 룰렛 ${!allClear ? '<span class="text-[9px] text-amber-500">(⚠ 미션 미완료)</span>' : ''}</p>
-          <div class="grid grid-cols-3 sm:grid-cols-4 gap-1 mb-4">
-            ${window._getRouletteItems().map(item => `<div class="bg-white rounded-lg p-1.5 border border-purple-100 text-center"><span class="text-[9px] font-bold" style="color:${item.color}">${item.name}</span><br><span class="text-[8px] text-gray-400">${item.prob}%</span><br><span class="text-[8px] text-gray-300">${item.value}</span></div>`).join('')}
-          </div>
-          <div id="rouletteDisplay" class="mb-4">
-            <div class="bg-white rounded-2xl border-4 border-purple-300 p-8 text-center">
-              <div id="rouletteItemText" class="text-3xl font-black text-gray-300">🎰 돌려주세요!</div>
-              <div id="rouletteValueText" class="text-sm text-gray-300 mt-1"></div>
+          <details class="mb-3">
+            <summary class="text-[10px] font-bold text-purple-500 cursor-pointer hover:text-purple-700 select-none">▶ 품목 확률표 보기</summary>
+            <div class="mt-2 rounded-xl overflow-hidden border border-purple-100">
+              <table class="w-full text-[10px]">
+                <thead><tr class="bg-purple-100 text-purple-700"><th class="py-1.5 px-3 text-left font-bold">이름</th><th class="py-1.5 px-3 text-right font-bold">크기</th><th class="py-1.5 px-3 text-right font-bold">확률</th></tr></thead>
+                <tbody class="bg-white divide-y divide-purple-50">
+                  ${window._getRouletteItems().map(item => `<tr class="hover:bg-purple-50/50"><td class="py-1 px-3 font-bold" style="color:${item.color}">${item.name}</td><td class="py-1 px-3 text-right text-gray-400 font-bold">${item.value}</td><td class="py-1 px-3 text-right font-bold text-gray-500">${item.prob}%</td></tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <div id="rouletteDisplay" class="mb-3">
+            <div class="text-center mb-2">
+              <div id="rouletteItemText" class="text-xl font-black text-gray-300">🎰 돌려주세요!</div>
+              <div id="rouletteValueText" class="text-sm text-gray-400 mt-0.5"></div>
+            </div>
+            <div class="relative flex justify-center items-start">
+              <div style="position:absolute;top:-2px;left:50%;transform:translateX(-50%);z-index:10;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:20px solid #7c3aed;filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3));"></div>
+              <canvas id="rouletteCanvas" width="260" height="260" style="display:block;border-radius:50%;box-shadow:0 4px 20px rgba(124,58,237,0.25);"></canvas>
             </div>
           </div>
+          <div class="flex gap-1.5 justify-center mb-3" id="rouletteSpeedBtns">
+            ${['vfast','fast','normal','slow'].map((s,i) => {
+              const labels = {vfast:'매우빠름',fast:'빠름',normal:'보통',slow:'느림'};
+              return `<button onclick="window._setRouletteSpeed('${s}')" id="rspd_${s}" class="px-3 py-1.5 rounded-xl text-[10px] font-bold border transition-all ${s==='fast'?'bg-purple-500 text-white border-purple-500':'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}">${labels[s]}</button>`;
+            }).join('')}
+          </div>
           <div class="flex gap-2 justify-center">
-            <button onclick="window._buddySpinRoulette(${team.id}, false)" class="px-6 py-3 bg-purple-500 text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-purple-600 transition-all">🎰 연습 돌리기</button>
-            ${(!roulette || roulette.length === 0) ? `<button onclick="window._buddySpinRoulette(${team.id}, true)" id="rouletteConfirmBtn" class="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-red-600 transition-all">🔒 보상 확정!</button>` : `<span class="text-[10px] text-green-600 font-bold self-center">✅ 이미 확정됨</span><button onclick="window._buddyResetRoulette(${team.id})" class="text-[9px] text-red-400 hover:text-red-600 font-bold self-center ml-2"><i class="fas fa-undo mr-0.5"></i>결과 취소</button>`}
+            <button onclick="window._buddySpinRoulette(${team.id}, false)" class="px-6 py-3 bg-purple-500 text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-purple-600 transition-all active:scale-95">🎰 연습 돌리기</button>
+            ${(!roulette || roulette.length === 0) ? `<button onclick="window._buddySpinRoulette(${team.id}, true)" id="rouletteConfirmBtn" class="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-red-600 transition-all active:scale-95">🔒 보상 확정!</button>` : `<span class="text-[10px] text-green-600 font-bold self-center">✅ 이미 확정됨</span><button onclick="window._buddyResetRoulette(${team.id})" class="text-[9px] text-red-400 hover:text-red-600 font-bold self-center ml-2"><i class="fas fa-undo mr-0.5"></i>결과 취소</button>`}
           </div>
         </div>` : ''}
 
@@ -5700,6 +6073,7 @@
         </div>` : ''}
       </div>`;
       container.innerHTML = html;
+      setTimeout(() => window._drawRouletteWheel(window._rouletteCurrentAngle || 0), 0);
     } catch(e) { container.innerHTML = '<div class="p-8 text-center text-red-400 text-xs font-bold">오류: '+e.message+'</div>'; }
   };
 
@@ -5790,10 +6164,8 @@
       if (fileInput?.files?.length > 0) {
         for (const file of Array.from(fileInput.files).slice(0,5)) {
           const path = 'buddy/' + Date.now() + '_' + Math.random().toString(36).substring(2,8) + '.' + file.name.split('.').pop();
-          const resized = await window._resizeImage(file, 1200, 0.8);
-          const finalPath = path.replace(/\.[^.]+$/, '.webp');
-          const uploadedUrl = await window._r2Upload('board-images', finalPath, resized);
-          imageUrls.push(uploadedUrl);
+          await window._r2Upload('board-images', path, file);
+          imageUrls.push(R2_PUBLIC_URL + '/board-images/' + path);
         }
       }
       const {data: existing} = await supaDb.from('buddy_missions').select('*').eq('team_id', teamId).eq('week_number', week).maybeSingle();
@@ -5855,7 +6227,77 @@
     } catch(e) { window.showMsg('삭제 실패', 'error'); }
   };
 
+  window._rouletteSpeed = 'fast';
+  window._rouletteCurrentAngle = 0;
+  window._rouletteSpinning = false;
+  window._rouletteRAF = null;
+
+  window._setRouletteSpeed = (speed) => {
+    window._rouletteSpeed = speed;
+    ['vfast','fast','normal','slow'].forEach(s => {
+      const btn = document.getElementById('rspd_' + s);
+      if (!btn) return;
+      if (s === speed) { btn.className = 'px-3 py-1.5 rounded-xl text-[10px] font-bold border transition-all bg-purple-500 text-white border-purple-500'; }
+      else { btn.className = 'px-3 py-1.5 rounded-xl text-[10px] font-bold border transition-all bg-white text-gray-500 border-gray-200 hover:bg-gray-50'; }
+    });
+  };
+
+  window._drawRouletteWheel = (angle) => {
+    const canvas = document.getElementById('rouletteCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const items = window._getRouletteItems();
+    const cx = canvas.width / 2, cy = canvas.height / 2, r = cx - 6;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 외곽 링
+    ctx.beginPath(); ctx.arc(cx, cy, r + 5, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ede9fe'; ctx.fill();
+
+    let startAngle = angle - Math.PI / 2;
+    items.forEach(item => {
+      const sa = (item.prob / 100) * 2 * Math.PI;
+      const ea = startAngle + sa;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, startAngle, ea); ctx.closePath();
+      ctx.fillStyle = item.color; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2; ctx.stroke();
+
+      // 텍스트 (너무 좁은 섹터는 스킵)
+      if (sa >= 0.18) {
+        const ta = startAngle + sa / 2;
+        const tr = r * 0.60;
+        ctx.save();
+        ctx.translate(cx + Math.cos(ta) * tr, cy + Math.sin(ta) * tr);
+        // 왼쪽 반구(cos<0)는 180도 뒤집어서 항상 읽기 쉽게
+        let rot = ta + Math.PI / 2;
+        if (Math.cos(ta) < 0) rot += Math.PI;
+        ctx.rotate(rot);
+        ctx.fillStyle = 'white'; ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 3;
+        const fs = sa > 0.5 ? 10 : sa > 0.3 ? 9 : 8;
+        ctx.font = `bold ${fs}px sans-serif`;
+        const maxLen = sa > 0.5 ? 8 : 6;
+        const label = item.name.length > maxLen ? item.name.slice(0, maxLen) : item.name;
+        ctx.fillText(label, 0, sa > 0.25 ? -3 : 0);
+        if (sa > 0.25) {
+          ctx.font = 'bold 7px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          ctx.fillText(item.prob + '%', 0, 9);
+        }
+        ctx.restore();
+      }
+      startAngle = ea;
+    });
+
+    // 중심 원
+    const grad = ctx.createRadialGradient(cx - 4, cy - 4, 2, cx, cy, 16);
+    grad.addColorStop(0, '#8b5cf6'); grad.addColorStop(1, '#4c1d95');
+    ctx.beginPath(); ctx.arc(cx, cy, 15, 0, 2 * Math.PI);
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+  };
+
   window._buddySpinRoulette = async (teamId, isConfirm) => {
+    if (window._rouletteSpinning) return;
     if (isConfirm && !confirm('⚠ 보상을 확정하시겠습니까? 한 번 확정하면 변경할 수 없습니다!')) return;
 
     const items = window._getRouletteItems();
@@ -5863,45 +6305,61 @@
     let cumulative = 0, result = items[0];
     for (const item of items) { cumulative += item.prob; if (rand < cumulative) { result = item; break; } }
 
+    // 결과 섹터 중심 각도 계산
+    let resultStartProb = 0;
+    for (const item of items) { if (item === result) break; resultStartProb += item.prob; }
+    const resultCenterOffset = ((resultStartProb + result.prob / 2) / 100) * 2 * Math.PI;
+
+    // 속도별 회전수/시간 설정
+    const speedMap = { vfast: {r: 25, d: 2200}, fast: {r: 18, d: 3500}, normal: {r: 13, d: 5000}, slow: {r: 8, d: 7000} };
+    const spd = speedMap[window._rouletteSpeed] || speedMap.fast;
+
+    // 목표 각도: N바퀴 + 결과 섹터가 포인터에 오는 위치
+    const startAngle = window._rouletteCurrentAngle;
+    const restAngle = -resultCenterOffset;
+    const startNorm = ((startAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const restNorm = ((restAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    let extra = restNorm - startNorm;
+    if (extra <= 0) extra += 2 * Math.PI;
+    const targetAngle = startAngle + 2 * Math.PI * spd.r + extra;
+
     const itemEl = document.getElementById('rouletteItemText');
     const valueEl = document.getElementById('rouletteValueText');
-    if (!itemEl) return;
+    if (itemEl) { itemEl.textContent = '🎰 돌리는 중...'; itemEl.style.color = '#9ca3af'; itemEl.className = 'text-xl font-black text-gray-300'; }
+    if (valueEl) valueEl.textContent = '';
 
-    // 슬롯머신 애니메이션
-    let spinCount = 0;
-    const totalSpins = 35 + Math.floor(Math.random() * 15);
+    window._rouletteSpinning = true;
+    if (window._rouletteRAF) cancelAnimationFrame(window._rouletteRAF);
 
-    await new Promise(resolve => {
-      const spin = () => {
-        const current = spinCount >= totalSpins ? result : items[Math.floor(Math.random() * items.length)];
-        itemEl.textContent = current.name;
-        itemEl.style.color = current.color;
-        if (valueEl) valueEl.textContent = current.value;
-        spinCount++;
-        if (spinCount <= totalSpins) {
-          const delay = spinCount < totalSpins * 0.5 ? 50 : spinCount < totalSpins * 0.75 ? 100 : spinCount < totalSpins * 0.9 ? 200 : 400;
-          setTimeout(spin, delay);
-        } else {
-          itemEl.textContent = '🎉 ' + result.name + ' 🎉';
-          itemEl.className = 'text-3xl font-black animate-pulse';
-          if (valueEl) valueEl.textContent = result.value + (isConfirm ? ' — 확정!' : ' — 연습');
-          resolve();
+    const startTime = performance.now();
+    const animate = (now) => {
+      const t = Math.min((now - startTime) / spd.d, 1);
+      const eased = 1 - Math.pow(1 - t, 4); // quartic ease-out
+      const cur = startAngle + (targetAngle - startAngle) * eased;
+      window._rouletteCurrentAngle = cur;
+      window._drawRouletteWheel(cur);
+
+      if (t < 1) {
+        window._rouletteRAF = requestAnimationFrame(animate);
+      } else {
+        window._rouletteSpinning = false;
+        window._rouletteCurrentAngle = targetAngle;
+        if (itemEl) { itemEl.textContent = '🎉 ' + result.name + ' 🎉'; itemEl.style.color = result.color; itemEl.className = 'text-xl font-black animate-pulse'; }
+        if (valueEl) valueEl.textContent = result.value + (isConfirm ? ' — 확정!' : ' — 연습');
+
+        if (isConfirm) {
+          supaDb.from('buddy_roulette').insert({team_id: teamId, result_item: result.name, result_value: result.value}).then(({error}) => {
+            if (error) { window.showMsg('저장 실패: ' + error.message, 'error'); return; }
+            supaDb.from('buddy_teams').update({status: 'completed'}).eq('id', teamId);
+            const btn = document.getElementById('rouletteConfirmBtn');
+            if (btn) { btn.disabled = true; btn.textContent = '✅ 확정 완료'; btn.className = 'px-6 py-3 bg-green-500 text-white rounded-2xl font-bold text-sm cursor-default'; }
+            window.showMsg('🎉 ' + result.name + ' (' + result.value + ') 확정!', 'success');
+            setTimeout(() => window._buddyDetail(teamId), 2000);
+          });
         }
-      };
-      spin();
-    });
-
-    if (isConfirm) {
-      try {
-        const {error} = await supaDb.from('buddy_roulette').insert({team_id: teamId, result_item: result.name, result_value: result.value});
-        if (error) throw error;
-        await supaDb.from('buddy_teams').update({status: 'completed'}).eq('id', teamId);
-        const btn = document.getElementById('rouletteConfirmBtn');
-        if (btn) { btn.disabled = true; btn.textContent = '✅ 확정 완료'; btn.className = 'px-6 py-3 bg-green-500 text-white rounded-2xl font-bold text-sm cursor-default'; }
-        window.showMsg('🎉 ' + result.name + ' (' + result.value + ') 확정!', 'success');
-        setTimeout(() => window._buddyDetail(teamId), 2000);
-      } catch(e) { window.showMsg('저장 실패: '+e.message, 'error'); }
-    }
+      }
+    };
+    requestAnimationFrame(animate);
   };
 
       window.renderGuildStatsUnified = (container) => {
@@ -6000,20 +6458,27 @@
 
       <!-- 길드별 인원 -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
-        <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-users mr-2 text-pink-400"></i>길드별 인원</h3>
-        <div class="space-y-2">
+        <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-users mr-2 text-pink-400"></i>길드별 인원 <span class="text-[9px] text-gray-400 font-bold ml-1">MAX 200명</span></h3>
+        <div class="space-y-2.5">
           ${guilds.map(g => {
+            const MAX_GUILD = 200;
             const cnt = guildCounts[g.name] || 0;
-            const pct = totalCount > 0 ? (cnt / totalCount * 100) : 0;
+            const pct = (cnt / MAX_GUILD * 100);
+            const isFull = cnt >= MAX_GUILD;
+            const isNearFull = cnt >= MAX_GUILD * 0.95;
             const colors = {'뚠카롱':'bg-pink-400','뚱카롱':'bg-rose-500','밤카롱':'bg-indigo-400','별카롱':'bg-amber-400','달카롱':'bg-blue-400','꿀카롱':'bg-orange-400'};
-            return `<div class="flex items-center gap-3">
-              <span class="text-[10px] font-bold text-gray-600 w-14 shrink-0">${g.name.replace('카롱','')}</span>
+            const barColor = isFull ? 'bg-red-500' : (colors[g.name]||'bg-pink-300');
+            return `<div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[10px] font-bold text-gray-600">${g.name}</span>
+                <span class="text-[10px] font-bold ${isFull ? 'text-red-500' : isNearFull ? 'text-amber-500' : 'text-gray-500'}">${cnt}<span class="text-gray-300">/${MAX_GUILD}</span> ${isFull ? '<i class="fas fa-exclamation-circle text-red-400 ml-0.5"></i>' : ''}</span>
+              </div>
               <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
-                <div class="h-full ${colors[g.name]||'bg-pink-300'} rounded-full flex items-center justify-end pr-2 transition-all" style="width:${Math.max(pct,5)}%">
-                  <span class="text-[9px] font-black text-white">${cnt}</span>
+                <div class="h-full ${barColor} rounded-full flex items-center ${pct > 15 ? 'justify-end pr-2' : 'justify-start pl-2'} transition-all" style="width:${Math.max(Math.min(pct,100),3)}%">
+                  <span class="text-[9px] font-black text-white">${pct.toFixed(0)}%</span>
                 </div>
               </div>
-              <span class="text-[9px] font-bold text-gray-400 w-10 text-right">${pct.toFixed(0)}%</span>
+              <div class="text-[8px] text-gray-400 mt-0.5 text-right">${isFull ? '정원 초과' : '잔여 ' + (MAX_GUILD - cnt) + '자리'}</div>
             </div>`;
           }).join('')}
         </div>
@@ -6026,7 +6491,7 @@
           <div class="space-y-1.5">
             ${topClasses.map(([cls, cnt], i) => `<div class="flex items-center gap-2">
               <span class="text-[10px] font-bold text-gray-500 w-4 text-right">${i+1}</span>
-              <span class="text-[10px] font-bold text-gray-700 w-16 truncate">${cls}</span>
+              <span class="text-[10px] font-bold text-gray-700 w-24 truncate" title="${cls}">${cls}</span>
               <div class="flex-1 bg-gray-100 rounded-full h-3.5 overflow-hidden">
                 <div class="h-full bg-purple-300 rounded-full transition-all" style="width:${(cnt/maxClassCount*100)}%"></div>
               </div>
@@ -6923,7 +7388,13 @@
    // 수로 면제 체크박스
    const exemptHtml = allRoleNames.map(rn => {
      const em = (roleDisplay[rn]||{}).emoji||'';
-     return '<label class="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100 cursor-pointer hover:bg-pink-50"><input type="checkbox" class="cfg-exempt-check custom-checkbox" value="'+rn+'" '+(suroExempt.includes(rn)?'checked':'')+'><span class="text-xs font-bold">'+em+' '+rn+'</span></label>';
+     const checked = suroExempt.includes(rn);
+     return '<label class="flex items-center gap-3 bg-gray-50 rounded-xl px-3 py-2 border border-gray-100 cursor-pointer hover:bg-pink-50 transition-all">'
+       +'<div class="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all '+(checked?'bg-pink-500 border-pink-500':'border-gray-300 bg-white')+'">'
+       +(checked?'<i class="fas fa-check text-white text-[9px]"></i>':'')
+       +'</div>'
+       +'<input type="checkbox" class="cfg-exempt-check sr-only" value="'+rn+'" '+(checked?'checked':'')+' onchange="this.closest(\'label\').querySelector(\'div\').className=\'w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all \'+(this.checked?\'bg-pink-500 border-pink-500\':\'border-gray-300 bg-white\');this.closest(\'label\').querySelector(\'i\')?this.closest(\'label\').querySelector(\'i\').className=(this.checked?\'fas fa-check text-white text-[9px]\':\'hidden\'):null">'
+       +'<span class="text-xs font-bold">'+em+' '+rn+'</span></label>';
    }).join('');
 
    // 직위 배정 규칙 (길드별 탭)
@@ -7040,7 +7511,7 @@
    +'<div class="space-y-1" id="cfgRoleList">'+rolesHtml+'</div></div>'
 
    +'<div class="mb-6"><h4 class="text-xs lg:text-sm text-gray-600 mb-2 flex items-center gap-2"><i class="fas fa-shield-alt text-pink-400 text-[10px]"></i>수로 면제 직위</h4>'
-   +'<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5">'+exemptHtml+'</div></div>'
+   +'<div class="flex flex-col gap-1">'+exemptHtml+'</div></div>'
 
    +'<div class="mb-6"><h4 class="text-xs lg:text-sm text-gray-600 mb-1 flex items-center gap-2"><i class="fas fa-magic text-pink-400 text-[10px]"></i>직위 커트라인 & 자동 배정</h4>'
    +'<p class="text-[8px] text-gray-400 mb-2">topN: 상위 N명, btmN: 하위 N명, 최소점수: 점수 구간</p>'
@@ -7116,40 +7587,6 @@
   };
 
   // 길드 로고 업로드
-  
-  // 이미지 리사이즈+압축 유틸 (maxWidth px, quality 0~1)
-  window._resizeImage = (file, maxWidth = 800, quality = 0.75) => {
-    return new Promise((resolve) => {
-      if (!file.type.startsWith('image/')) return resolve(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          // 이미 작으면 그대로
-          if (img.width <= maxWidth) {
-            // WebP 변환만
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width; canvas.height = img.height;
-            canvas.getContext('2d').drawImage(img, 0, 0);
-            canvas.toBlob(blob => resolve(blob ? new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), {type:'image/webp'}) : file), 'image/webp', quality);
-            return;
-          }
-          const ratio = maxWidth / img.width;
-          const canvas = document.createElement('canvas');
-          canvas.width = maxWidth;
-          canvas.height = Math.round(img.height * ratio);
-          const ctx = canvas.getContext('2d');
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          canvas.toBlob(blob => resolve(blob ? new File([blob], file.name.replace(/\.[^.]+$/, '.webp'), {type:'image/webp'}) : file), 'image/webp', quality);
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
   window._cfgUploadLogo = async (input) => {
     const file = input.files?.[0];
     if (!file) return;
@@ -7157,9 +7594,7 @@
     const ext = file.name.split('.').pop().toLowerCase();
     const safeName = 'guild_logo_' + Date.now() + '.' + ext;
     try {
-      const resized = await window._resizeImage(file, 200, 0.8);
-      const finalLogoName = safeName.replace(/\.[^.]+$/, '.webp');
-      const url = await window._r2Upload('guide-images', finalLogoName, resized);
+      const url = await window._r2Upload('guide-images', safeName, file);
       // SITE_CONFIG에 저장
       const cfg = { ...SITE_CONFIG, guildLogo: url };
       await supaDb.from('site_config').upsert({ id: 1, config: cfg });
@@ -8140,7 +8575,8 @@
    </tbody>
    </table>`;
 
-   container.addEventListener('keydown', (e) => {
+   if (container._suroKeyHandler) container.removeEventListener('keydown', container._suroKeyHandler);
+   container._suroKeyHandler = (e) => {
    if (e.key !== 'Tab') return;
    const el = document.activeElement;
    if (!el || !el.classList.contains('suro-score-input')) return;
@@ -8151,7 +8587,8 @@
    const nextInput = nextTr.querySelector('.suro-score-input');
    if (nextInput) { nextInput.focus(); nextInput.select(); }
    }
-   });
+   };
+   container.addEventListener('keydown', container._suroKeyHandler);
   };
 
   window._suroInputPage = (delta) => {
@@ -9847,6 +10284,10 @@
    });
   };
 
+  window._homeGuideCache = null;
+  window._homeGuideCacheTime = 0;
+  const HOME_CACHE_TTL = 60000; // 1분 캐시
+
   window.renderHome = async (container) => {
    const guilds = SITE_CONFIG?.guilds || [{name:'뚠카롱'},{name:'뚱카롱'},{name:'밤카롱'},{name:'별카롱'},{name:'달카롱'},{name:'꿀카롱'}];
    const guildColors = {'뚠카롱':'#ec4899','뚱카롱':'#e11d48','밤카롱':'#6366f1','별카롱':'#ca8a04','달카롱':'#2563eb','꿀카롱':'#d97706'};
@@ -9861,19 +10302,30 @@
    };
 
    let noticeHtml = '', introHtml = '', ranksHtml = '', linksHtml = '';
-   const guideData = {};
-   try {
-   const { data: allGuides } = await supaDb.from('guide_pages').select('*').order('id');
-   if (allGuides) allGuides.forEach(p => {
-     let html = replacePlaceholders(p.content || '');
-     // 이미지에 lazy loading 추가
-     html = html.replace(/<img /g, '<img loading="lazy" ');
-     guideData[p.slug] = html;
-   });
+   let guideData;
+   const now = Date.now();
+   if (window._homeGuideCache && (now - window._homeGuideCacheTime) < HOME_CACHE_TTL) {
+     guideData = {};
+     Object.entries(window._homeGuideCache).forEach(([slug, content]) => {
+       guideData[slug] = replacePlaceholders(content);
+     });
+   } else {
+     guideData = {};
+     try {
+       const { data: allGuides } = await supaDb.from('guide_pages').select('*').order('id');
+       if (allGuides) {
+         window._homeGuideCache = {};
+         allGuides.forEach(p => {
+           window._homeGuideCache[p.slug] = p.content || '';
+           guideData[p.slug] = replacePlaceholders(p.content || '');
+         });
+         window._homeGuideCacheTime = now;
+       }
+     } catch(e) { console.error('Guide load error:', e); }
+   }
    introHtml = guideData['intro'] || '';
    ranksHtml = guideData['ranks'] || '';
    linksHtml = guideData['links'] || '';
-   } catch(e) { console.error('Guide load error:', e); }
 
    const defaultHomeTabs = [
      { slug: 'notice1', label: '공지 1', icon: 'fa-bullhorn' },
@@ -9919,15 +10371,10 @@
 
    ${visibleTabs.length > 0 ? `<div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
    <div class="flex items-center gap-1 p-3 border-b border-gray-100 dark:border-gray-700 overflow-x-auto no-scrollbar">
-     ${visibleTabs.map(t => `<button onclick="window._homeGuideTab='${t.slug}';document.querySelectorAll('.hg-tab-btn').forEach(b=>b.className=b.className.replace(/bg-pink-500 text-white shadow/g,'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'));this.className=this.className.replace(/bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400/g,'bg-pink-500 text-white shadow');document.querySelectorAll('.hg-tab-content').forEach(c=>c.classList.add('hidden'));const _tc=document.getElementById('hg-${t.slug}');if(_tc){_tc.classList.remove('hidden');_tc.querySelectorAll('img[data-src]').forEach(i=>{i.src=i.dataset.src;i.removeAttribute('data-src')})}" class="hg-tab-btn px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shrink-0 ${t.slug===firstTab?'bg-pink-500 text-white shadow':'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'} hover:opacity-90"><i class="fas ${t.icon} mr-1"></i>${t.label}</button>`).join('')}
+     ${visibleTabs.map(t => `<button onclick="window._homeGuideTab='${t.slug}';document.querySelectorAll('.hg-tab-btn').forEach(b=>b.className=b.className.replace(/bg-pink-500 text-white shadow/g,'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'));this.className=this.className.replace(/bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400/g,'bg-pink-500 text-white shadow');document.querySelectorAll('.hg-tab-content').forEach(c=>c.classList.add('hidden'));document.getElementById('hg-${t.slug}')?.classList.remove('hidden')" class="hg-tab-btn px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shrink-0 ${t.slug===firstTab?'bg-pink-500 text-white shadow':'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'} hover:opacity-90"><i class="fas ${t.icon} mr-1"></i>${t.label}</button>`).join('')}
      <span class="ml-auto shrink-0">${editBtn}</span>
    </div>
-   ${visibleTabs.map(t => {
-     let content = guideData[t.slug] || '';
-     // 숨겨진 탭은 img src → data-src (로드 지연)
-     if (t.slug !== firstTab) content = content.replace(/<img([^>]*)src="([^"]+)"/g, '<img$1data-src="$2" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"');
-     return '<div id="hg-'+t.slug+'" class="hg-tab-content p-5 '+(t.slug!==firstTab?'hidden':'')+'"><div class="home-guide-content">'+content+'</div></div>';
-   }).join('')}
+   ${visibleTabs.map(t => `<div id="hg-${t.slug}" class="hg-tab-content p-5 ${t.slug!==firstTab?'hidden':''}"><div class="home-guide-content" id="hgc-${t.slug}"></div></div>`).join('')}
    </div>` : ''}
 
    ${eventsHtml ? `<div class="bg-white dark:bg-gray-800 rounded-2xl p-5">
@@ -9935,8 +10382,18 @@
    <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">${eventsHtml}</div>
    </div>` : ''}
    </div>`;
+   // 가이드 콘텐츠를 Tailwind CDN MutationObserver 일시 차단 후 주입 → 재컴파일 방지
+   const _tw = window.tailwind;
+   if (_tw && _tw.config) {
+     const _obs = document.querySelector('style[data-tailwind]');
+     // Tailwind CDN 내부 observer를 직접 건드리기 어려우므로,
+     // 콘텐츠 주입 후 스타일 재적용이 안정적으로 이뤄지도록 setTimeout 사용
+   }
    setTimeout(() => {
-   // border 후처리 제거됨 (가이드 콘텐츠 스타일 보존)
+     visibleTabs.forEach(t => {
+       const el = document.getElementById('hgc-' + t.slug);
+       if (el && !el.innerHTML) el.innerHTML = guideData[t.slug] || '';
+     });
    }, 50);
   };
 
