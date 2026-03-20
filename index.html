@@ -5390,7 +5390,7 @@
     const getShortPeriod = (h) => { const m = h.match(/(\d{2}-\d{2}-\d{2}\([^)]+\))\s*~/); return m ? m[1] : h.substring(0, 15); };
 
     container.innerHTML = `
-    <div class="flex flex-col gap-2 fade-in h-full overflow-y-auto no-scrollbar">
+    <div class="flex flex-col gap-2 fade-in h-full overflow-y-auto no-scrollbar pb-20 lg:pb-0">
       <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-3 text-white">
         <div class="flex items-center gap-2">
           <span class="text-xl shrink-0">⚔️</span>
