@@ -10831,7 +10831,7 @@ function M(c){const e=c.channels();let l=R,u="",w=[];for(let t=0;t<12;t++)w.push
        listEl.innerHTML = window._ocrAccumulatedRecords.map(r =>
         `<tr class="border-t border-gray-100">
          <td class="p-1.5 text-gray-700">${r.name}</td>
-         <td class="p-1.5 text-right font-mono text-emerald-600">${r.week.toLocaleString()}</td>
+         <td class="p-1.5 text-right font-mono text-emerald-600">${r.culv.toLocaleString()}</td>
         </tr>`
        ).join('');
       }
@@ -10906,7 +10906,7 @@ function M(c){const e=c.channels();let l=R,u="",w=[];for(let t=0;t<12;t++)w.push
    setTimeout(() => {
     const textarea = document.getElementById('suroPasteText');
     if (textarea) {
-     textarea.value = records.map(r => `${r.name}\t${r.week}`).join('\n');
+     textarea.value = records.map(r => `${r.name}\t${r.culv}`).join('\n');
      window.parseSuroPaste();
     }
    }, 100);
@@ -10961,7 +10961,7 @@ function M(c){const e=c.channels();let l=R,u="",w=[];for(let t=0;t<12;t++)w.push
     <table class="w-full text-[10px]">
     <thead class="bg-gray-100 sticky top-0"><tr>
     <th class="p-1.5 text-left text-gray-400">닉네임</th>
-    <th class="p-1.5 text-right text-gray-400">주간 점수</th>
+    <th class="p-1.5 text-right text-gray-400">지하수로 점수</th>
     </tr></thead>
     <tbody id="ocrRecordList"></tbody>
     </table>
