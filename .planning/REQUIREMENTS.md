@@ -122,12 +122,67 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (Populated during roadmap creation) | | |
+| FOUND-01 | Phase 1 — Foundation & Auth | Not Started |
+| FOUND-02 | Phase 1 — Foundation & Auth | Not Started |
+| FOUND-03 | Phase 1 — Foundation & Auth | Not Started |
+| FOUND-04 | Phase 1 — Foundation & Auth | Not Started |
+| FOUND-05 | Phase 1 — Foundation & Auth | Not Started |
+| FOUND-06 | Phase 1 — Foundation & Auth | Not Started |
+| FOUND-07 | Phase 1 — Foundation & Auth | Not Started |
+| AUTH-01 | Phase 1 — Foundation & Auth | Not Started |
+| AUTH-02 | Phase 1 — Foundation & Auth | Not Started |
+| AUTH-03 | Phase 1 — Foundation & Auth | Not Started |
+| AUTH-04 | Phase 1 — Foundation & Auth | Not Started |
+| AUTH-05 | Phase 1 — Foundation & Auth | Not Started |
+| MEMB-01 | Phase 2 — Members & Guild Stats | Not Started |
+| MEMB-02 | Phase 2 — Members & Guild Stats | Not Started |
+| MEMB-03 | Phase 2 — Members & Guild Stats | Not Started |
+| MEMB-04 | Phase 2 — Members & Guild Stats | Not Started |
+| MEMB-05 | Phase 2 — Members & Guild Stats | Not Started |
+| STAT-01 | Phase 2 — Members & Guild Stats | Not Started |
+| STAT-02 | Phase 2 — Members & Guild Stats | Not Started |
+| STAT-03 | Phase 2 — Members & Guild Stats | Not Started |
+| STAT-04 | Phase 2 — Members & Guild Stats | Not Started |
+| SCORE-01 | Phase 3 — Scores & Promotion | Not Started |
+| SCORE-02 | Phase 3 — Scores & Promotion | Not Started |
+| SCORE-03 | Phase 3 — Scores & Promotion | Not Started |
+| SCORE-04 | Phase 3 — Scores & Promotion | Not Started |
+| SCORE-05 | Phase 3 — Scores & Promotion | Not Started |
+| PROMO-01 | Phase 3 — Scores & Promotion | Not Started |
+| PROMO-02 | Phase 3 — Scores & Promotion | Not Started |
+| PROMO-03 | Phase 3 — Scores & Promotion | Not Started |
+| PROMO-04 | Phase 3 — Scores & Promotion | Not Started |
+| ANAL-01 | Phase 4 — Analysis & Rewards | Not Started |
+| ANAL-02 | Phase 4 — Analysis & Rewards | Not Started |
+| ANAL-03 | Phase 4 — Analysis & Rewards | Not Started |
+| ANAL-04 | Phase 4 — Analysis & Rewards | Not Started |
+| ANAL-05 | Phase 4 — Analysis & Rewards | Not Started |
+| REWARD-01 | Phase 4 — Analysis & Rewards | Not Started |
+| REWARD-02 | Phase 4 — Analysis & Rewards | Not Started |
+| REWARD-03 | Phase 4 — Analysis & Rewards | Not Started |
+| BOARD-01 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BOARD-02 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BOARD-03 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BOARD-04 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BOARD-05 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BUDDY-01 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BUDDY-02 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| BUDDY-03 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| CAL-01 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| CAL-02 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| CAL-03 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| CAL-04 | Phase 5 — Board, Buddy & Calendar | Not Started |
+| OCR-01 | Phase 6 — OCR & Polish | Not Started |
+| OCR-02 | Phase 6 — OCR & Polish | Not Started |
+| OCR-03 | Phase 6 — OCR & Polish | Not Started |
+| OCR-04 | Phase 6 — OCR & Polish | Not Started |
 
 **Coverage:**
-- v1 requirements: 47 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 47 ⚠️
+- v1 requirements: 54 total (FOUND×7, AUTH×5, MEMB×5, SCORE×5, ANAL×5, PROMO×4, STAT×4, REWARD×3, BOARD×5, BUDDY×3, CAL×4, OCR×4)
+- Mapped to phases: 54
+- Unmapped: 0 ✓
+
+> Note: The original placeholder stated 47; actual count by enumeration is 54. All requirements are mapped.
 
 ---
 *Requirements defined: 2026-03-24*
