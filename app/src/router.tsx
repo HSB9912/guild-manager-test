@@ -3,7 +3,17 @@ import { createBrowserRouter } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 
 const Lazy = (factory: () => Promise<{ default: React.ComponentType }>) => {
-  const Comp = lazy(factory)
+  const Comp = lazy(() =>
+    factory().catch(() => {
+      // New build deployed — old chunk no longer exists. Reload once.
+      const key = 'chunk-reload'
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, '1')
+        window.location.reload()
+      }
+      return factory() // fallback attempt
+    })
+  )
   return (
     <Suspense fallback={<div className="flex justify-center py-20 text-gray-400 font-bold text-sm">로딩 중...</div>}>
       <Comp />
