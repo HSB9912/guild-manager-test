@@ -3,7 +3,7 @@ import { useMembers, useUpdateMember } from '@/hooks/useMembers'
 import { usePeriods, useScores, buildScoreMap } from '@/hooks/useScores'
 import { useSiteConfig } from '@/hooks/useSiteConfig'
 import { useToast } from '@/components/ui/Toast'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { Save, Wand2, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
@@ -22,6 +22,16 @@ export default function RoleAssignPage() {
   const { data: config } = useSiteConfig()
   const { data: periods = [] } = usePeriods()
   const { data: scores = [] } = useScores()
+
+  // Raw config for autoRankRules & suroExempt
+  const { data: rawConfig } = useQuery({
+    queryKey: ['site-config-raw-for-roles'],
+    queryFn: async () => {
+      const { data } = await supabase.from('site_config').select('config').eq('id', 1).maybeSingle()
+      return (data?.config || {}) as Record<string, unknown>
+    },
+    staleTime: 1000 * 60 * 5,
+  })
   const toast = useToast((s) => s.show)
   const updateMember = useUpdateMember()
   const qc = useQueryClient()
@@ -86,9 +96,12 @@ export default function RoleAssignPage() {
 
   /* ─── Auto role assignment ─── */
   const handleAutoAssign = () => {
-    const excludeRoles = selectedGuild === '뚠카롱'
-      ? ['마카롱', '다쿠아즈']
-      : ['마카롱', '다쿠아즈', '아인슈페너', '부팬케이크', '부케이크', '수플레', '반죽(휴면)']
+    // Get exempt roles from settings
+    const suroExempt = (rawConfig?.suroExempt as string[]) || []
+    const excludeRoles = [
+      '마카롱', '다쿠아즈',
+      ...suroExempt,
+    ]
 
     const targets = members.filter(
       (m) => m.guild === selectedGuild && !excludeRoles.includes(m.role) && m.isMain !== false
@@ -116,9 +129,8 @@ export default function RoleAssignPage() {
     const mainRankMap = new Map<string, number>()
     mainOnly.forEach((m, idx) => mainRankMap.set(m.name, idx))
 
-    // Get rules from config or use defaults
-    const rawConfig = (config as any) || {}
-    const autoRankRules = (rawConfig as any).autoRankRules?.[selectedGuild] || [
+    // Get rules from settings page config (자동 직위 규칙 탭)
+    const autoRankRules = (rawConfig?.autoRankRules as Record<string, any[]>)?.[selectedGuild] || [
       { topN: 5, rank: '크라운' },
       { min: 130000, rank: '파르페' },
       { min: 95000, rank: '티라미슈' },
