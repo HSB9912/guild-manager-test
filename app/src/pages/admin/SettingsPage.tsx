@@ -813,12 +813,17 @@ function AutoRankRulesSettings({
   const cfg = configRow || {}
   const guilds = (cfg.guilds as GuildConfig[]) || []
   const existingRules = (cfg.autoRankRules as Record<string, AutoRankRule[]>) || {}
+  const existingExempt = (cfg.autoRankExemptRoles as Record<string, string[]>) || {}
+  const allRanks = (cfg.ranks as Record<string, string[]>) || {}
+  const allRoleNames = [...new Set(Object.values(allRanks).flat())]
 
   const [selectedGuild, setSelectedGuild] = useState<string>('')
   const [rules, setRules] = useState<Record<string, AutoRankRule[]>>({})
+  const [exemptRoles, setExemptRoles] = useState<Record<string, string[]>>({})
 
   useEffect(() => {
     setRules(existingRules)
+    setExemptRoles(existingExempt)
     if (!selectedGuild && guilds.length > 0) {
       setSelectedGuild(guilds[0].name)
     }
@@ -862,7 +867,7 @@ function AutoRankRulesSettings({
         min: r.min !== '' && r.min !== undefined ? Number(r.min) : undefined,
       })).filter((r) => r.rank.trim() !== '') as AutoRankRule[]
     }
-    const newCfg = { ...cfg, autoRankRules: cleaned }
+    const newCfg = { ...cfg, autoRankRules: cleaned, autoRankExemptRoles: exemptRoles }
     saveConfig.mutate(newCfg)
   }
 
@@ -981,6 +986,47 @@ function AutoRankRulesSettings({
               <button onClick={addRule} className={cn(btnSecondary, 'text-xs')}>
                 <Plus size={12} /> 규칙 추가
               </button>
+            </div>
+
+            {/* Exempt roles per guild */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <h4 className="font-bold text-sm text-gray-700 mb-2 flex items-center gap-1.5">
+                <ShieldOff size={14} className="text-amber-500" />
+                자동산정 면제 직위 ({selectedGuild})
+              </h4>
+              <p className="text-xs text-gray-400 mb-3">체크된 직위는 자동 직위 산정에서 제외됩니다 (간부 등)</p>
+              <div className="flex flex-wrap gap-2">
+                {allRoleNames.length > 0 ? allRoleNames.map((rn) => {
+                  const checked = (exemptRoles[selectedGuild] || []).includes(rn)
+                  return (
+                    <label
+                      key={rn}
+                      className={cn(
+                        'flex items-center gap-2 px-4 py-2.5 rounded-xl border cursor-pointer transition-all text-sm font-bold',
+                        checked
+                          ? 'bg-amber-50 border-amber-200 text-amber-700'
+                          : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100'
+                      )}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          const current = exemptRoles[selectedGuild] || []
+                          const next = e.target.checked
+                            ? [...current, rn]
+                            : current.filter((r) => r !== rn)
+                          setExemptRoles((prev) => ({ ...prev, [selectedGuild]: next }))
+                        }}
+                        className="w-4 h-4 rounded accent-amber-500"
+                      />
+                      {rn}
+                    </label>
+                  )
+                }) : (
+                  <p className="text-xs text-gray-300">직위 데이터가 없습니다</p>
+                )}
+              </div>
             </div>
           </>
         ) : (

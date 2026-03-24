@@ -96,19 +96,26 @@ export default function RoleAssignPage() {
 
   /* ─── Auto role assignment ─── */
   const handleAutoAssign = () => {
-    // Get exempt roles from settings
+    // Get rules from settings (설정 > 자동 직위 규칙)
+    const autoRankRulesAll = (rawConfig?.autoRankRules as Record<string, any[]>) || {}
+    const autoRankRules = autoRankRulesAll[selectedGuild] || []
+
+    if (autoRankRules.length === 0) {
+      toast(`"${selectedGuild}" 길드의 자동 직위 규칙이 설정되지 않았습니다.\n설정 > 자동 직위 규칙 탭에서 먼저 규칙을 추가해주세요.`, 'error')
+      return
+    }
+
+    // Get exempt roles from settings (설정 > 자동 직위 규칙 > 면제 직위 + 수로 면제)
+    const autoExemptRoles = (rawConfig?.autoRankExemptRoles as Record<string, string[]>)?.[selectedGuild] || []
     const suroExempt = (rawConfig?.suroExempt as string[]) || []
-    const excludeRoles = [
-      '마카롱', '다쿠아즈',
-      ...suroExempt,
-    ]
+    const excludeRoles = [...new Set([...autoExemptRoles, ...suroExempt])]
 
     const targets = members.filter(
       (m) => m.guild === selectedGuild && !excludeRoles.includes(m.role) && m.isMain !== false
     )
 
     if (targets.length === 0) {
-      toast('부여 대상이 없습니다.', 'error')
+      toast('부여 대상이 없습니다. (면제 직위 확인)', 'error')
       return
     }
 
@@ -128,17 +135,6 @@ export default function RoleAssignPage() {
     const mainOnly = scored.filter((m) => m.isMain !== false)
     const mainRankMap = new Map<string, number>()
     mainOnly.forEach((m, idx) => mainRankMap.set(m.name, idx))
-
-    // Get rules from settings page config (자동 직위 규칙 탭)
-    const autoRankRules = (rawConfig?.autoRankRules as Record<string, any[]>)?.[selectedGuild] || [
-      { topN: 5, rank: '크라운' },
-      { min: 130000, rank: '파르페' },
-      { min: 95000, rank: '티라미슈' },
-      { min: 72000, rank: '크로칸슈' },
-      { min: 50000, rank: '롤케이크' },
-      { min: 38000, rank: '팬케이크' },
-      { min: 0, rank: '스콘' },
-    ]
 
     const topNRules = autoRankRules
       .filter((r: any) => r.topN > 0)
