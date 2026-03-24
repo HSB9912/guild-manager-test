@@ -14,7 +14,7 @@ export function MobileTabBar() {
   const { setSidebarOpen } = useUIStore()
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[500] bg-white border-t border-gray-200 safe-bottom">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[500] bg-white border-t border-gray-200" style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}>
       <div className="flex justify-around items-center h-14">
         {TABS.map(({ to, icon: Icon, label }) => (
           <NavLink

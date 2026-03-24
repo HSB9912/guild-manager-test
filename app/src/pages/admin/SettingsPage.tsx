@@ -896,64 +896,79 @@ function AutoRankRulesSettings({
               ))}
             </div>
 
-            {/* Rules table header */}
-            <div className="grid grid-cols-[60px_60px_70px_1fr_1fr_36px] gap-2 px-3 mb-1.5">
-              <span className="text-xs text-gray-400 font-bold">Top N</span>
-              <span className="text-xs text-gray-400 font-bold">Bottom N</span>
-              <span className="text-xs text-gray-400 font-bold">최소 점수</span>
-              <span className="text-xs text-gray-400 font-bold">직위명</span>
-              <span className="text-xs text-gray-400 font-bold">비고</span>
-              <span />
-            </div>
-
-            {/* Rules rows */}
-            <div className="space-y-1.5">
+            {/* Rules - Card layout */}
+            <div className="space-y-3">
               {currentRules.map((rule, ri) => (
                 <div
                   key={ri}
-                  className="grid grid-cols-[60px_60px_70px_1fr_1fr_36px] gap-2 items-center bg-gray-50 rounded-xl px-3 py-2 border border-gray-100"
+                  className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-indigo-200 transition-colors relative group"
                 >
-                  <input
-                    type="number"
-                    placeholder="-"
-                    value={rule.topN ?? ''}
-                    onChange={(e) => updateRule(ri, 'topN', e.target.value === '' ? '' : Number(e.target.value))}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-indigo-300 transition-colors text-center"
-                  />
-                  <input
-                    type="number"
-                    placeholder="-"
-                    value={rule.bottomN ?? ''}
-                    onChange={(e) => updateRule(ri, 'bottomN', e.target.value === '' ? '' : Number(e.target.value))}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-indigo-300 transition-colors text-center"
-                  />
-                  <input
-                    type="number"
-                    placeholder="-"
-                    value={rule.min ?? ''}
-                    onChange={(e) => updateRule(ri, 'min', e.target.value === '' ? '' : Number(e.target.value))}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-indigo-300 transition-colors text-center"
-                  />
-                  <input
-                    type="text"
-                    placeholder="직위명"
-                    value={rule.rank}
-                    onChange={(e) => updateRule(ri, 'rank', e.target.value)}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-indigo-300 transition-colors"
-                  />
-                  <input
-                    type="text"
-                    placeholder="메모 (선택)"
-                    value={rule.note || ''}
-                    onChange={(e) => updateRule(ri, 'note', e.target.value)}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500 outline-none focus:border-indigo-300 transition-colors"
-                  />
+                  {/* Delete button */}
                   <button
                     onClick={() => removeRule(ri)}
-                    className="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors"
+                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors opacity-50 group-hover:opacity-100"
                   >
-                    <Trash2 size={12} />
+                    <Trash2 size={14} />
                   </button>
+
+                  {/* Top row: rank name + badge */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 font-black text-sm">
+                      {ri + 1}
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="직위명을 입력하세요"
+                      value={rule.rank}
+                      onChange={(e) => updateRule(ri, 'rank', e.target.value)}
+                      className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                    />
+                  </div>
+
+                  {/* Condition fields - 3 column grid */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs text-gray-400 font-bold mb-1.5 block">Top N (상위 N명)</label>
+                      <input
+                        type="number"
+                        placeholder="미사용"
+                        value={rule.topN ?? ''}
+                        onChange={(e) => updateRule(ri, 'topN', e.target.value === '' ? '' : Number(e.target.value))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 font-bold mb-1.5 block">Bottom N (하위 N명)</label>
+                      <input
+                        type="number"
+                        placeholder="미사용"
+                        value={rule.bottomN ?? ''}
+                        onChange={(e) => updateRule(ri, 'bottomN', e.target.value === '' ? '' : Number(e.target.value))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 font-bold mb-1.5 block">최소 점수</label>
+                      <input
+                        type="number"
+                        placeholder="미사용"
+                        value={rule.min ?? ''}
+                        onChange={(e) => updateRule(ri, 'min', e.target.value === '' ? '' : Number(e.target.value))}
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Note field */}
+                  <div className="mt-3">
+                    <input
+                      type="text"
+                      placeholder="메모 (선택사항)"
+                      value={rule.note || ''}
+                      onChange={(e) => updateRule(ri, 'note', e.target.value)}
+                      className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-500 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
