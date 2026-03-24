@@ -331,6 +331,38 @@ function PasteModal({
   const [parsed, setParsed] = useState<ParsedEntry[] | null>(null)
   const [skipped, setSkipped] = useState<{ line: number; text: string; reason: string }[]>([])
 
+  // Levenshtein distance for fuzzy matching
+  const levenshtein = (a: string, b: string): number => {
+    const m = a.length, n = b.length
+    const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0))
+    for (let i = 0; i <= m; i++) dp[i][0] = i
+    for (let j = 0; j <= n; j++) dp[0][j] = j
+    for (let i = 1; i <= m; i++)
+      for (let j = 1; j <= n; j++)
+        dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    return dp[m][n]
+  }
+
+  const findSimilarMember = (name: string) => {
+    const lower = name.toLowerCase()
+    let best: { id: string; name: string; dist: number } | null = null
+    for (const m of members) {
+      const ml = m.name.toLowerCase()
+      // Exact substring match
+      if (ml.includes(lower) || lower.includes(ml)) return { ...m, dist: 0 }
+      const dist = levenshtein(lower, ml)
+      const maxLen = Math.max(lower.length, ml.length)
+      // Allow up to 30% difference
+      if (dist <= Math.ceil(maxLen * 0.3) && (!best || dist < best.dist)) {
+        best = { id: m.id, name: m.name, dist }
+      }
+    }
+    return best
+  }
+
+  // Track manual overrides for unmatched entries
+  const [manualMatches, setManualMatches] = useState<Record<number, string>>({})
+
   const handleParse = () => {
     if (!text.trim()) return
     const lines = text.split('\n').filter((l) => l.trim())
@@ -361,10 +393,20 @@ function PasteModal({
 
     setParsed(results)
     setSkipped(skip)
+    setManualMatches({})
   }
 
   const matched = parsed?.filter((p) => p.member) || []
   const unmatched = parsed?.filter((p) => !p.member) || []
+
+  // Build suggestions for unmatched entries
+  const suggestions = useMemo(() => {
+    const map: Record<number, { id: string; name: string; dist: number } | null> = {}
+    unmatched.forEach((p, i) => {
+      map[i] = findSimilarMember(p.name)
+    })
+    return map
+  }, [unmatched, members])
 
   return (
     <div
@@ -420,58 +462,127 @@ function PasteModal({
           {/* Preview */}
           {parsed && (
             <div className="space-y-3">
-              <div className="flex gap-2 flex-wrap text-[10px]">
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100">
-                  매칭 {matched.length}명
+              <div className="flex gap-2 flex-wrap text-xs">
+                <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100 font-bold">
+                  ✓ 매칭 {matched.length}명
                 </span>
-                <span className="px-3 py-1 bg-red-50 text-red-500 rounded-lg border border-red-100">
-                  미매칭 {unmatched.length}명
+                <span className="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg border border-amber-100 font-bold">
+                  ? 미매칭 {unmatched.length}명
                 </span>
                 {skipped.length > 0 && (
-                  <span className="px-3 py-1 bg-gray-50 text-gray-400 rounded-lg border border-gray-100">
+                  <span className="px-3 py-1.5 bg-gray-50 text-gray-400 rounded-lg border border-gray-100 font-bold">
                     건너뜀 {skipped.length}건
                   </span>
                 )}
               </div>
 
+              {/* Matched section */}
               {matched.length > 0 && (
-                <div className="bg-gray-50 rounded-xl p-3 max-h-48 overflow-y-auto">
-                  <table className="w-full text-[10px]">
-                    <thead>
-                      <tr className="text-gray-400 font-bold">
-                        <th className="text-left py-1">닉네임</th>
-                        <th className="text-right py-1">점수</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {matched.map((p, i) => (
-                        <tr key={i} className="border-t border-gray-100">
-                          <td className="py-1 font-bold text-gray-800">{p.name}</td>
-                          <td className="py-1 text-right font-mono text-indigo-600">
-                            {p.score.toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="border border-emerald-200 rounded-xl overflow-hidden">
+                  <div className="px-3 py-2 bg-emerald-50 text-xs font-bold text-emerald-700 flex items-center gap-1">
+                    ✓ 매칭 완료 ({matched.length}명)
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    <table className="w-full text-xs">
+                      <tbody className="divide-y divide-gray-50">
+                        {matched.map((p, i) => (
+                          <tr key={i} className="hover:bg-emerald-50/30">
+                            <td className="px-3 py-1.5 font-bold text-gray-800">{p.name}</td>
+                            <td className="px-3 py-1.5 text-right font-mono font-bold text-emerald-600">
+                              {p.score.toLocaleString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
+              {/* Unmatched section with fuzzy suggestions */}
               {unmatched.length > 0 && (
-                <div className="bg-red-50 rounded-xl p-3 text-[10px] text-red-500 font-bold">
-                  미매칭: {unmatched.map((p) => p.name).join(', ')}
+                <div className="border border-amber-200 rounded-xl overflow-hidden">
+                  <div className="px-3 py-2 bg-amber-50 text-xs font-bold text-amber-700 flex items-center gap-1">
+                    ⚠ 미매칭 — 닉네임 추정 ({unmatched.length}명)
+                  </div>
+                  <div className="divide-y divide-gray-50">
+                    {unmatched.map((p, ui) => {
+                      const suggestion = suggestions[ui]
+                      const manualId = manualMatches[ui]
+                      return (
+                        <div key={ui} className="px-3 py-2.5 flex items-center gap-2 flex-wrap">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-red-500 text-xs line-through">{p.name}</span>
+                              <span className="font-mono font-bold text-gray-600 text-xs">{p.score.toLocaleString()}</span>
+                            </div>
+                            {suggestion && !manualId && (
+                              <div className="mt-1 flex items-center gap-1.5">
+                                <span className="text-[10px] text-amber-500 font-bold">추정:</span>
+                                <button
+                                  onClick={() => setManualMatches((prev) => ({ ...prev, [ui]: suggestion.id }))}
+                                  className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg hover:bg-indigo-100 transition-colors"
+                                >
+                                  {suggestion.name} (유사도 {Math.round((1 - suggestion.dist / Math.max(p.name.length, suggestion.name.length)) * 100)}%)
+                                </button>
+                              </div>
+                            )}
+                            {manualId && (
+                              <div className="mt-1 flex items-center gap-1.5">
+                                <span className="text-[10px] text-emerald-500 font-bold">→ {members.find((m) => m.id === manualId)?.name}</span>
+                                <button
+                                  onClick={() => setManualMatches((prev) => { const n = { ...prev }; delete n[ui]; return n })}
+                                  className="text-[10px] text-red-400 hover:text-red-600"
+                                >✕ 취소</button>
+                              </div>
+                            )}
+                          </div>
+                          {/* Manual select dropdown */}
+                          {!manualId && (
+                            <select
+                              value=""
+                              onChange={(e) => {
+                                if (e.target.value) setManualMatches((prev) => ({ ...prev, [ui]: e.target.value }))
+                              }}
+                              className="text-[10px] bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 outline-none w-32"
+                            >
+                              <option value="">직접 선택</option>
+                              {members.map((m) => (
+                                <option key={m.id} value={m.id}>{m.name}</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {skipped.length > 0 && (
+                <div className="bg-gray-50 rounded-xl p-3 text-[10px] text-gray-400 font-bold">
+                  건너뜀: {skipped.map((s) => `${s.text} (${s.reason})`).join(', ')}
                 </div>
               )}
 
               <button
                 onClick={() => {
-                  onApply(matched, period)
+                  // Combine matched + manually matched unmatched entries
+                  const finalResults = [...matched]
+                  unmatched.forEach((p, ui) => {
+                    const mid = manualMatches[ui]
+                    if (mid) {
+                      const m = members.find((x) => x.id === mid)
+                      if (m) finalResults.push({ ...p, member: { id: m.id, name: m.name } })
+                    }
+                  })
+                  onApply(finalResults, period)
                   onClose()
                 }}
-                disabled={matched.length === 0}
+                disabled={matched.length === 0 && Object.keys(manualMatches).length === 0}
                 className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-xs hover:bg-emerald-600 disabled:opacity-50 transition-all shadow-lg"
               >
-                {matched.length}명 점수 반영
+                {matched.length + Object.keys(manualMatches).length}명 점수 반영
               </button>
             </div>
           )}
