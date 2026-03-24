@@ -130,7 +130,7 @@ export default function RewardsPage() {
       if (!map.has(p.key)) map.set(p.key, [])
       map.get(p.key)!.push(h)
     })
-    return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]))
+    return [...map.entries()].sort((a, b) => b[0] < a[0] ? -1 : b[0] > a[0] ? 1 : 0)
   }, [suroHeaders])
 
   const [selectedQuarterIdx, setSelectedQuarterIdx] = useState(0)

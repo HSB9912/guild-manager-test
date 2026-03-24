@@ -84,12 +84,12 @@ export default function MembersPage() {
       if (sortKey === 'mainInfo') {
         const av = a.isMain ? a.name : (a.mainCharName || '')
         const bv = b.isMain ? b.name : (b.mainCharName || '')
-        return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av)
+        return sortAsc ? (av < bv ? -1 : av > bv ? 1 : 0) : (bv < av ? -1 : bv > av ? 1 : 0)
       }
       const av = a[sortKey as keyof Member]
       const bv = b[sortKey as keyof Member]
       if (typeof av === 'number' && typeof bv === 'number') return sortAsc ? av - bv : bv - av
-      return sortAsc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av))
+      { const sa = String(av), sb = String(bv); return sortAsc ? (sa < sb ? -1 : sa > sb ? 1 : 0) : (sb < sa ? -1 : sb > sa ? 1 : 0) }
     })
     return list
   }, [members, search, guildFilter, roleFilter, sortKey, sortAsc, scoreMap, latestPeriod])

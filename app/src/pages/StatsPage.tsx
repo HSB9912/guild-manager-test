@@ -580,9 +580,9 @@ function SubCharsView({ members, config }: { members: any[]; config: any }) {
       if (sortField === 'role')
         return (
           ((rp[a.main.role] ?? 99) - (rp[b.main.role] ?? 99)) * dir ||
-          a.main.name.localeCompare(b.main.name)
+          (a.main.name < b.main.name ? -1 : a.main.name > b.main.name ? 1 : 0)
         )
-      if (sortField === 'name') return a.main.name.localeCompare(b.main.name) * dir
+      if (sortField === 'name') return (a.main.name < b.main.name ? -1 : a.main.name > b.main.name ? 1 : 0) * dir
       if (sortField === 'subs') return (a.subs.length - b.subs.length) * dir
       return 0
     })

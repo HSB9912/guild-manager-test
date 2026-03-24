@@ -77,7 +77,7 @@ export default function PenaltyPage() {
     () =>
       members
         .map((m) => ({ name: m.name, guild: m.guild }))
-        .sort((a, b) => `${a.name} (${a.guild})`.localeCompare(`${b.name} (${b.guild})`, 'ko')),
+        .sort((a, b) => { const ak = `${a.name} (${a.guild})`, bk = `${b.name} (${b.guild})`; return ak < bk ? -1 : ak > bk ? 1 : 0 }),
     [members],
   )
 

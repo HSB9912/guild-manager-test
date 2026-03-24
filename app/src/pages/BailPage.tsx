@@ -62,7 +62,7 @@ export default function BailPage() {
     () =>
       members
         .filter((m) => m.guild === '뚠카롱' && ['마카롱', '다쿠아즈'].includes(m.role))
-        .sort((a, b) => a.name.localeCompare(b.name, 'ko')),
+        .sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
     [members],
   )
 
@@ -73,7 +73,7 @@ export default function BailPage() {
       const a = Number(h.amount) || 0
       stats[h.receiver] = (stats[h.receiver] || 0) + a
     })
-    return Object.entries(stats).sort((a, b) => a[0].localeCompare(b[0], 'ko'))
+    return Object.entries(stats).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)
   }, [bailHistory])
 
   // Stats: totals

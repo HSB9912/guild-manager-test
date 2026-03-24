@@ -30,7 +30,7 @@ export default function SuroInputPage() {
     () =>
       members
         .filter((m) => m.guild === selectedGuild)
-        .sort((a, b) => a.name.localeCompare(b.name)),
+        .sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
     [members, selectedGuild]
   )
 
