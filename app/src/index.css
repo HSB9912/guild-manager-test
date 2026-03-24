@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Noto Sans KR', sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    margin: 0;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Sortable table headers */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+th.sortable:hover {
+  background-color: #eef2ff !important;
+  color: #4f46e5 !important;
+}
+
+/* Score zero highlight */
+.score-zero {
+  background-color: #fee2e2 !important;
+  color: #ef4444 !important;
+}
+
+/* Nav active state */
+.nav-item.active {
+  background-color: #eef2ff;
+  color: #6366f1;
+  box-shadow: inset 4px 0 0 #6366f1;
+}
+
+/* Calendar */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  text-align: center;
+  font-size: 0.75rem;
+}
+.calendar-day {
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.calendar-day:hover { background-color: #f9fafb; border-color: #c7d2fe; }
+.calendar-day.today { background-color: #6366f1; color: white; font-weight: bold; }
+.calendar-day.thursday { color: #4f46e5; background-color: #eef2ff; border: 1px solid #c7d2fe; font-weight: bold; }
+
+/* No scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Tap highlight */
+.nav-item, button { -webkit-tap-highlight-color: transparent; }
+
+/* Safe area */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ===== DARK MODE ===== */
+body.dark { background-color: #0f1117; color: #c9cdd4; }
+body.dark .bg-gray-50, body.dark main { background-color: #0f1117 !important; }
+body.dark .bg-white { background-color: #1c1f2b !important; color: #c9cdd4; border-color: #2a2d3a !important; }
+body.dark aside { background-color: #14161e !important; border-color: #2a2d3a !important; }
+body.dark header { background-color: #14161e !important; border-color: #2a2d3a !important; }
+body.dark .border-gray-100, body.dark .border-gray-200 { border-color: #2a2d3a !important; }
+body.dark .text-gray-800 { color: #e0e3ea !important; }
+body.dark .text-gray-700 { color: #b8bcc6 !important; }
+body.dark .text-gray-600 { color: #8b90a0 !important; }
+body.dark .text-gray-500 { color: #6b7080 !important; }
+body.dark input, body.dark select, body.dark textarea {
+  background-color: #22252f !important; color: #c9cdd4 !important; border-color: #333848 !important;
+}
+body.dark table thead { background-color: #14161e !important; }
+body.dark table thead th { background-color: #14161e !important; color: #6b7080 !important; }
+body.dark table tbody td { background-color: #1a1d27 !important; border-color: #22252f !important; }
+body.dark .nav-item.active {
+  background-color: #1e1b3a !important; color: #818cf8 !important;
+  box-shadow: inset 4px 0 0 #6366f1 !important;
+}
+body.dark th.sortable:hover { background-color: #22252f !important; color: #818cf8 !important; }
+body.dark .calendar-day.today { background-color: #6366f1; }
+body.dark .calendar-day.thursday { background-color: rgba(99,102,241,0.15); color: #818cf8; border-color: rgba(99,102,241,0.3); }
+body.dark ::-webkit-scrollbar-track { background: #14161e; }
+body.dark ::-webkit-scrollbar-thumb { background: #333848; }
+body.dark .score-zero { background-color: rgba(239,68,68,0.08) !important; color: #f87171 !important; }
+
+/* Font size variants */
+body.font-sm #contentArea { font-size: 0.8rem; }
+body.font-sm #contentArea table { font-size: 0.6rem; }
+body.font-lg #contentArea { font-size: 1.1rem; }
+body.font-lg #contentArea table { font-size: 0.85rem; }
