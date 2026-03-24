@@ -301,8 +301,9 @@ export default function PenaltyPage() {
           </div>
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 flex-wrap">
             {activePenalties.length > 0 ? (
-              activePenalties.map(([name, pts]) => {
+              activePenalties.map(([name, pts], idx) => {
                 const isExpelled = expelledNames.has(name)
+                const displayName = isAdmin ? name : `대상자 ${idx + 1}`
 
                 // Expelled + 10+ points => gray badge
                 if (pts >= 10 && isExpelled) {
@@ -314,7 +315,7 @@ export default function PenaltyPage() {
                       <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xs shadow-sm">
                         <span className="text-[10px]">V</span>
                       </div>
-                      <span className="text-xs font-bold text-white line-through">{name}</span>
+                      <span className="text-xs font-bold text-white line-through">{displayName}</span>
                       <span className="text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">
                         추방완료
                       </span>
@@ -359,7 +360,7 @@ export default function PenaltyPage() {
                         pts >= 10 ? 'text-white' : 'text-red-600',
                       )}
                     >
-                      {name}
+                      {displayName}
                     </span>
                     {pts >= 10 && (
                       <span className="text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded-full">
@@ -407,9 +408,10 @@ export default function PenaltyPage() {
                 <thead className="bg-gray-50 text-[10px] font-bold text-gray-500 uppercase sticky top-0">
                   <tr>
                     <th className="p-3">날짜</th>
-                    <th className="p-3">대상자</th>
+                    {isAdmin && <th className="p-3">대상자</th>}
                     <th className="p-3">점수</th>
-                    <th className="p-3">부여 사유</th>
+                    {isAdmin && <th className="p-3">부여 사유</th>}
+                    {!isAdmin && <th className="p-3">비고</th>}
                     {isAdmin && <th className="p-3 text-right">삭제</th>}
                   </tr>
                 </thead>
@@ -417,7 +419,7 @@ export default function PenaltyPage() {
                   {reversedHistory.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={isAdmin ? 5 : 4}
+                        colSpan={isAdmin ? 5 : 3}
                         className="p-20 text-center text-gray-300 font-bold italic"
                       >
                         벌점 이력이 없습니다.
@@ -432,14 +434,20 @@ export default function PenaltyPage() {
                         <td className="p-3 font-mono text-gray-400 text-[10px]">
                           {formatDisplayDate(h.date)}
                         </td>
-                        <td className="p-3 text-gray-700">{h.name}</td>
+                        {isAdmin && <td className="p-3 text-gray-700">{h.name}</td>}
                         <td className="p-3 text-red-500 font-bold">{Number(h.points)}점</td>
-                        <td
-                          className="p-3 text-gray-500 text-[11px] whitespace-normal break-words max-w-[200px]"
-                          title={h.reason || ''}
-                        >
-                          {h.reason || ''}
-                        </td>
+                        {isAdmin ? (
+                          <td
+                            className="p-3 text-gray-500 text-[11px] whitespace-normal break-words max-w-[200px]"
+                            title={h.reason || ''}
+                          >
+                            {h.reason || ''}
+                          </td>
+                        ) : (
+                          <td className="p-3 text-gray-400 text-[11px]">
+                            벌점 부여
+                          </td>
+                        )}
                         {isAdmin && (
                           <td className="p-3 text-right">
                             <button

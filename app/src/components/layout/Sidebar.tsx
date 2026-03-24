@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useUIStore } from '@/store/ui'
 import { useAuthStore } from '@/store/auth'
+import { useSiteConfig } from '@/hooks/useSiteConfig'
 import {
   Home, Users, BarChart3, ArrowUpDown,
   PieChart, Gift, ClipboardList, Handshake,
@@ -37,6 +38,8 @@ const ADMIN_ITEMS = [
 export function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useUIStore()
   const role = useAuthStore((s) => s.role)
+  const { data: siteConfig } = useSiteConfig()
+  const guildLogo = siteConfig?.guildLogo
   const [adminOpen, setAdminOpen] = useState(false)
 
   return (
@@ -59,7 +62,9 @@ export function Sidebar() {
         {/* Header */}
         <div className="p-6 border-b border-gray-100 flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl shadow-lg shadow-indigo-100 overflow-hidden bg-gradient-to-tr from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl">
-            뚠
+            {guildLogo ? (
+              <img src={guildLogo} className="w-full h-full object-cover" alt="guild logo" />
+            ) : '뚠'}
           </div>
           <div>
             <h1 className="text-lg font-bold text-gray-800 tracking-tight">뚠카롱 길드 현황</h1>

@@ -6,6 +6,7 @@ import { useMembers } from '@/hooks/useMembers'
 import { useSiteConfig } from '@/hooks/useSiteConfig'
 import { cn } from '@/lib/cn'
 import { Calendar, Pencil } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 
 interface GuidePage {
   id: number
@@ -118,6 +119,22 @@ export default function HomePage() {
   const { data: siteConfig } = useSiteConfig()
   const { data: guidePages = [] } = useGuidePages()
   const { data: recentEvents = [] } = useRecentEvents()
+  const navigate = useNavigate()
+
+  // Intercept clicks on internal links inside guide HTML content
+  const handleGuideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const anchor = (e.target as HTMLElement).closest('a')
+    if (!anchor) return
+    const href = anchor.getAttribute('href')
+    if (!href) return
+    // Internal link: starts with / or with the base path
+    const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
+    if (href.startsWith('/') && !href.startsWith('//')) {
+      e.preventDefault()
+      const route = href.startsWith(basePath) ? href.slice(basePath.length) : href
+      navigate(route)
+    }
+  }
 
   const guilds = siteConfig?.guilds || [
     { name: '뚠카롱' }, { name: '뚱카롱' }, { name: '밤카롱' },
@@ -164,8 +181,10 @@ export default function HomePage() {
       {/* Welcome Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-indigo-100">
-            뚠
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-indigo-100 overflow-hidden">
+            {siteConfig?.guildLogo ? (
+              <img src={siteConfig.guildLogo} className="w-full h-full object-cover" alt="guild logo" />
+            ) : '뚠'}
           </div>
           <div>
             <h2 className="text-xl font-black text-gray-800">뚠카롱 길드에 오신 걸 환영합니다!</h2>
@@ -197,13 +216,13 @@ export default function HomePage() {
               </button>
             ))}
             {isAdmin && (
-              <a
-                href="/admin/guide-edit"
+              <Link
+                to="/admin/guide-edit"
                 className="ml-auto shrink-0 text-[9px] font-bold text-indigo-400 hover:text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg transition-all flex items-center gap-1"
               >
                 <Pencil size={10} />
                 편집
-              </a>
+              </Link>
             )}
           </div>
           {visibleTabs.map((t) => (
@@ -213,6 +232,7 @@ export default function HomePage() {
             >
               <div
                 className="home-guide-content prose prose-sm max-w-none"
+                onClick={handleGuideClick}
                 dangerouslySetInnerHTML={{ __html: sanitizeHTML(guideDataMap[t.slug] || '') }}
               />
             </div>
@@ -240,14 +260,14 @@ export default function HomePage() {
       {/* Quick Links */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: '길드원', desc: '멤버 관리', color: 'from-indigo-500 to-blue-500', href: '/members' },
-          { label: '수로 분석', desc: '점수 통계', color: 'from-blue-400 to-indigo-400', href: '/analysis' },
-          { label: '승강제', desc: '승급/강등', color: 'from-amber-400 to-orange-400', href: '/promotion' },
-          { label: '게시판', desc: '공지/글', color: 'from-emerald-400 to-green-400', href: '/board' },
+          { label: '길드원', desc: '멤버 관리', color: 'from-indigo-500 to-blue-500', to: '/members' },
+          { label: '수로 분석', desc: '점수 통계', color: 'from-blue-400 to-indigo-400', to: '/analysis' },
+          { label: '승강제', desc: '승급/강등', color: 'from-amber-400 to-orange-400', to: '/promotion' },
+          { label: '게시판', desc: '공지/글', color: 'from-emerald-400 to-green-400', to: '/board' },
         ].map((item) => (
-          <a
+          <Link
             key={item.label}
-            href={item.href}
+            to={item.to}
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition-all group"
           >
             <div
@@ -257,7 +277,7 @@ export default function HomePage() {
             </div>
             <p className="font-bold text-gray-800 text-sm">{item.label}</p>
             <p className="text-[10px] text-gray-400 font-bold">{item.desc}</p>
-          </a>
+          </Link>
         ))}
       </div>
 

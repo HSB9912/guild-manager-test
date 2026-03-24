@@ -388,8 +388,8 @@ export default function BailPage() {
                 <tr>
                   <th className="p-3 lg:p-5">날짜</th>
                   <th className="p-3 lg:p-5">구분</th>
-                  <th className="p-3 lg:p-5">납부자/사유</th>
-                  <th className="p-3 lg:p-5">수령자</th>
+                  {isAdmin && <th className="p-3 lg:p-5">납부자/사유</th>}
+                  {isAdmin && <th className="p-3 lg:p-5">수령자</th>}
                   <th className="p-3 lg:p-5 text-right">수량</th>
                   {isAdmin && <th className="p-3 lg:p-5 text-right">삭제</th>}
                 </tr>
@@ -398,7 +398,7 @@ export default function BailPage() {
                 {reversedHistory.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={isAdmin ? 6 : 5}
+                      colSpan={isAdmin ? 6 : 3}
                       className="p-20 text-center text-gray-300 font-bold italic"
                     >
                       내역이 존재하지 않습니다.
@@ -427,13 +427,17 @@ export default function BailPage() {
                             </span>
                           )}
                         </td>
-                        <td className="p-3 lg:p-4 text-gray-700">
-                          {h.payer}
-                          {h.memo && (
-                            <span className="text-[10px] text-gray-400 ml-1">({h.memo})</span>
-                          )}
-                        </td>
-                        <td className="p-3 lg:p-4 text-blue-500">{h.receiver}</td>
+                        {isAdmin && (
+                          <td className="p-3 lg:p-4 text-gray-700">
+                            {h.payer}
+                            {h.memo && (
+                              <span className="text-[10px] text-gray-400 ml-1">({h.memo})</span>
+                            )}
+                          </td>
+                        )}
+                        {isAdmin && (
+                          <td className="p-3 lg:p-4 text-blue-500">{h.receiver}</td>
+                        )}
                         <td
                           className={cn(
                             'p-3 lg:p-4 text-right',
