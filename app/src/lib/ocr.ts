@@ -13,7 +13,9 @@ export async function initOcr(): Promise<void> {
   if (worker) return
 
   return new Promise((resolve, reject) => {
-    const BASE = new URL(import.meta.env.BASE_URL + 'ocr/', window.location.origin).href
+    // BASE_URL is /guild-manager/ on GitHub Pages, / on localhost
+    const base = import.meta.env.BASE_URL || '/'
+    const BASE = window.location.origin + base + 'ocr/'
     const workerCode = buildWorkerCode(BASE)
     const blob = new Blob([workerCode], { type: 'application/javascript' })
     worker = new Worker(URL.createObjectURL(blob))
@@ -30,6 +32,8 @@ export async function initOcr(): Promise<void> {
     }
     worker.onerror = (err) => {
       clearTimeout(timeout)
+      console.error('[OCR] Worker error:', err)
+      console.error('[OCR] BASE URL was:', BASE)
       reject(err)
     }
   })
@@ -60,7 +64,7 @@ export function terminateOcr() {
 function buildWorkerCode(base: string): string {
   return `(function(){"use strict";
 const BASE = ${JSON.stringify(base)};
-self.importScripts(BASE + "opencv.js");
+try{self.importScripts(BASE + "opencv.js")}catch(err){console.error("[OCR Worker] Failed to load opencv.js from:",BASE+"opencv.js",err);return;}
 let I=!1,g={},p=null,y=null,x=null,s=null,h=null,v=null,O=null,b=null;
 const N=180;let R=null;
 cv.onRuntimeInitialized=async()=>{
