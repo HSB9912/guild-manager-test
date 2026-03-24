@@ -24,6 +24,7 @@ export default function SuroInputPage() {
   const [saving, setSaving] = useState(false)
   const [showOcr, setShowOcr] = useState(false)
   const [showPaste, setShowPaste] = useState(false)
+  const [pasteInitialText, setPasteInitialText] = useState('')
 
   const guildMembers = useMemo(
     () =>
@@ -97,13 +98,16 @@ export default function SuroInputPage() {
   const guilds = config?.guilds.map((g) => g.name) || ['뚠카롱', '뚱카롱']
 
   const handleOcrResults = (records: OcrRecord[]) => {
-    const newScores: Record<string, string> = { ...localScores }
-    for (const r of records) {
-      const member = guildMembers.find((m) => m.name === r.name)
-      if (member) newScores[member.id] = String(r.culv)
+    if (records.length === 0) {
+      toast('인식된 결과가 없습니다.', 'error')
+      return
     }
-    setLocalScores(newScores)
-    toast(`OCR: ${records.length}명 점수 반영`, 'success')
+    // Convert OCR results to paste-format text and open paste modal
+    const text = records.map((r) => `${r.name}\t${r.culv}`).join('\n')
+    setPasteInitialText(text)
+    setShowOcr(false)
+    setShowPaste(true)
+    toast(`OCR: ${records.length}명 인식 → 붙여넣기 모달에서 확인/수정하세요`, 'success')
   }
 
   const handleClearAll = () => {
@@ -180,6 +184,7 @@ export default function SuroInputPage() {
           guildMembers={guildMembers}
           periodLabel={periodLabel}
           suroHeaders={suroHeaders}
+          initialText={pasteInitialText}
           onApply={(parsed, period) => {
             setPeriodLabel(period)
             const newScores: Record<string, string> = { ...localScores }
@@ -189,7 +194,7 @@ export default function SuroInputPage() {
             setLocalScores(newScores)
             toast(`${parsed.filter((p) => p.member).length}명 점수 반영`, 'success')
           }}
-          onClose={() => setShowPaste(false)}
+          onClose={() => { setShowPaste(false); setPasteInitialText('') }}
         />
       )}
 
@@ -309,6 +314,7 @@ function PasteModal({
   guildMembers: _guildMembers,
   periodLabel,
   suroHeaders,
+  initialText,
   onApply,
   onClose,
 }: {
@@ -316,10 +322,11 @@ function PasteModal({
   guildMembers: { id: string; name: string }[]
   periodLabel: string
   suroHeaders: string[]
+  initialText?: string
   onApply: (parsed: ParsedEntry[], period: string) => void
   onClose: () => void
 }) {
-  const [text, setText] = useState('')
+  const [text, setText] = useState(initialText || '')
   const [period, setPeriod] = useState(periodLabel)
   const [parsed, setParsed] = useState<ParsedEntry[] | null>(null)
   const [skipped, setSkipped] = useState<{ line: number; text: string; reason: string }[]>([])
