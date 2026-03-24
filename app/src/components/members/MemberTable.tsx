@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pencil, Trash2, ChevronUp, ChevronDown, Crown } from 'lucide-react'
+import { Pencil, Trash2, ChevronUp, ChevronDown, Crown, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import type { Member } from '@/types/member'
 import type { ScoreMap } from '@/types/score'
@@ -243,9 +243,16 @@ export function MemberTable({
                       <div className="flex items-center leading-none">
                         <RoleIcon role={m.role} />
                         <div className="flex flex-col min-w-0">
-                          <span className="font-bold text-gray-800 text-sm tracking-tight truncate">
-                            {m.name}
-                            {m.level > 0 && <span className="text-[8px] text-gray-400 font-mono ml-1">Lv.{m.level}</span>}
+                          <span className="font-bold text-gray-800 text-sm tracking-tight truncate flex items-center gap-1">
+                            <button
+                              onClick={() => window.open(`https://meaegi.com/s/${encodeURIComponent(m.name)}`, 'meaegi', 'width=420,height=700,scrollbars=yes,resizable=yes')}
+                              className="hover:text-indigo-600 hover:underline transition-colors text-left"
+                              title="매애기에서 검색"
+                            >
+                              {m.name}
+                            </button>
+                            {m.level > 0 && <span className="text-[8px] text-gray-400 font-mono">Lv.{m.level}</span>}
+                            <ExternalLink size={9} className="text-gray-300 shrink-0" />
                           </span>
                           <span className="text-[9px] text-gray-400 font-medium truncate">{m.class || ''}</span>
                         </div>
