@@ -7927,6 +7927,29 @@
    if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
    cfg.autoRankRules[gn][ri].rank = el.value;
    });
+   document.querySelectorAll('.cfg-autorule-topn').forEach(el => {
+   const gn = el.dataset.guild;
+   const ri = parseInt(el.dataset.ri);
+   if (!cfg.autoRankRules[gn]) cfg.autoRankRules[gn] = [];
+   if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
+   const v = parseInt(el.value);
+   if (!isNaN(v) && v > 0) cfg.autoRankRules[gn][ri].topN = v;
+   });
+   document.querySelectorAll('.cfg-autorule-bottomn').forEach(el => {
+   const gn = el.dataset.guild;
+   const ri = parseInt(el.dataset.ri);
+   if (!cfg.autoRankRules[gn]) cfg.autoRankRules[gn] = [];
+   if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
+   const v = parseInt(el.value);
+   if (!isNaN(v) && v > 0) cfg.autoRankRules[gn][ri].bottomN = v;
+   });
+   document.querySelectorAll('.cfg-autorule-note').forEach(el => {
+   const gn = el.dataset.guild;
+   const ri = parseInt(el.dataset.ri);
+   if (!cfg.autoRankRules[gn]) cfg.autoRankRules[gn] = [];
+   if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
+   if (el.value.trim()) cfg.autoRankRules[gn][ri].note = el.value.trim();
+   });
 
    cfg.guildBadgeStyles = cfg.guildBadgeStyles || {};
    document.querySelectorAll('.cfg-badge-bg').forEach(el => {
