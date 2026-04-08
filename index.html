@@ -5990,14 +5990,39 @@
 
       let html = `<div class="flex flex-col gap-3 fade-in pb-20 lg:pb-0">
         <button onclick="window.renderBuddy(document.getElementById('contentArea'))" class="text-[10px] text-gray-400 hover:text-pink-500 font-bold self-start"><i class="fas fa-arrow-left mr-1"></i>목록</button>
-        <div class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 overflow-hidden">
-          ${team.team_image ? `<div class="relative w-full overflow-hidden" style="height:180px">
+        ${team.team_image ? `
+        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+          <div class="relative w-full" style="height:220px">
             <img src="${team.team_image}" class="w-full h-full object-cover" style="object-position:center ${team.team_image_pos||50}%">
-            ${isAdmin() ? `<div class="absolute top-2 right-2 flex gap-1.5">
-              <button onclick="window._buddyAdjustImage(${team.id})" class="w-7 h-7 bg-black/50 hover:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="위치 조정"><i class="fas fa-arrows-alt"></i></button>
-              <button onclick="window._buddyRemoveImage(${team.id})" class="w-7 h-7 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="이미지 제거"><i class="fas fa-times"></i></button>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+            ${isAdmin() ? `<div class="absolute top-3 right-3 flex gap-1.5">
+              <label class="w-7 h-7 bg-black/40 hover:bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs transition-all cursor-pointer" title="이미지 변경"><i class="fas fa-camera"></i><input type="file" accept="image/*" class="hidden" onchange="window._buddyUploadImage(${team.id}, this)"></label>
+              <button onclick="window._buddyAdjustImage(${team.id})" class="w-7 h-7 bg-black/40 hover:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="위치 조정"><i class="fas fa-arrows-alt"></i></button>
+              <button onclick="window._buddyRemoveImage(${team.id})" class="w-7 h-7 bg-black/40 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="이미지 제거"><i class="fas fa-times"></i></button>
             </div>` : ''}
+            <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-5">
+              <div class="flex items-end gap-3">
+                <span class="text-3xl drop-shadow-lg">🤝</span>
+                <div class="flex-1">
+                  <h2 class="text-xl font-black text-white drop-shadow-lg">${team.team_name || (team.mentor_name + ' × ' + team.mentee_name)}</h2>
+                  <p class="text-[11px] text-white/80"><span class="font-bold text-amber-300">멘토</span> ${team.mentor_name} · <span class="font-bold text-blue-300">멘티</span> ${team.mentee_name} · ${team.start_date||''}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          ${isAdmin() ? `<div class="flex items-center gap-2 p-3 bg-white flex-wrap">
+            <span class="text-[9px] text-gray-400 font-bold">상태:</span>
+            <div class="flex gap-1">${statusBtns.map(s => `<button onclick="window._buddyUpdateStatus(${team.id},'${s}')" class="px-2 py-0.5 rounded-lg text-[8px] font-bold transition-all ${team.status===s ? (s==='active'?'bg-green-500 text-white':s==='completed'?'bg-blue-500 text-white':s==='failed'?'bg-red-500 text-white':'bg-gray-500 text-white') : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-100'}">${statusLabel[s]}</button>`).join('')}</div>
+            <span class="text-gray-200 mx-1">|</span>
+            <span class="text-[9px] text-gray-400 font-bold">보상:</span>
+            <div class="flex gap-1">
+              <button onclick="window._buddyUpdateReward(${team.id},'A')" class="px-2 py-0.5 rounded-lg text-[8px] font-bold transition-all ${team.reward_choice==='A'?'bg-emerald-500 text-white':'bg-white border border-gray-200 text-gray-500 hover:bg-gray-100'}">A 조각</button>
+              <button onclick="window._buddyUpdateReward(${team.id},'B')" class="px-2 py-0.5 rounded-lg text-[8px] font-bold transition-all ${team.reward_choice==='B'?'bg-purple-500 text-white':'bg-white border border-gray-200 text-gray-500 hover:bg-gray-100'}">B 룰렛</button>
+            </div>
+            <button onclick="window._buddyDeleteTeam(${team.id})" class="ml-auto text-[9px] text-red-400 hover:text-red-600 font-bold"><i class="fas fa-trash mr-0.5"></i>삭제</button>
           </div>` : ''}
+        </div>` : `
+        <div class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 overflow-hidden">
           <div class="p-4 lg:p-5">
           <div class="flex items-center gap-3 flex-wrap">
             <span class="text-3xl">🤝</span>
@@ -6005,7 +6030,7 @@
               <h2 class="text-lg font-black text-gray-800">${team.team_name || (team.mentor_name + ' × ' + team.mentee_name)}</h2>
               <p class="text-[10px] text-gray-500"><span class="font-bold text-amber-600">멘토</span> ${team.mentor_name} · <span class="font-bold text-blue-600">멘티</span> ${team.mentee_name} · ${team.start_date||''}</p>
             </div>
-            ${isAdmin() && !team.team_image ? `<label class="px-3 py-1.5 bg-yellow-500 text-white rounded-xl text-[9px] font-bold shadow hover:bg-yellow-600 cursor-pointer shrink-0"><i class="fas fa-image mr-1"></i>팀 이미지<input type="file" accept="image/*" class="hidden" onchange="window._buddyUploadImage(${team.id}, this)"></label>` : ''}
+            ${isAdmin() ? `<label class="px-3 py-1.5 bg-yellow-500 text-white rounded-xl text-[9px] font-bold shadow hover:bg-yellow-600 cursor-pointer shrink-0"><i class="fas fa-image mr-1"></i>팀 이미지<input type="file" accept="image/*" class="hidden" onchange="window._buddyUploadImage(${team.id}, this)"></label>` : ''}
           </div>
           ${isAdmin() ? `<div class="flex items-center gap-2 mt-3 flex-wrap">
             <span class="text-[9px] text-gray-400 font-bold">상태:</span>
@@ -6018,7 +6043,7 @@
             </div>
             <button onclick="window._buddyDeleteTeam(${team.id})" class="ml-auto text-[9px] text-red-400 hover:text-red-600 font-bold"><i class="fas fa-trash mr-0.5"></i>삭제</button>
           </div>` : ''}
-        </div></div>
+        </div></div>`}
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
           ${[1,2,3,4].map(w => {
