@@ -5952,7 +5952,7 @@
     const statusStyle = {active:'bg-green-100 text-green-600',completed:'bg-blue-100 text-blue-600',failed:'bg-red-100 text-red-600',cancelled:'bg-gray-100 text-gray-500'};
     const statusLabel = {active:'진행 중',completed:'완료',failed:'실패',cancelled:'취소'};
     return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all" onclick="window._buddyDetail(${t.id})">
-      ${t.team_image ? `<div class="w-full overflow-hidden"><img src="${t.team_image}" class="w-full object-contain"></div>` : ''}
+      ${t.team_image ? `<div class="w-full overflow-hidden bg-gray-100" style="max-height:140px"><img src="${t.team_image}" class="w-full h-full object-cover"></div>` : ''}
       <div class="p-4 flex items-center gap-3 ${isActive ? 'bg-gradient-to-r from-yellow-50 to-amber-50' : 'bg-gray-50'}">
         <div class="text-2xl">🤝</div>
         <div class="flex-1 min-w-0">
@@ -5991,8 +5991,8 @@
       let html = `<div class="flex flex-col gap-3 fade-in pb-20 lg:pb-0">
         <button onclick="window.renderBuddy(document.getElementById('contentArea'))" class="text-[10px] text-gray-400 hover:text-pink-500 font-bold self-start"><i class="fas fa-arrow-left mr-1"></i>목록</button>
         <div class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 overflow-hidden">
-          ${team.team_image ? `<div class="relative w-full overflow-hidden">
-            <img src="${team.team_image}" class="w-full object-contain">
+          ${team.team_image ? `<div class="relative w-full overflow-hidden" style="max-height:280px">
+            <img src="${team.team_image}" class="w-full h-full object-cover">
             ${isAdmin() ? `<button onclick="window._buddyRemoveImage(${team.id})" class="absolute top-2 right-2 w-7 h-7 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="이미지 제거"><i class="fas fa-times"></i></button>` : ''}
           </div>` : ''}
           <div class="p-4 lg:p-5">
