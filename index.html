@@ -5992,9 +5992,9 @@
         <button onclick="window.renderBuddy(document.getElementById('contentArea'))" class="text-[10px] text-gray-400 hover:text-pink-500 font-bold self-start"><i class="fas fa-arrow-left mr-1"></i>목록</button>
         ${team.team_image ? `
         <div class="rounded-2xl overflow-hidden shadow-lg">
-          <div class="relative w-full" style="height:260px">
-            <img src="${team.team_image}" class="w-full h-full object-cover" style="object-position:center ${team.team_image_pos||50}%">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/15"></div>
+          <div class="relative w-full bg-black/90">
+            <img src="${team.team_image}" class="w-full object-contain mx-auto" style="max-height:280px">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
             ${isAdmin() ? `<div class="absolute top-3 right-3 flex gap-1.5">
               <label class="w-7 h-7 bg-black/40 hover:bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs transition-all cursor-pointer" title="이미지 변경"><i class="fas fa-camera"></i><input type="file" accept="image/*" class="hidden" onchange="window._buddyUploadImage(${team.id}, this)"></label>
               <button onclick="window._buddyAdjustImage(${team.id})" class="w-7 h-7 bg-black/40 hover:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="위치 조정"><i class="fas fa-arrows-alt"></i></button>
