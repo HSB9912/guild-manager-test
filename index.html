@@ -5952,6 +5952,7 @@
     const statusStyle = {active:'bg-green-100 text-green-600',completed:'bg-blue-100 text-blue-600',failed:'bg-red-100 text-red-600',cancelled:'bg-gray-100 text-gray-500'};
     const statusLabel = {active:'진행 중',completed:'완료',failed:'실패',cancelled:'취소'};
     return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all" onclick="window._buddyDetail(${t.id})">
+      ${t.team_image ? `<div class="w-full h-32 lg:h-40 overflow-hidden"><img src="${t.team_image}" class="w-full h-full object-cover"></div>` : ''}
       <div class="p-4 flex items-center gap-3 ${isActive ? 'bg-gradient-to-r from-yellow-50 to-amber-50' : 'bg-gray-50'}">
         <div class="text-2xl">🤝</div>
         <div class="flex-1 min-w-0">
@@ -5989,13 +5990,19 @@
 
       let html = `<div class="flex flex-col gap-3 fade-in pb-20 lg:pb-0">
         <button onclick="window.renderBuddy(document.getElementById('contentArea'))" class="text-[10px] text-gray-400 hover:text-pink-500 font-bold self-start"><i class="fas fa-arrow-left mr-1"></i>목록</button>
-        <div class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 p-4 lg:p-5">
+        <div class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 overflow-hidden">
+          ${team.team_image ? `<div class="relative w-full h-40 lg:h-56 overflow-hidden">
+            <img src="${team.team_image}" class="w-full h-full object-cover">
+            ${isAdmin() ? `<button onclick="window._buddyRemoveImage(${team.id})" class="absolute top-2 right-2 w-7 h-7 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs transition-all" title="이미지 제거"><i class="fas fa-times"></i></button>` : ''}
+          </div>` : ''}
+          <div class="p-4 lg:p-5">
           <div class="flex items-center gap-3 flex-wrap">
             <span class="text-3xl">🤝</span>
             <div class="flex-1">
               <h2 class="text-lg font-black text-gray-800">${team.team_name || (team.mentor_name + ' × ' + team.mentee_name)}</h2>
               <p class="text-[10px] text-gray-500"><span class="font-bold text-amber-600">멘토</span> ${team.mentor_name} · <span class="font-bold text-blue-600">멘티</span> ${team.mentee_name} · ${team.start_date||''}</p>
             </div>
+            ${isAdmin() && !team.team_image ? `<label class="px-3 py-1.5 bg-yellow-500 text-white rounded-xl text-[9px] font-bold shadow hover:bg-yellow-600 cursor-pointer shrink-0"><i class="fas fa-image mr-1"></i>팀 이미지<input type="file" accept="image/*" class="hidden" onchange="window._buddyUploadImage(${team.id}, this)"></label>` : ''}
           </div>
           ${isAdmin() ? `<div class="flex items-center gap-2 mt-3 flex-wrap">
             <span class="text-[9px] text-gray-400 font-bold">상태:</span>
@@ -6008,7 +6015,7 @@
             </div>
             <button onclick="window._buddyDeleteTeam(${team.id})" class="ml-auto text-[9px] text-red-400 hover:text-red-600 font-bold"><i class="fas fa-trash mr-0.5"></i>삭제</button>
           </div>` : ''}
-        </div>
+        </div></div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
           ${[1,2,3,4].map(w => {
@@ -6207,6 +6214,37 @@
 
   window._buddyUpdateStatus = async (id, status) => { await supaDb.from('buddy_teams').update({status}).eq('id', id); window._buddyDetail(id); };
   window._buddyUpdateReward = async (id, reward) => { await supaDb.from('buddy_teams').update({reward_choice: reward}).eq('id', id); window._buddyDetail(id); };
+
+  window._buddyUploadImage = async (teamId, input) => {
+    const file = input.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) return window.showMsg('5MB 이하 이미지만 가능합니다', 'error');
+    try {
+      window.showMsg('이미지 업로드 중...', 'info');
+      const ext = file.name.split('.').pop().toLowerCase();
+      const safeName = 'buddy_team_' + teamId + '_' + Date.now() + '.' + ext;
+      const url = await window._r2Upload('buddy-images', safeName, file);
+      await supaDb.from('buddy_teams').update({team_image: url}).eq('id', teamId);
+      window.showMsg('팀 이미지가 등록되었습니다!', 'success');
+      window._buddyDetail(teamId);
+    } catch(e) { window.showMsg('업로드 실패: ' + e.message, 'error'); }
+    input.value = '';
+  };
+
+  window._buddyRemoveImage = async (teamId) => {
+    if (!confirm('팀 이미지를 제거하시겠습니까?')) return;
+    try {
+      const {data: team} = await supaDb.from('buddy_teams').select('team_image').eq('id', teamId).single();
+      if (team?.team_image) {
+        const parts = team.team_image.split('/');
+        const filename = parts[parts.length - 1];
+        try { await window._r2Delete('buddy-images', filename); } catch(e) {}
+      }
+      await supaDb.from('buddy_teams').update({team_image: null}).eq('id', teamId);
+      window.showMsg('팀 이미지가 제거되었습니다', 'info');
+      window._buddyDetail(teamId);
+    } catch(e) { window.showMsg('제거 실패: ' + e.message, 'error'); }
+  };
   window._buddyDeleteTeam = async (id) => {
     if (!confirm('이 버디팀을 삭제하시겠습니까? 미션/룰렛 기록도 함께 삭제됩니다.')) return;
     try { await supaDb.from('buddy_teams').delete().eq('id', id); window.showMsg('삭제 완료', 'success'); window.renderBuddy(document.getElementById('contentArea')); }
