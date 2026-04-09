@@ -2940,7 +2940,7 @@
                     <td class="py-1.5 px-2 text-center text-gray-400 text-[11px]">${appState.isKickMode ? `<input type="checkbox" class="custom-checkbox" ${appState.kickSelection.has(m.id)?'checked':''} onclick="event.stopPropagation()" onchange="window.handleKickSelect('${m.id}')">` : (gi+1)}</td>
                     <td class="py-1.5 px-2">
                         <div class="flex items-center gap-1.5 leading-none">
-                            ${emoji ? `<span class="text-sm">${emoji}</span>` : ''}<span class="text-[12px] font-black text-gray-800">${m.name}</span>${m.level > 0 ? `<span class="text-[8px] text-gray-400 font-mono">Lv.${m.level}</span>` : ''}
+                            ${emoji ? `<span class="text-sm">${emoji}</span>` : ''}<div><span class="text-[12px] font-black text-gray-800">${m.name}</span>${m.level > 0 ? `<span class="text-[8px] text-gray-400 font-mono ml-1">Lv.${m.level}</span>` : ''}${hasSubs ? `<div class="text-[9px] text-gray-400 leading-tight mt-0.5">${m.class || ''} · 부캐 ${g.subs.length}개</div>` : `<div class="text-[9px] text-gray-400 leading-tight mt-0.5">${m.class || ''}</div>`}</div>
                         </div>
                     </td>
                     <td class="py-1.5 px-2 hidden sm:table-cell text-[10px] text-gray-500">${m.guild}</td>
@@ -2974,13 +2974,19 @@
                                     <div class="flex flex-col gap-1">
                                         ${g.subs.map(sub => {
                                             const ss = getScore(sub);
+                                            const sp = getPrev(sub);
+                                            const sd = ss - sp;
                                             const srd = _rd(sub.role);
                                             return `<div class="flex items-center gap-2 px-2.5 py-1.5 bg-white rounded-lg border border-gray-100">
                                                 ${appState.isKickMode ? `<input type="checkbox" class="custom-checkbox" ${appState.kickSelection.has(sub.id)?'checked':''} onchange="window.handleKickSelect('${sub.id}')">` : `<span class="text-[9px] text-gray-300">└</span>`}
                                                 <span class="text-[11px] font-bold text-gray-700">${sub.name}</span>
+                                                ${sub.level > 0 ? `<span class="text-[8px] text-gray-400">Lv.${sub.level}</span>` : ''}
                                                 <span class="inline-block px-1 py-0.5 rounded text-[8px] font-bold" style="background:${srd.bgColor||'#f3f4f6'};color:${srd.textColor||'#6b7280'};">${sub.role}</span>
                                                 <span class="text-[9px] text-gray-400">${sub.guild} · ${sub.class || '-'}</span>
-                                                <span class="ml-auto text-[10px] font-bold ${ss > 0 ? 'text-gray-600' : 'text-gray-300'}">${ss > 0 ? ss.toLocaleString() : '-'}</span>
+                                                <div class="ml-auto flex items-center gap-1.5">
+                                                    ${ss > 0 && sd !== 0 ? `<span class="text-[8px] font-bold ${sd > 0 ? 'text-red-500' : 'text-blue-500'}">${sd > 0 ? '▲+' : '▼'}${sd.toLocaleString()}</span>` : ''}
+                                                    <span class="text-[10px] font-bold ${ss > 0 ? 'text-gray-700' : 'text-gray-300'}">${ss > 0 ? ss.toLocaleString() : '0'}</span>
+                                                </div>
                                                 ${isAdmin() && !appState.isBatchMode && !appState.isKickMode ? `<button onclick="window.openEditModal('${sub.id}')" class="text-blue-400 hover:text-blue-600 text-[8px] ml-1"><i class="fas fa-edit"></i></button><button onclick="window.openDeleteModal('${sub.id}')" class="text-red-400 hover:text-red-600 text-[8px]"><i class="fas fa-trash"></i></button>` : ''}
                                             </div>`;
                                         }).join('')}
@@ -3027,9 +3033,10 @@
             const panels = document.querySelectorAll('[id^="mSubs-"]');
             const rows = document.querySelectorAll('[id^="mRow-"]');
             panels.forEach(el => { el.style.display = window._memberAllOpen ? '' : 'none'; });
-            rows.forEach(el => { el.style.background = ''; });
-            // 헤더 아이콘 토글
-            window.updateMemberTable();
+            rows.forEach(el => { el.style.background = window._memberAllOpen ? '#fdf2f8' : ''; });
+            // 아이콘만 토글 (re-render 없이)
+            const btn = document.querySelector('th button[title="전체 펼치기/접기"] i');
+            if (btn) btn.className = window._memberAllOpen ? 'fas fa-compress-alt' : 'fas fa-expand-alt';
         };
 
         window.renderBail = (container) => {
