@@ -656,6 +656,13 @@
 
         function smartCompare(a, b, field, order) {
             let valA = a[field]; let valB = b[field];
+            if (field === 'score') {
+                const headers = appState.suroHeaders || [];
+                const lh = headers.length > 0 ? headers[headers.length - 1] : null;
+                valA = lh ? (Math.round(Number(a.suro?.[lh])) || 0) : 0;
+                valB = lh ? (Math.round(Number(b.suro?.[lh])) || 0) : 0;
+                return order === 'asc' ? valA - valB : valB - valA;
+            }
             if (field === 'mainInfo') {
                 valA = a.isMain ? a.name : (a.mainCharName || "");
                 valB = b.isMain ? b.name : (b.mainCharName || "");
@@ -2785,8 +2792,15 @@
                     <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
                         <div class="relative flex-1">
                             <i class="fas fa-search absolute left-3 lg:left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                            <input type="text" oninput="window.handleSearch(this.value)" value="${appState.filters.search}" class="w-full pl-8 lg:pl-10 pr-3 lg:pr-4 py-2 lg:py-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none text-[11px] lg:text-xs font-bold shadow-inner focus:ring-2 focus:ring-pink-50 transition-all" placeholder="닉네임 검색 (띄어쓰기로 다중검색)">
+                            <input type="text" oninput="window.handleSearch(this.value)" value="${appState.filters.search}" class="w-full pl-8 lg:pl-10 pr-3 lg:pr-4 py-2 lg:py-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none text-[11px] lg:text-xs font-bold shadow-inner focus:ring-2 focus:ring-pink-50 transition-all" placeholder="닉네임/본캐/직업 검색 (다중검색)">
                         </div>
+                        <select onchange="window.handleSort(this.value)" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-[10px] lg:text-xs font-bold outline-none cursor-pointer shrink-0">
+                            <option value="name" ${appState.filters.sortField==='name'?'selected':''}>정렬: 닉네임순</option>
+                            <option value="score" ${appState.filters.sortField==='score'?'selected':''}>정렬: 수로 높은순</option>
+                            <option value="role" ${appState.filters.sortField==='role'?'selected':''}>정렬: 직위순</option>
+                            <option value="guild" ${appState.filters.sortField==='guild'?'selected':''}>정렬: 소속순</option>
+                            <option value="class" ${appState.filters.sortField==='class'?'selected':''}>정렬: 직업순</option>
+                        </select>
 
                         ${isAdmin() ? `<div class="flex gap-1.5 lg:gap-2 shrink-0 flex-wrap">
                             <button onclick="window.toggleKickMode()" class="px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl text-[10px] lg:text-xs font-bold transition-all ${appState.isKickMode ? 'bg-red-500 text-white shadow-md animate-pulse' : 'bg-red-50 text-red-500 hover:bg-red-100'}">
@@ -2805,7 +2819,8 @@
                     </div>
                 </div>
 
-                <div id="memberTableContainer" class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm flex-1 min-h-0 flex flex-col"></div>
+                <div id="memberTableContainer" class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm flex-1 min-h-0 flex flex-col">
+                </div>
             </div>`;
             window.updateMemberTable();
         };
@@ -2814,105 +2829,207 @@
             const container = document.getElementById('memberTableContainer'); if(!container) return;
 
             const rawSearchTerm = appState.filters.search.trim();
-            const searchTokens = rawSearchTerm.length > 0 
+            const searchTokens = rawSearchTerm.length > 0
                 ? rawSearchTerm.toLowerCase().split(/[\s,]+/).filter(t => t.length > 0)
                 : [];
 
-            const filtered = appState.members.filter(m => { 
-                const gMatch = appState.filters.guild === 'all' || m.guild === appState.filters.guild; 
+            const filtered = appState.members.filter(m => {
+                const gMatch = appState.filters.guild === 'all' || m.guild === appState.filters.guild;
                 if (searchTokens.length === 0) return gMatch;
                 const sMatch = searchTokens.some(token => {
-                    return m.name.toLowerCase().includes(token) || 
-                           (m.class||'').toLowerCase().includes(token) || 
+                    return m.name.toLowerCase().includes(token) ||
+                           (m.class||'').toLowerCase().includes(token) ||
                            (m.role||'').toLowerCase().includes(token) ||
-                           (m.mainCharName || '').toLowerCase().includes(token) || 
-                           (m.isMain && m.name.toLowerCase().includes(token)); 
+                           (m.mainCharName || '').toLowerCase().includes(token) ||
+                           (m.isMain && m.name.toLowerCase().includes(token));
                 });
-                return gMatch && sMatch; 
+                return gMatch && sMatch;
             });
 
-            filtered.sort((a, b) => smartCompare(a, b, appState.filters.sortField, appState.filters.sortOrder));
+            // 본캐 기준 그룹핑
+            const headers = appState.suroHeaders || [];
+            const latestH = headers.length > 0 ? headers[headers.length - 1] : null;
+            const prevH = headers.length > 1 ? headers[headers.length - 2] : null;
+            const getScore = (m) => latestH ? (Math.round(Number(m.suro?.[latestH])) || 0) : 0;
+            const getPrev = (m) => prevH ? (Math.round(Number(m.suro?.[prevH])) || 0) : 0;
 
-            const totalItems = filtered.length;
-            const pageData = filtered;
-            const sortIcon = (f) => appState.filters.sortField === f ? (appState.filters.sortOrder === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>') : '';
-
-            let html = `<div class="overflow-auto flex-1 relative -webkit-overflow-scrolling-touch"><table class="w-full text-left text-[10px] lg:text-xs whitespace-nowrap"><thead class="bg-gray-50 text-[9px] lg:text-[10px] font-bold text-gray-500 border-b border-gray-100 shadow-sm"><tr><th class="py-2 px-2 text-center w-8 lg:w-12">${appState.isKickMode ? '선택' : 'No.'}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th><th class="py-2 px-2 sortable hidden sm:table-cell" onclick="window.handleSort('mainInfo')">본캐${sortIcon('mainInfo')}</th><th class="py-2 px-2 sortable" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th><th class="py-2 px-2 sortable hidden sm:table-cell" onclick="window.handleSort('role')">직위${sortIcon('role')}</th><th class="py-2 px-2 sortable hidden md:table-cell" onclick="window.handleSort('class')">직업${sortIcon('class')}</th>${isAdmin() ? '<th class="py-2 px-2 text-right">관리</th>' : ''}</tr></thead><tbody class="divide-y divide-gray-50 text-gray-600 font-bold">`;
-
-            pageData.forEach((m, idx) => {
-                const globalIndex = idx + 1;
-                // 17명마다 구분선
-                if (idx > 0 && idx % ITEMS_PER_PAGE === 0) {
-                    html += `<tr><td colspan="7" class="py-0"><div class="border-t-2 border-dashed border-pink-200 mx-2 relative"><span class="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-white px-2 text-[9px] font-bold text-pink-300">${idx}명</span></div></td></tr>`;
-                }
-                const mainName = m.isMain ? m.name : (m.mainCharName || '-'); 
-                const mainMem = appState.members.find(x => x.name === mainName);
-                const mainRankHtml = mainMem ? formatRankWithSuffix(mainMem.role) : '-';
-
-                const targetRole = mainMem ? mainMem.role : (m.isMain ? m.role : '');
-
-                const isDark = document.documentElement.classList.contains('dark');
-                let rowStyle = "";
-                const _trRd = SITE_CONFIG?.roleDisplay?.[targetRole] || {};
-                const _mRd = SITE_CONFIG?.roleDisplay?.[m.role] || {};
-                const _rowColor = _trRd.rowColor || _mRd.rowColor || '';
-                if (_rowColor) {
-                    rowStyle = isDark
-                        ? `background:${_rowColor}15;border-left:3px solid ${_rowColor};`
-                        : `background:linear-gradient(to right,${_rowColor}18,${_rowColor}25);border-left:3px solid ${_rowColor};`;
-                }
-
-                const pending = appState.pendingUpdates[m.id];
-                const currentGuild = pending && pending.guild ? pending.guild : m.guild;
-                const currentRole = pending && pending.role ? pending.role : m.role;
-                const currentClass = pending && pending.class ? pending.class : (m.class || '');
-
-                const _rd = SITE_CONFIG?.roleDisplay?.[m.role] || {};
-                const _rtc = _rd.textColor || '';
-                const _rbc = _rd.bgColor || '';
-                let roleHtml = '';
-                if (!appState.isBatchMode) {
-                    let rstyle = '';
-                    if (_rbc) { rstyle += 'background-color:' + _rbc + ';'; rstyle += 'color:' + (_rtc || 'white') + ';'; }
-                    else if (_rtc) { rstyle += 'color:' + _rtc + ';background:#f3f4f6;'; }
-                    else { rstyle += 'background:#f3f4f6;color:#6b7280;'; }
-                    let roleText = m.role;
-                    const _isSub = m.isMain === false;
-                    const _SUB_ONLY = ['와플','아인슈페너','부팬케이크','수플레','부케이크','반죽(휴면)'];
-                    if (['마카롱','다쿠아즈'].includes(m.role)) {
-                      const subRole = window.getComputedRank(m);
-                      if (subRole) roleText = m.role + ' · ' + subRole;
-                    } else if (_isSub && !_SUB_ONLY.includes(m.role)) {
-                      roleText = m.role + ' · 와플';
-                    }
-                    roleHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-tight" style="${rstyle}">${roleText}</span>`;
+            const mainMap = new Map();
+            filtered.forEach(m => {
+                if (m.isMain !== false) {
+                    if (!mainMap.has(m.name)) mainMap.set(m.name, { main: m, subs: [] });
+                    else mainMap.get(m.name).main = m;
                 } else {
-                    roleHtml = `<span class="text-[10px]">${m.role}</span>`;
+                    const mn = m.mainCharName || '';
+                    if (mn) {
+                        if (!mainMap.has(mn)) mainMap.set(mn, { main: null, subs: [] });
+                        mainMap.get(mn).subs.push(m);
+                    } else {
+                        mainMap.set(m.name, { main: m, subs: [] });
+                    }
+                }
+            });
+
+            let groups = [...mainMap.entries()].map(([key, val]) => {
+                if (!val.main) {
+                    const found = appState.members.find(x => x.name === key && x.isMain !== false);
+                    if (found) val.main = found;
+                }
+                return val;
+            }).filter(g => g.main);
+
+            const sf = appState.filters.sortField, so = appState.filters.sortOrder;
+            groups.sort((a, b) => {
+                if (sf === 'score') { return so === 'asc' ? getScore(a.main) - getScore(b.main) : getScore(b.main) - getScore(a.main); }
+                return smartCompare(a.main, b.main, sf, so);
+            });
+
+            const totalMain = groups.length;
+            const totalAll = filtered.length;
+            const _rd = (role) => SITE_CONFIG?.roleDisplay?.[role] || {};
+            const sortIcon = (f) => sf === f ? (so === 'asc' ? ' <i class="fas fa-sort-up"></i>' : ' <i class="fas fa-sort-down"></i>') : '';
+
+            const diffBadge = (score, prev) => {
+                if (score === 0) return '<span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-50 text-red-500">미참여</span>';
+                const d = score - prev;
+                if (prev === 0) return '<span class="text-[9px] font-bold text-red-500">▲ NEW</span>';
+                if (d === 0) return '<span class="text-[9px] font-bold text-gray-400">-</span>';
+                return `<span class="text-[9px] font-bold ${d > 0 ? 'text-red-500' : 'text-blue-500'}">${d > 0 ? '▲' : '▼'} ${d > 0 ? '+' : ''}${d.toLocaleString()}</span>`;
+            };
+
+            const roleBadge = (role) => {
+                const rd = _rd(role);
+                const bg = rd.bgColor || '#f3f4f6', tc = rd.textColor || '#6b7280';
+                return `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold" style="background:${bg};color:${tc};">${role}</span>`;
+            };
+
+            // 테이블 헤더
+            let html = `<div class="overflow-auto flex-1 relative no-scrollbar" style="-webkit-overflow-scrolling:touch;">
+            <table class="w-full text-left text-[10px] lg:text-xs" style="white-space:nowrap;">
+                <thead class="bg-gray-50 text-[9px] lg:text-[10px] font-bold text-gray-500 border-b border-gray-200 sticky top-0 z-10">
+                    <tr>
+                        <th class="py-2 px-2 text-center" style="width:32px;">${appState.isKickMode ? '선택' : 'No.'}</th>
+                        <th class="py-2 px-2 cursor-pointer hover:bg-gray-100" onclick="window.handleSort('name')">닉네임${sortIcon('name')}</th>
+                        <th class="py-2 px-2 cursor-pointer hover:bg-gray-100 hidden sm:table-cell" onclick="window.handleSort('guild')">소속${sortIcon('guild')}</th>
+                        <th class="py-2 px-2 cursor-pointer hover:bg-gray-100 hidden sm:table-cell" onclick="window.handleSort('role')">직위${sortIcon('role')}</th>
+                        <th class="py-2 px-2 cursor-pointer hover:bg-gray-100 hidden md:table-cell" onclick="window.handleSort('class')">직업${sortIcon('class')}</th>
+                        <th class="py-2 px-2 text-right cursor-pointer hover:bg-gray-100" onclick="window.handleSort('score')" style="color:#ec4899;">수로${sortIcon('score')}</th>
+                        <th class="py-2 px-2 text-right hidden sm:table-cell">변동</th>
+                        <th class="py-2 px-2 text-center" style="width:36px;">
+                            <button onclick="window._toggleAllMembers()" class="text-[9px] text-gray-400 hover:text-pink-500" title="전체 펼치기/접기"><i class="fas fa-${window._memberAllOpen ? 'compress-alt' : 'expand-alt'}"></i></button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="font-bold text-gray-600">`;
+
+            groups.forEach((g, gi) => {
+                const m = g.main;
+                // 17명 구분선
+                if (gi > 0 && gi % ITEMS_PER_PAGE === 0) {
+                    html += `<tr><td colspan="8" style="padding:0;"><div style="border-top:2px dashed #fbcfe8;margin:0 8px;position:relative;"><span style="position:absolute;left:50%;transform:translateX(-50%) translateY(-50%);background:white;padding:0 8px;font-size:9px;font-weight:700;color:#f9a8d4;">${gi}명</span></div></td></tr>`;
                 }
 
-                html += `<tr class="${pending ? 'batch-modified' : ''} hover:bg-pink-50/20 group transition-colors" style="${rowStyle}">
-                    <td class="py-1.5 px-2 text-center text-gray-400 text-[11px]">
-                        ${appState.isKickMode 
-                            ? `<input type="checkbox" class="custom-checkbox" ${appState.kickSelection.has(m.id) ? 'checked' : ''} onchange="window.handleKickSelect('${m.id}')">`
-                            : globalIndex}
-                    </td>
-                    <td class="py-1.5 px-2 font-bold text-gray-800 flex items-center leading-none">${window.getNicknameIcon(m.role, m)}<span class="text-sm tracking-tight">${m.name}</span></td>
-                    <td class="py-1.5 px-2 leading-tight hidden sm:table-cell">
-                        <span class="block text-[11px] font-bold text-gray-700">${mainName}</span>
-                        <span class="text-[9px] font-medium text-gray-400">${mainRankHtml}</span>
-                    </td>
-                    <td class="py-1.5 px-2">${appState.isBatchMode ? `<select onchange="window.stageUpdate('${m.id}', 'guild', this.value)" class="bg-white border rounded px-1 text-[10px] outline-none">${appState.guilds.map(g=>`<option value="${g.name}" ${currentGuild===g.name?'selected':''}>${g.name}</option>`).join('')}</select>` : m.guild}</td>
-                    <td class="py-1.5 px-2 hidden sm:table-cell">${appState.isBatchMode ? `<select onchange="window.stageUpdate('${m.id}', 'role', this.value)" class="bg-white border rounded px-1 text-[10px] outline-none">${(appState.guildRanks[currentGuild]||initialGuildRanks[currentGuild]||initialGuildRanks['뚠카롱']).map(r=>`<option value="${r}" ${currentRole===r?'selected':''}>${r}</option>`).join('')}</select>` : roleHtml}</td>
-                    <td class="py-1.5 px-2 hidden md:table-cell">${appState.isBatchMode ? `<input type="text" value="${currentClass}" onchange="window.stageUpdate('${m.id}', 'class', this.value)" class="bg-white border rounded px-1 text-[10px] w-24 outline-none">` : `<span class="text-[10px] text-gray-400">${m.class||'-'}</span>`}</td>
-                    <td class="py-1.5 px-2 text-right">
-                        ${isAdmin() && !appState.isBatchMode && !appState.isKickMode ? `<div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="window.openEditModal('${m.id}')" class="w-7 h-7 rounded-lg border border-gray-100 text-blue-500 hover:bg-blue-50 flex items-center justify-center shadow-sm"><i class="fas fa-edit text-[10px]"></i></button><button onclick="window.openDeleteModal('${m.id}')" class="w-7 h-7 rounded-lg border border-gray-100 text-red-500 hover:bg-red-50 flex items-center justify-center shadow-sm"><i class="fas fa-trash text-[10px]"></i></button></div>` : ''}
-                    </td>
-                </tr>`;
-            });
-            html += `</tbody></table></div>`;
-            html += `<div class="py-2 text-center text-[9px] text-gray-300 font-bold">총 ${totalItems}명</div>`;
+                const score = getScore(m);
+                const prev = getPrev(m);
+                const rd = _rd(m.role);
+                const borderColor = rd.rowColor || rd.bgColor || '#e5e7eb';
+                const emoji = rd.emoji || (m.role === '마카롱' ? '<i class="fas fa-crown text-blue-500"></i>' : m.role === '다쿠아즈' ? '<i class="fas fa-crown text-pink-500"></i>' : '');
+                const hasSubs = g.subs.length > 0;
+                const subBadge = hasSubs ? `<span class="inline-block px-1 py-0.5 rounded text-[8px] font-bold bg-pink-50 text-pink-400">${g.subs.length}캐</span>` : '';
 
+                html += `<tr class="hover:bg-pink-50/20 transition-colors cursor-pointer group" style="border-bottom:1px solid #f3f4f6;height:38px;border-left:3px solid ${borderColor};" onclick="window._toggleMemberGroup(${gi})" id="mRow-${gi}">
+                    <td class="py-1.5 px-2 text-center text-gray-400 text-[11px]">${appState.isKickMode ? `<input type="checkbox" class="custom-checkbox" ${appState.kickSelection.has(m.id)?'checked':''} onclick="event.stopPropagation()" onchange="window.handleKickSelect('${m.id}')">` : (gi+1)}</td>
+                    <td class="py-1.5 px-2">
+                        <div class="flex items-center gap-1.5 leading-none">
+                            ${emoji ? `<span class="text-sm">${emoji}</span>` : ''}<span class="text-[12px] font-black text-gray-800">${m.name}</span>${m.level > 0 ? `<span class="text-[8px] text-gray-400 font-mono">Lv.${m.level}</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-1.5 px-2 hidden sm:table-cell text-[10px] text-gray-500">${m.guild}</td>
+                    <td class="py-1.5 px-2 hidden sm:table-cell">${roleBadge(m.role)}</td>
+                    <td class="py-1.5 px-2 hidden md:table-cell text-[10px] text-gray-400">${m.class || '-'}</td>
+                    <td class="py-1.5 px-2 text-right font-mono ${score === 0 ? 'text-red-400' : 'text-gray-800'}" style="font-weight:800;">${score > 0 ? score.toLocaleString() : '0'}</td>
+                    <td class="py-1.5 px-2 text-right hidden sm:table-cell">${diffBadge(score, prev)}</td>
+                    <td class="py-1.5 px-2 text-center">${subBadge}${isAdmin() && !appState.isBatchMode && !appState.isKickMode ? `<span class="opacity-0 group-hover:opacity-100 transition-opacity inline-flex gap-0.5 ml-1"><button onclick="event.stopPropagation();window.openEditModal('${m.id}')" class="text-blue-400 hover:text-blue-600 text-[9px]"><i class="fas fa-edit"></i></button><button onclick="event.stopPropagation();window.openDeleteModal('${m.id}')" class="text-red-400 hover:text-red-600 text-[9px]"><i class="fas fa-trash"></i></button></span>` : ''}</td>
+                </tr>`;
+
+                // 부캐 패널 (숨김, DOM toggle)
+                if (hasSubs) {
+                    html += `<tr id="mSubs-${gi}" style="display:none;"><td colspan="8" style="padding:0;border:none;">
+                        <div style="background:linear-gradient(180deg,#fdf2f8,#fff 60%);border-bottom:2px solid #f3f4f6;padding:10px 14px;">
+                            <div class="flex gap-3 flex-wrap lg:flex-nowrap">
+                                <div style="min-width:180px;">
+                                    <div class="text-[10px] font-bold text-pink-500 mb-1.5"><i class="fas fa-user mr-1"></i>${m.name} 요약</div>
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        <div class="bg-white rounded-lg p-2 border border-gray-100 text-center">
+                                            <div class="text-[8px] text-gray-400 font-bold">수로 점수</div>
+                                            <div class="text-sm font-black text-gray-800">${score > 0 ? score.toLocaleString() : '0'}</div>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-2 border border-gray-100 text-center">
+                                            <div class="text-[8px] text-gray-400 font-bold">전주 대비</div>
+                                            <div class="text-sm font-black ${score - prev > 0 ? 'text-red-500' : score - prev < 0 ? 'text-blue-500' : 'text-gray-400'}">${score - prev > 0 ? '+' : ''}${(score - prev).toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-[250px]">
+                                    <div class="text-[10px] font-bold text-gray-600 mb-1.5"><i class="fas fa-users mr-1"></i>부캐 ${g.subs.length}개</div>
+                                    <div class="flex flex-col gap-1">
+                                        ${g.subs.map(sub => {
+                                            const ss = getScore(sub);
+                                            const srd = _rd(sub.role);
+                                            return `<div class="flex items-center gap-2 px-2.5 py-1.5 bg-white rounded-lg border border-gray-100">
+                                                ${appState.isKickMode ? `<input type="checkbox" class="custom-checkbox" ${appState.kickSelection.has(sub.id)?'checked':''} onchange="window.handleKickSelect('${sub.id}')">` : `<span class="text-[9px] text-gray-300">└</span>`}
+                                                <span class="text-[11px] font-bold text-gray-700">${sub.name}</span>
+                                                <span class="inline-block px-1 py-0.5 rounded text-[8px] font-bold" style="background:${srd.bgColor||'#f3f4f6'};color:${srd.textColor||'#6b7280'};">${sub.role}</span>
+                                                <span class="text-[9px] text-gray-400">${sub.guild} · ${sub.class || '-'}</span>
+                                                <span class="ml-auto text-[10px] font-bold ${ss > 0 ? 'text-gray-600' : 'text-gray-300'}">${ss > 0 ? ss.toLocaleString() : '-'}</span>
+                                                ${isAdmin() && !appState.isBatchMode && !appState.isKickMode ? `<button onclick="window.openEditModal('${sub.id}')" class="text-blue-400 hover:text-blue-600 text-[8px] ml-1"><i class="fas fa-edit"></i></button><button onclick="window.openDeleteModal('${sub.id}')" class="text-red-400 hover:text-red-600 text-[8px]"><i class="fas fa-trash"></i></button>` : ''}
+                                            </div>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td></tr>`;
+                }
+            });
+
+            html += `</tbody></table></div>`;
+            html += `<div class="py-2 text-center text-[9px] text-gray-300 font-bold shrink-0">본캐 ${totalMain}명 · 전체 ${totalAll}명</div>`;
             container.innerHTML = html;
+
+            // 전체 펼치기 상태면 모두 열기
+            if (window._memberAllOpen) {
+                groups.forEach((g, gi) => {
+                    if (g.subs.length > 0) {
+                        const el = document.getElementById('mSubs-' + gi);
+                        if (el) el.style.display = '';
+                    }
+                });
+            }
+        };
+
+        window._memberAllOpen = false;
+        window._toggleMemberGroup = (gi) => {
+            const el = document.getElementById('mSubs-' + gi);
+            if (!el) return;
+            const isVisible = el.style.display !== 'none';
+            // 전체 펼치기 모드가 아니면 다른 패널 닫기
+            if (!window._memberAllOpen) {
+                document.querySelectorAll('[id^="mSubs-"]').forEach(e => { if (e !== el) e.style.display = 'none'; });
+                document.querySelectorAll('[id^="mRow-"]').forEach(e => e.style.background = '');
+            }
+            el.style.display = isVisible ? 'none' : '';
+            const row = document.getElementById('mRow-' + gi);
+            if (row) row.style.background = isVisible ? '' : '#fdf2f8';
+        };
+
+        window._toggleAllMembers = () => {
+            window._memberAllOpen = !window._memberAllOpen;
+            const panels = document.querySelectorAll('[id^="mSubs-"]');
+            const rows = document.querySelectorAll('[id^="mRow-"]');
+            panels.forEach(el => { el.style.display = window._memberAllOpen ? '' : 'none'; });
+            rows.forEach(el => { el.style.background = ''; });
+            // 헤더 아이콘 토글
+            window.updateMemberTable();
         };
 
         window.renderBail = (container) => {
@@ -8868,7 +8985,7 @@
   window._memberSearchTimer = null;
   window.handleSearch = (v) => { appState.filters.search = v; appState.pagination.members = 1; if(window._memberSearchTimer) clearTimeout(window._memberSearchTimer); window._memberSearchTimer = setTimeout(() => window.updateMemberTable(), 100); };
   window.filterByGuild = (g) => { appState.filters.guild = g; appState.pagination.members = 1; if(appState.activeTab === 'members') window.renderMembers(document.getElementById('contentArea')); else window.updateMemberTable(); };
-  window.handleSort = (field) => { if(appState.filters.sortField === field) appState.filters.sortOrder = appState.filters.sortOrder === 'asc' ? 'desc' : 'asc'; else { appState.filters.sortField = field; appState.filters.sortOrder = 'asc'; } appState.pagination.members = 1; window.updateMemberTable(); };
+  window.handleSort = (field) => { if(appState.filters.sortField === field) appState.filters.sortOrder = appState.filters.sortOrder === 'asc' ? 'desc' : 'asc'; else { appState.filters.sortField = field; appState.filters.sortOrder = (field === 'score' || field === 'role') ? 'desc' : 'asc'; } appState.pagination.members = 1; window.updateMemberTable(); };
   window.closeModal = (id) => { document.getElementById(id)?.classList.add('hidden'); };
 
   window.openEditModal = (id) => { 
