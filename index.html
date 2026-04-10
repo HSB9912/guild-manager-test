@@ -4783,7 +4783,7 @@
     { grade: '티라미슈', label: 'TOP 21~51', pieces: '숫돌 24개', benefit: '전체면제 + 숫돌24개 + 부캐길드면제' },
     { grade: '크로칸슈', label: '중급 길드원', minScore: 90000, pieces: '-', benefit: '전체면제 + 부캐길드면제' },
     { grade: '롤케이크', label: '평길드원', minScore: 55000, pieces: '-', benefit: '절반면제' },
-    { grade: '팬케이크', label: '강등 위험조', minScore: 0, pieces: '-', benefit: '부캐면제 X (하위 10명)' },
+    { grade: '팬케이크', label: '강등 위험조', minScore: 0, pieces: '-', benefit: '부캐면제 X (하위 20명)' },
   ];
 
   window.renderSuroReward = (container) => {
@@ -4873,7 +4873,7 @@
       '팬케이크': { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-600', badge: 'bg-gray-400' },
     };
 
-    const bottom10 = ranked.slice(-10).map(m => m.name);
+    const bottom20 = ranked.slice(-20).map(m => m.name);
     const results = ranked.map((m, i) => {
       const rank = i + 1;
       let grade = '', reward = '', benefit = '', rewardNote = '';
@@ -4901,12 +4901,14 @@
           reward = `숫돌 ${adj}개`; rewardNote = `(24→${adj}, ${Math.round(ratio*100)}%)`;
         } else { reward = '숫돌 24개'; }
         benefit = '전체면제 + 숫돌24개 + 부캐길드면제';
+      } else if (bottom20.includes(m.name)) {
+        grade = '팬케이크'; reward = '-'; benefit = '부캐면제 X (하위 20)';
       } else if (m.avg >= 90000) {
         grade = '크로칸슈'; reward = '-'; benefit = '전체면제 + 부캐길드면제';
       } else if (m.avg >= 55000) {
         grade = '롤케이크'; reward = '-'; benefit = '절반면제';
       } else {
-        grade = '팬케이크'; reward = '-'; benefit = bottom10.includes(m.name) ? '부캐면제 X' : '';
+        grade = '롤케이크'; reward = '-'; benefit = '절반면제';
       }
       return { ...m, rank, grade, reward, benefit, rewardNote };
     });
@@ -4921,7 +4923,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
         ${['크라운','파르페','티라미슈','크로칸슈','롤케이크','팬케이크'].map(g => {
           const c = gc(g); const cnt = results.filter(r => r.grade === g).length;
-          const info = g === '크라운' ? 'TOP 5' : g === '파르페' ? '6~20등' : g === '티라미슈' ? '21~51등' : g === '크로칸슈' ? '90,000+' : g === '롤케이크' ? '55,000+' : '하위 10명';
+          const info = g === '크라운' ? 'TOP 5' : g === '파르페' ? '6~20등' : g === '티라미슈' ? '21~51등' : g === '크로칸슈' ? '90,000+' : g === '롤케이크' ? '55,000+' : '하위 20명';
           return `<div class="${c.bg} ${c.border} border rounded-xl p-2 text-center">
             <div class="text-[10px] font-black ${c.text}">${g}</div>
             <div class="text-lg font-black ${c.text}">${cnt}</div>
@@ -8454,6 +8456,7 @@
    if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
    const v = parseInt(el.value);
    if (!isNaN(v) && v > 0) cfg.autoRankRules[gn][ri].topN = v;
+   else delete cfg.autoRankRules[gn][ri].topN;
    });
    document.querySelectorAll('.cfg-autorule-bottomn').forEach(el => {
    const gn = el.dataset.guild;
@@ -8462,6 +8465,7 @@
    if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
    const v = parseInt(el.value);
    if (!isNaN(v) && v > 0) cfg.autoRankRules[gn][ri].bottomN = v;
+   else delete cfg.autoRankRules[gn][ri].bottomN;
    });
    document.querySelectorAll('.cfg-autorule-note').forEach(el => {
    const gn = el.dataset.guild;
