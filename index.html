@@ -82,6 +82,14 @@ body.theme-retro::-webkit-scrollbar-track{background:#fef3c7;border-left:2px sol
 body.theme-retro::-webkit-scrollbar-thumb{background:#1e1b4b;border:2px solid #fef3c7;border-radius:0;}
 body.theme-retro .batch-modified{background:#fed7aa !important;}
 body.theme-retro .score-zero{background:#fecaca !important;color:#7f1d1d !important;}
+/* DB 시트 sticky 컬럼 보정 */
+body.theme-retro #sheetTableWrap table thead th[class*="sticky"]{background:#1e1b4b !important;color:#fef3c7 !important;border-right:2px solid #0f0a2a !important;}
+body.theme-retro #sheetTableWrap table tbody td[class*="sticky"]{background:#fff !important;color:#1e1b4b !important;border-right:2px solid #1e1b4b !important;}
+body.theme-retro #sheetTableWrap table tbody tr:nth-child(even) td[class*="sticky"]{background:#fef9e7 !important;}
+body.theme-retro #sheetTableWrap table tbody tr:hover td[class*="sticky"]{background:#fde68a !important;}
+body.theme-retro #sheetTableWrap table td{border-right:1px solid #1e1b4b !important;}
+body.theme-retro #sheetTableWrap table select,body.theme-retro #sheetTableWrap table input{background:transparent !important;border:none !important;box-shadow:none !important;color:#1e1b4b !important;font-weight:800 !important;}
+body.theme-retro #sheetTableWrap table select:focus,body.theme-retro #sheetTableWrap table input:focus{background:#fef3c7 !important;outline:2px solid #f59e0b !important;}
 /* 레트로 + 다크모드 조합 */
 body.theme-retro.dark{background:#0f0a2a !important;}
 body.theme-retro.dark aside{background:#1e1b4b !important;border-color:#f59e0b !important;}
