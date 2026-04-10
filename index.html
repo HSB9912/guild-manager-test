@@ -9691,19 +9691,33 @@
    }
   };
 
+  // KST 기준 날짜 문자열 반환 (넥슨 API는 KST 기준)
+  window._getKSTDate = (daysBack = 0) => {
+    const now = new Date();
+    const kst = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
+    kst.setDate(kst.getDate() - daysBack);
+    return kst.toISOString().split('T')[0];
+  };
+
   window._guessMainChar = async (characterName) => {
     try {
       const ocid = await window._getCharOcid(characterName);
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const dateStr = yesterday.toISOString().split('T')[0];
-      const rankData = await window._nexonFetch('/maplestory/v1/ranking/union', {
-        ocid: ocid,
-        date: dateStr
-      });
-      if (rankData && rankData.ranking && rankData.ranking.length > 0) {
-        return rankData.ranking[0].character_name;
+
+      // 유니온 랭킹으로 본캐 조회 (KST 기준 어제 → 3일전 → 7일전)
+      const tryDays = [1, 2, 3, 7];
+      for (const daysBack of tryDays) {
+        try {
+          const dateStr = window._getKSTDate(daysBack);
+          const rankData = await window._nexonFetch('/maplestory/v1/ranking/union', {
+            ocid: ocid,
+            date: dateStr
+          });
+          if (rankData?.ranking?.length > 0) {
+            return rankData.ranking[0].character_name;
+          }
+        } catch(e) { continue; }
       }
+
       return null;
     } catch(e) {
       return null;
