@@ -66,6 +66,17 @@ export default {
         return json(files);
       }
 
+      // GET /meaegi/캐릭터명 — 메애기 API 프록시 (CORS 우회)
+      if (request.method === 'GET' && path.startsWith('/meaegi/')) {
+        const charName = path.slice('/meaegi/'.length);
+        const meaegiUrl = `https://meaegi.com/api/maplestory/character/${charName}`;
+        const meaegiRes = await fetch(meaegiUrl, {
+          headers: { 'User-Agent': 'guild-manager/1.0' },
+        });
+        const data = await meaegiRes.json();
+        return json({ mainCharacterName: data.mainCharacterName || null });
+      }
+
       return new Response('Not Found', { status: 404, headers: cors });
     } catch (e) {
       return json({ error: e.message }, 500);

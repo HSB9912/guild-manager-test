@@ -9700,9 +9700,9 @@
   };
 
   window._guessMainChar = async (characterName) => {
-    // 1차: 메애기 API (가장 정확, 빠름)
+    // 1차: 메애기 API (Cloudflare Worker 프록시 경유, CORS 우회)
     try {
-      const meaegiRes = await fetch('https://meaegi.com/api/maplestory/character/' + encodeURIComponent(characterName));
+      const meaegiRes = await fetch(R2_WORKER_URL + '/meaegi/' + encodeURIComponent(characterName));
       if (meaegiRes.ok) {
         const meaegiData = await meaegiRes.json();
         if (meaegiData.mainCharacterName) {
