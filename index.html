@@ -10465,6 +10465,37 @@
    </div>
    </div>
 
+   <div class="bg-white p-6 lg:p-8 rounded-[2rem] border border-purple-100 shadow-sm font-bold">
+   <div class="flex items-center justify-between mb-6">
+   <div class="flex items-center gap-3">
+   <div class="w-10 h-10 bg-gradient-to-tr from-purple-400 to-fuchsia-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-user-friends"></i></div>
+   <div>
+   <h3 class="text-lg text-gray-800">본캐 미입력 추론</h3>
+   <p class="text-[10px] text-gray-400">본캐 정보가 비어있거나, 부캐길드에서 본캐로 잘못 체크된 멤버를 찾아 본캐를 자동 추론합니다</p>
+   </div>
+   </div>
+   <button onclick="window._runMainCharGuess()" id="mainGuessBtn" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white rounded-xl text-xs font-bold shadow-lg hover:shadow-xl transition-all">
+   <i class="fas fa-magic mr-2"></i>추론 실행
+   </button>
+   </div>
+
+   <div class="bg-gray-50 rounded-2xl p-4 mb-6 border border-gray-100">
+   <p class="text-[10px] text-gray-500 leading-relaxed">
+   <i class="fas fa-info-circle text-purple-400 mr-1"></i>
+   메애기(meaegi.com) API를 통해 본캐를 자동 탐지합니다.<br>
+   <i class="fas fa-arrow-right text-gray-300 mr-1 ml-3"></i> <span class="text-purple-500">대상</span>: 본캐로 체크되어 있지만 본캐닉이 비어있는 멤버 (주로 부캐길드)<br>
+   <i class="fas fa-arrow-right text-gray-300 mr-1 ml-3"></i> <span class="text-emerald-500">결과</span>: 본캐닉이 자기 자신이면 OK, 다른 캐릭이면 부캐로 전환 제안
+   </p>
+   </div>
+
+   <div id="mainGuessResult">
+   <div class="text-center py-12 text-gray-300">
+   <i class="fas fa-user-friends text-4xl mb-3"></i>
+   <p class="text-xs font-bold">위 버튼을 눌러 본캐 추론을 시작하세요</p>
+   </div>
+   </div>
+   </div>
+
    <div class="bg-white p-6 lg:p-8 rounded-[2rem] border border-blue-100 shadow-sm font-bold">
    <div class="flex items-center gap-3 mb-6">
    <div class="w-10 h-10 bg-gradient-to-tr from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-pen-square"></i></div>
@@ -10654,6 +10685,167 @@
    } catch (e) {
    window.showMsg('삭제 실패: ' + e.message, 'error');
    }
+  };
+
+  window._runMainCharGuess = async () => {
+    const btn = document.getElementById('mainGuessBtn');
+    const resultDiv = document.getElementById('mainGuessResult');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>추론 중...'; }
+
+    // 대상: 본캐로 체크되어 있지만 본캐닉이 비어있는 멤버, 또는 부캐길드에서 본캐로 체크된 멤버
+    const subGuilds = appState.guilds.filter(g => g.type && (g.type.includes('부캐') || g.type.includes('부'))).map(g => g.name);
+    const targets = appState.members.filter(m => {
+      // 1) 본캐 체크인데 본캐닉 미입력
+      const noMainName = m.isMain !== false && (!m.mainCharName || m.mainCharName.trim() === '');
+      // 2) 부캐길드에서 본캐로 체크됨
+      const subGuildMain = m.isMain !== false && subGuilds.includes(m.guild);
+      return noMainName || subGuildMain;
+    });
+
+    if (targets.length === 0) {
+      resultDiv.innerHTML = '<div class="text-center py-8"><i class="fas fa-check-circle text-4xl text-emerald-400 mb-3"></i><p class="text-xs text-emerald-600 font-bold">본캐 미입력 멤버가 없습니다!</p></div>';
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic mr-2"></i>추론 실행'; }
+      return;
+    }
+
+    resultDiv.innerHTML = `<div class="text-center py-4 text-gray-400"><i class="fas fa-spinner fa-spin text-xl mb-2"></i><p class="text-[10px]">메애기 API로 ${targets.length}명 추론 중...</p></div>`;
+
+    const results = [];
+    for (let i = 0; i < targets.length; i++) {
+      const m = targets[i];
+      if (btn) btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>${i+1}/${targets.length}`;
+      try {
+        const guess = await window._guessMainChar(m.name);
+        const mainName = guess?.name || null;
+        const isSelf = mainName === m.name;
+        const needsFix = mainName && !isSelf;
+        results.push({ member: m, mainName, isSelf, needsFix, method: guess?.method || 'fail' });
+      } catch(e) {
+        results.push({ member: m, mainName: null, isSelf: false, needsFix: false, method: 'error' });
+      }
+    }
+
+    const needFix = results.filter(r => r.needsFix);
+    const selfOk = results.filter(r => r.isSelf);
+    const unknown = results.filter(r => !r.mainName);
+
+    let html = `<div class="space-y-3">`;
+
+    // 요약
+    html += `<div class="grid grid-cols-3 gap-2 mb-4">
+      <div class="bg-purple-50 rounded-xl p-3 text-center border border-purple-100">
+        <div class="text-xl font-black text-purple-600">${needFix.length}</div>
+        <div class="text-[9px] text-purple-400 font-bold">수정 필요</div>
+      </div>
+      <div class="bg-emerald-50 rounded-xl p-3 text-center border border-emerald-100">
+        <div class="text-xl font-black text-emerald-600">${selfOk.length}</div>
+        <div class="text-[9px] text-emerald-400 font-bold">정상 (본캐)</div>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-3 text-center border border-gray-100">
+        <div class="text-xl font-black text-gray-400">${unknown.length}</div>
+        <div class="text-[9px] text-gray-400 font-bold">미확인</div>
+      </div>
+    </div>`;
+
+    // 수정 필요 목록
+    if (needFix.length > 0) {
+      html += `<div class="border border-purple-100 rounded-xl overflow-hidden">
+        <div class="bg-purple-50 px-4 py-2 flex justify-between items-center">
+          <span class="text-[11px] text-purple-700 font-bold"><i class="fas fa-exclamation-triangle mr-1"></i>부캐로 전환 필요 (${needFix.length}명)</span>
+          <button onclick="window._applyAllMainGuess()" id="applyAllGuessBtn" class="px-3 py-1.5 bg-purple-500 text-white rounded-lg text-[10px] font-bold hover:bg-purple-600"><i class="fas fa-check-double mr-1"></i>전체 적용</button>
+        </div>
+        <div class="divide-y divide-gray-50">`;
+      needFix.forEach((r, ri) => {
+        html += `<div class="flex items-center gap-3 px-4 py-2.5 hover:bg-purple-50/30" id="guessRow_${ri}">
+          <input type="checkbox" class="guess-check custom-checkbox" data-idx="${ri}" checked>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[11px] font-black text-gray-800">${r.member.name}</span>
+              <span class="text-[9px] text-gray-400">${r.member.guild} · ${r.member.class || '-'}</span>
+              <span class="text-[9px] text-gray-300">→</span>
+              <span class="text-[11px] font-black text-purple-600">본캐: ${r.mainName}</span>
+              <span class="text-[8px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-400">${r.method}</span>
+            </div>
+            <div class="text-[9px] text-gray-400 mt-0.5">현재: isMain=${r.member.isMain !== false ? 'O' : 'X'}, 본캐닉="${r.member.mainCharName || '(비어있음)'}" → isMain=X, 본캐닉="${r.mainName}"</div>
+          </div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    // 정상 목록
+    if (selfOk.length > 0) {
+      html += `<details class="border border-emerald-100 rounded-xl overflow-hidden">
+        <summary class="bg-emerald-50 px-4 py-2 text-[11px] text-emerald-700 font-bold cursor-pointer"><i class="fas fa-check-circle mr-1"></i>정상 확인됨 (${selfOk.length}명) — 클릭하여 펼치기</summary>
+        <div class="divide-y divide-gray-50 max-h-[200px] overflow-y-auto">
+          ${selfOk.map(r => `<div class="flex items-center gap-2 px-4 py-1.5 text-[10px]">
+            <span class="text-emerald-500"><i class="fas fa-check"></i></span>
+            <span class="font-bold text-gray-700">${r.member.name}</span>
+            <span class="text-gray-400">${r.member.guild}</span>
+            <span class="text-emerald-500 ml-auto">본캐 확인 OK</span>
+          </div>`).join('')}
+        </div>
+      </details>`;
+    }
+
+    // 미확인
+    if (unknown.length > 0) {
+      html += `<details class="border border-gray-100 rounded-xl overflow-hidden">
+        <summary class="bg-gray-50 px-4 py-2 text-[11px] text-gray-600 font-bold cursor-pointer"><i class="fas fa-question-circle mr-1"></i>미확인 (${unknown.length}명)</summary>
+        <div class="divide-y divide-gray-50 max-h-[200px] overflow-y-auto">
+          ${unknown.map(r => `<div class="flex items-center gap-2 px-4 py-1.5 text-[10px]">
+            <span class="text-gray-300"><i class="fas fa-question"></i></span>
+            <span class="font-bold text-gray-700">${r.member.name}</span>
+            <span class="text-gray-400">${r.member.guild}</span>
+            <span class="text-gray-300 ml-auto">추론 실패</span>
+          </div>`).join('')}
+        </div>
+      </details>`;
+    }
+
+    html += `</div>`;
+    resultDiv.innerHTML = html;
+
+    // 전체 적용 데이터 저장
+    window._mainGuessResults = needFix;
+
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic mr-2"></i>추론 실행'; }
+  };
+
+  window._applyAllMainGuess = async () => {
+    const results = window._mainGuessResults || [];
+    const checks = document.querySelectorAll('.guess-check:checked');
+    if (checks.length === 0) { window.showMsg('적용할 항목을 선택해주세요.', 'error'); return; }
+
+    const selected = [...checks].map(c => results[parseInt(c.dataset.idx)]).filter(Boolean);
+    const lines = selected.map(r => `• ${r.member.name} (${r.member.guild}) → 본캐: ${r.mainName}`);
+    if (!confirm(`${selected.length}명의 본캐 정보를 수정하시겠습니까?\n\n${lines.join('\n')}`)) return;
+
+    const btn = document.getElementById('applyAllGuessBtn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>적용 중...'; }
+
+    let ok = 0;
+    for (const r of selected) {
+      try {
+        const { error } = await supaDb.from('members').update({
+          is_main: false,
+          main_char_name: r.mainName
+        }).eq('id', r.member.id);
+        if (!error) {
+          ok++;
+          await supaDb.from('operation_history').insert({
+            date: window.getKSTDateStr(),
+            category: '본캐추론',
+            name: r.member.name,
+            content: `본캐 자동 추론: ${r.mainName} (${r.method}) — ${r.member.guild}`
+          });
+        }
+      } catch(e) {}
+    }
+
+    window.showMsg(`${ok}명의 본캐 정보가 수정되었습니다!`, 'success');
+    await window.fetchMembers();
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-double mr-1"></i>전체 적용'; }
   };
 
   window._runDupCheck = async () => {
