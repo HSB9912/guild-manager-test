@@ -8006,18 +8006,25 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
    const rolePriority = cfg.rolePriority || ROLE_PRIORITY;
    const iconOptions = ['👑','❤️','🌙','⭐','☀️','🌰','🍯','🐉','🌸','💎','🔥','⚡','🛡️','🎮','🍀','🌊','⛰️','🦋','🐝','🌈','🍰','🧁','🍩','🍪','🎂','🍭','🍬','☕','🧇','🥐','🍞','🎪','🎯','🎲','🏰','⚔️','🗡️','🏹','🔮','✨','💫','🌟','🎵','🎨','🦊','🐻','🐰','🐱','🐶','🦁','🐸','🦉','🐧','🐼','🌺','🌻','🌷','🍎','🍋','🍒'];
 
-   // 길드 카드 (압축형)
+   // 길드 카드 (개선형 - 행 기반 편집)
    const guildsHtml = guilds.map((g, gi) => {
-     const icOpts = iconOptions.map(ic => '<span onclick="this.closest(\'[data-guild-idx]\').querySelector(\'input.cfg-guild-icon\').value=\''+ic+'\';this.closest(\'details\').removeAttribute(\'open\');" style="cursor:pointer;font-size:16px;padding:2px;user-select:none" title="'+ic+'">'+ic+'</span>').join('');
-     return '<div class="bg-gray-50 rounded-xl p-3 border border-gray-100" data-guild-idx="'+gi+'">'
-     +'<div class="flex items-center gap-2 mb-2"><div class="w-6 h-6 rounded-lg flex items-center justify-center text-sm" style="background:'+g.color+'15">'+g.icon+'</div><span class="font-bold text-gray-800 text-xs">'+g.name+'</span><button onclick="window._cfgRemoveGuild('+gi+')" class="ml-auto text-gray-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div>'
-     +'<div class="grid grid-cols-5 gap-1.5 text-[10px]">'
-     +'<div><label class="text-[8px] text-gray-400 block">이름</label><input class="cfg-guild-name w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold outline-none" value="'+g.name+'" data-idx="'+gi+'"></div>'
-     +'<div><label class="text-[8px] text-gray-400 block">타입</label><input class="cfg-guild-type w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold outline-none" value="'+g.type+'" data-idx="'+gi+'"></div>'
-     +'<div><label class="text-[8px] text-gray-400 block">색상</label><div class="flex items-center gap-1"><input type="color" class="cfg-guild-color w-6 h-6 rounded border-0 cursor-pointer" value="'+g.color+'" data-idx="'+gi+'"></div></div>'
-     +'<div><label class="text-[8px] text-gray-400 block">아이콘</label><div class="flex items-center gap-1"><input class="cfg-guild-icon w-10 text-center bg-white border border-gray-200 rounded-lg py-1 text-sm outline-none" value="'+g.icon+'" data-idx="'+gi+'"><details class="relative"><summary class="text-[8px] text-gray-400 cursor-pointer hover:text-pink-500">선택</summary><div class="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-xl p-2 flex flex-wrap gap-0.5 w-48 mt-1" style="max-height:120px;overflow-y:auto">'+icOpts+'</div></details></div></div>'
-     +'<div><label class="text-[8px] text-gray-400 block">인원</label><input type="number" class="cfg-guild-max w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold outline-none" value="'+g.max+'" data-idx="'+gi+'"></div>'
-     +'</div></div>';
+     const curCount = appState.members.filter(m => m.guild === g.name).length;
+     const icOpts = iconOptions.map(ic => '<span onclick="this.closest(\'[data-guild-idx]\').querySelector(\'input.cfg-guild-icon\').value=\''+ic+'\';this.closest(\'details\').removeAttribute(\'open\');" style="cursor:pointer;font-size:18px;padding:4px;user-select:none;display:inline-block;border-radius:6px;" onmouseover="this.style.background=\'#f3f4f6\'" onmouseout="this.style.background=\'\'" title="'+ic+'">'+ic+'</span>').join('');
+     return '<div class="bg-white rounded-xl border border-gray-200 p-3 hover:border-pink-300 transition-all" data-guild-idx="'+gi+'">'
+     +'<div class="flex items-center gap-3">'
+     +'<span class="text-gray-300 cursor-grab text-sm select-none shrink-0" title="드래그하여 순서 변경">⋮⋮</span>'
+     +'<div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 border-2" style="background:'+g.color+'15;border-color:'+g.color+'40">'+g.icon+'</div>'
+     +'<div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-[2fr_2fr_70px_40px_40px] gap-2 items-center">'
+     +'<div><label class="text-[8px] text-gray-400 font-bold uppercase">이름</label><input class="cfg-guild-name w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-bold outline-none focus:border-pink-300 focus:bg-white" value="'+g.name+'" data-idx="'+gi+'"></div>'
+     +'<div><label class="text-[8px] text-gray-400 font-bold uppercase">타입</label><input class="cfg-guild-type w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none focus:border-pink-300 focus:bg-white" value="'+g.type+'" data-idx="'+gi+'"></div>'
+     +'<div><label class="text-[8px] text-gray-400 font-bold uppercase">정원</label><input type="number" class="cfg-guild-max w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none text-center focus:border-pink-300 focus:bg-white" value="'+g.max+'" data-idx="'+gi+'"></div>'
+     +'<div><label class="text-[8px] text-gray-400 font-bold uppercase">색상</label><input type="color" class="cfg-guild-color w-full h-[30px] rounded-lg border border-gray-200 cursor-pointer p-0" value="'+g.color+'" data-idx="'+gi+'"></div>'
+     +'<div class="relative"><label class="text-[8px] text-gray-400 font-bold uppercase">아이콘</label><details class="relative"><summary class="list-none cursor-pointer"><input class="cfg-guild-icon w-full h-[30px] text-center bg-gray-50 border border-gray-200 rounded-lg text-base outline-none" value="'+g.icon+'" data-idx="'+gi+'" readonly></summary><div class="absolute z-[100] right-0 bg-white border border-gray-200 rounded-xl shadow-xl p-2 flex flex-wrap gap-0.5 w-56 mt-1" style="max-height:180px;overflow-y:auto">'+icOpts+'</div></details></div>'
+     +'</div>'
+     +'<div class="flex flex-col items-end gap-1 shrink-0 ml-2">'
+     +'<span class="text-[9px] font-bold text-gray-500">'+curCount+' / '+g.max+'명</span>'
+     +'<button onclick="window._cfgRemoveGuild('+gi+')" class="w-7 h-7 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 hover:border-red-200 flex items-center justify-center text-[10px] transition-all"><i class="fas fa-trash"></i></button>'
+     +'</div></div></div>';
    }).join('');
 
    // 직위 스타일 (이모지/색상, 순서·삭제는 길드별 목록에서 관리)
@@ -8189,9 +8196,9 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
    +'<div class="sm:col-span-2"><label class="text-[8px] text-gray-400 block">면제 안내</label><input id="cfgExemptNote" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-[11px] font-bold outline-none" value="'+suroExemptNote+'" placeholder="예: 크로칸슈 이상 면제"></div>'
    +'</div></div>'
 
-   +'<div class="mb-6"><h4 class="text-xs lg:text-sm text-gray-600 mb-2 flex items-center gap-2"><i class="fas fa-users text-pink-400 text-[10px]"></i>길드 정보</h4>'
-   +'<div class="grid grid-cols-1 lg:grid-cols-2 gap-2" id="cfgGuildList">'+guildsHtml+'</div>'
-   +'<button onclick="window._cfgAddGuild()" class="mt-2 text-[10px] text-pink-500 hover:text-pink-700 font-bold"><i class="fas fa-plus mr-1"></i>길드 추가</button></div>'
+   +'<div class="mb-6"><div class="flex items-center justify-between mb-3"><h4 class="text-xs lg:text-sm text-gray-700 flex items-center gap-2 font-bold"><i class="fas fa-flag text-pink-400 text-[11px]"></i>길드 관리 <span class="text-[9px] text-gray-400 font-normal">('+guilds.length+'개)</span></h4><button onclick="window._cfgAddGuild()" class="px-3 py-1.5 bg-pink-500 hover:bg-pink-600 text-white rounded-lg text-[10px] font-bold shadow-sm transition-all"><i class="fas fa-plus mr-1"></i>길드 추가</button></div>'
+   +'<div class="space-y-2" id="cfgGuildList">'+guildsHtml+'</div>'
+   +'</div>'
 
    +'<div class="mb-6"><h4 class="text-xs lg:text-sm text-gray-600 mb-2 flex items-center gap-2"><i class="fas fa-tag text-pink-400 text-[10px]"></i>길드 배지 색상</h4>'
    +'<div class="space-y-1.5" id="cfgBadgeList">'+badgeHtml+'</div></div>'
