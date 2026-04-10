@@ -2257,27 +2257,10 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
                                 <tbody id="analysisTableBody" class="font-bold text-gray-600">
                                     ${processedList.map((m, i) => {
                                         const globalIndex = i + 1;
-                                        const allScoresForDetail = allHeaders.map(h => ({ header: h, score: Math.round(Number(m.suro?.[h])) || 0, own: isOwnScore(m, h) }));
-                                        const validAll = allScoresForDetail.filter(x => x.score > 0 && x.own);
-                                        const maxScore = validAll.length > 0 ? Math.max(...validAll.map(x => x.score)) : 0;
-                                        const minScore = validAll.length > 0 ? Math.min(...validAll.map(x => x.score)) : 0;
-                                        let _fpI = allScoresForDetail.findIndex(x => x.score > 0); if (_fpI < 0) _fpI = allScoresForDetail.length;
-                                        const _aw = allScoresForDetail.length - _fpI;
-                                        const participation = _aw > 0 ? Math.round((validAll.length / _aw) * 100) : 0;
                                         const lastScore = m.recentScores[m.recentScores.length - 1] || 0;
                                         const prevLast = m.recentScores.length > 1 ? m.recentScores[m.recentScores.length - 2] : 0;
                                         const lastDiff = lastScore - prevLast;
                                         const miss = lastScore === 0;
-
-                                        const detailHtml = [...allScoresForDetail].reverse().map((x, di) => {
-                                            const origIdx = allScoresForDetail.length - 1 - di;
-                                            if (origIdx < _fpI) return `<div class="flex justify-between py-0.5 px-1.5 text-[9px] opacity-30"><span class="text-gray-400">${getShortWedStr(x.header)}</span><span class="text-gray-300">미가입</span></div>`;
-                                            const prev2 = di < allScoresForDetail.length - 1 ? [...allScoresForDetail].reverse()[di+1] : null;
-                                            const wd = prev2 && prev2.score > 0 && x.score > 0 ? x.score - prev2.score : 0;
-                                            const isCur = di === 0;
-                                            const foreign = !x.own && x.score > 0 ? '<span class="text-[7px] text-amber-400 ml-1">타길드</span>' : '';
-                                            return `<div class="flex justify-between py-0.5 px-1.5 rounded text-[9px] ${isCur?'bg-pink-50':''}"><span class="font-bold ${isCur?'text-pink-500':'text-gray-500'}">${getShortWedStr(x.header)}${isCur?' ←':''}${foreign}</span><span><span class="${wd>0?'text-red-500':wd<0?'text-blue-500':'text-gray-300'}" style="margin-right:4px;">${wd?(wd>0?'+':'')+wd.toLocaleString():''}</span><span class="font-black ${x.score?'text-gray-800':'text-red-400'}">${x.score?x.score.toLocaleString():'미참여'}</span></span></div>`;
-                                        }).join('');
 
                                         return `
                                         <tr style="height:30px;border-bottom:1px solid #f3f4f6;${miss?'background:#fef2f2;':''}" class="hover:bg-pink-50/20 cursor-pointer transition-colors" onclick="window._toggleAnalysisDetail(${i}, '${m.name.replace(/'/g, "\\'")}')" id="aRow-${i}" data-name="${m.name}">
@@ -2294,24 +2277,7 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
                                             <td class="py-1 px-1 text-center text-[9px]">${miss?'<span class="text-red-500 font-bold">미참여</span>':prevLast===0&&lastScore>0?'<span class="text-red-500">NEW</span>':lastDiff===0?'<span class="text-gray-300">-</span>':`<span class="${lastDiff>0?'text-red-500':'text-blue-500'} font-bold">${fmtDiffK(lastDiff)}</span>`}</td>
                                         </tr>
                                         <tr id="aDetail-${i}"><td colspan="${4 + recentHeaders.length}" style="padding:0;border:none;">
-                                            <div class="overflow-hidden transition-all duration-300" style="max-height:0;opacity:0;" id="aPanel-${i}">
-                                                <div style="padding:8px 12px;background:linear-gradient(180deg,#fdf2f8,#fff 50%);border-bottom:2px solid #f3f4f6;">
-                                                    <div class="flex gap-3">
-                                                        <div class="flex-1 min-w-0">
-                                                            <div class="flex gap-2 mb-1.5">
-                                                                <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">최고</div><div class="text-[11px] font-black">${maxScore.toLocaleString()}</div></div>
-                                                                <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">평균</div><div class="text-[11px] font-black text-gray-500">${m.avg.toLocaleString()}</div></div>
-                                                                <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">최저</div><div class="text-[11px] font-black text-gray-500">${minScore.toLocaleString()}</div></div>
-                                                                <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">참여</div><div class="text-[11px] font-black ${participation===100?'text-green-500':'text-amber-500'}">${participation}%</div></div>
-                                                            </div>
-                                                            <div class="flex flex-col max-h-[120px] overflow-y-auto no-scrollbar">${detailHtml}</div>
-                                                        </div>
-                                                        <div style="width:220px;flex-shrink:0;">
-                                                            <div class="bg-gray-50 rounded p-1.5 h-full" style="min-height:100px;"><canvas id="aChart-${i}"></canvas></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <div class="overflow-hidden transition-all duration-300" style="max-height:0;opacity:0;" id="aPanel-${i}" data-lazy="1"></div>
                                         </td></tr>`;
                                     }).join('')}
                                 </tbody>
@@ -2749,6 +2715,55 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
                 row.style.background = '';
                 window._analysisOpenRow = null;
             } else {
+                // Lazy: 처음 열 때만 내부 HTML 생성
+                if (panel.dataset.lazy === '1') {
+                    const member = appState.members.find(m => m.name === name);
+                    if (member) {
+                        const headers = [...appState.suroHeaders];
+                        const gName = appState.analysisGuild;
+                        const isOwn = (m, h) => { const rg = m.suroGuild?.[h]; return rg ? rg === gName : m.guild === gName; };
+                        const getShort = (h) => { const p = h.split('~'); const s = p.length > 1 ? p[1].replace('수로 점수','').trim() : h; const pp = s.split('-'); return pp.length >= 3 ? pp[1]+'-'+pp[2].substring(0,2) : s; };
+                        const getLong = (h) => { const p = h.split('~'); return p.length > 1 ? p[1].replace('수로 점수','').trim() : h; };
+
+                        const scoresAll = headers.map(h => ({ header: h, score: Math.round(Number(member.suro?.[h])) || 0, own: isOwn(member, h) }));
+                        const validAll = scoresAll.filter(x => x.score > 0 && x.own);
+                        const maxScore = validAll.length > 0 ? Math.max(...validAll.map(x => x.score)) : 0;
+                        const minScore = validAll.length > 0 ? Math.min(...validAll.map(x => x.score)) : 0;
+                        let fpI = scoresAll.findIndex(x => x.score > 0); if (fpI < 0) fpI = scoresAll.length;
+                        const activeW = scoresAll.length - fpI;
+                        const avg = validAll.length > 0 ? Math.round(validAll.reduce((a,b)=>a+b.score,0)/validAll.length) : 0;
+                        const participation = activeW > 0 ? Math.round((validAll.length / activeW) * 100) : 0;
+
+                        const detailHtml = [...scoresAll].reverse().map((x, di) => {
+                            const origIdx = scoresAll.length - 1 - di;
+                            if (origIdx < fpI) return `<div class="flex justify-between py-0.5 px-1.5 text-[9px] opacity-30"><span class="text-gray-400">${getShort(x.header)}</span><span class="text-gray-300">미가입</span></div>`;
+                            const prev2 = di < scoresAll.length - 1 ? [...scoresAll].reverse()[di+1] : null;
+                            const wd = prev2 && prev2.score > 0 && x.score > 0 ? x.score - prev2.score : 0;
+                            const isCur = di === 0;
+                            const foreign = !x.own && x.score > 0 ? '<span class="text-[7px] text-amber-400 ml-1">타길드</span>' : '';
+                            return `<div class="flex justify-between py-0.5 px-1.5 rounded text-[9px] ${isCur?'bg-pink-50':''}"><span class="font-bold ${isCur?'text-pink-500':'text-gray-500'}">${getShort(x.header)}${isCur?' ←':''}${foreign}</span><span><span class="${wd>0?'text-red-500':wd<0?'text-blue-500':'text-gray-300'}" style="margin-right:4px;">${wd?(wd>0?'+':'')+wd.toLocaleString():''}</span><span class="font-black ${x.score?'text-gray-800':'text-red-400'}">${x.score?x.score.toLocaleString():'미참여'}</span></span></div>`;
+                        }).join('');
+
+                        panel.innerHTML = `<div style="padding:8px 12px;background:linear-gradient(180deg,#fdf2f8,#fff 50%);border-bottom:2px solid #f3f4f6;">
+                            <div class="flex gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex gap-2 mb-1.5">
+                                        <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">최고</div><div class="text-[11px] font-black">${maxScore.toLocaleString()}</div></div>
+                                        <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">평균</div><div class="text-[11px] font-black text-gray-500">${avg.toLocaleString()}</div></div>
+                                        <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">최저</div><div class="text-[11px] font-black text-gray-500">${minScore.toLocaleString()}</div></div>
+                                        <div class="flex-1 bg-white rounded p-1.5 border border-gray-100 text-center"><div class="text-[7px] text-gray-400">참여</div><div class="text-[11px] font-black ${participation===100?'text-green-500':'text-amber-500'}">${participation}%</div></div>
+                                    </div>
+                                    <div class="flex flex-col max-h-[120px] overflow-y-auto no-scrollbar">${detailHtml}</div>
+                                </div>
+                                <div style="width:220px;flex-shrink:0;">
+                                    <div class="bg-gray-50 rounded p-1.5 h-full" style="min-height:100px;"><canvas id="aChart-${idx}"></canvas></div>
+                                </div>
+                            </div>
+                        </div>`;
+                        panel.dataset.lazy = '0';
+                    }
+                }
+
                 panel.style.maxHeight = '450px'; panel.style.opacity = '1';
                 row.style.background = '#fdf2f8';
                 window._analysisOpenRow = idx;
