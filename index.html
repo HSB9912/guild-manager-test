@@ -8208,41 +8208,58 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
    +'<button onclick="window._cfgReset()" class="px-4 py-3 bg-gray-100 text-gray-500 rounded-xl font-bold text-[10px] hover:bg-gray-200 transition-all"><i class="fas fa-undo mr-1"></i>초기화</button>'
    +'</div></div></div>'
 
-   // 직위
+   // 직위 (재설계: 2열 레이아웃)
    +'<div class="'+rolesContent+'">'
    +'<div class="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-2xl border border-gray-100 dark:border-gray-700 font-bold">'
-   +'<div class="flex items-center gap-2 mb-1"><div class="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-medal text-purple-500 text-xs"></i></div>'
-   +'<div><h3 class="text-base lg:text-lg text-gray-800">직위 설정</h3></div></div>'
-   +'<p class="text-[9px] text-purple-400 mb-6"><i class="fas fa-info-circle mr-1"></i>변경 후 하단 [저장] 필수</p>'
+   +'<div class="flex items-center justify-between mb-4">'
+   +'<div class="flex items-center gap-2"><div class="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-medal text-purple-500 text-xs"></i></div>'
+   +'<div><h3 class="text-base lg:text-lg text-gray-800">직위 설정</h3><p class="text-[9px] text-purple-400"><i class="fas fa-info-circle mr-1"></i>변경 후 하단 [저장] 필수</p></div></div>'
+   +'<div class="flex gap-2">'
+   +'<button onclick="window._cfgSave()" class="px-5 py-2 bg-pink-500 text-white rounded-xl font-bold text-xs shadow-lg hover:bg-pink-600 transition-all"><i class="fas fa-save mr-1"></i>저장</button>'
+   +'</div>'
+   +'</div>'
 
-   +'<div class="mb-6">'
-   +'<h4 class="text-xs lg:text-sm text-gray-600 mb-2 flex items-center gap-2"><i class="fas fa-list text-purple-400 text-[10px]"></i>길드별 직위 목록 <span class="text-[9px] text-gray-400 font-normal ml-1">'+rsGuild+' — '+guildRoleNames.length+'개</span></h4>'
-   +'<div class="flex gap-1.5 mb-3 overflow-x-auto no-scrollbar">'+roleGuildTabsHtml+'</div>'
-   +'<div class="space-y-1.5" id="cfgGuildRoleList">'+guildRoleListHtml+'</div>'
-   +'<div class="flex items-center gap-2 mt-3">'
-   +'<input id="cfgNewRoleName" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-purple-300 placeholder:text-gray-300" placeholder="새 직위 이름 입력...">'
-   +'<button onclick="window._cfgAddRole(\''+rsGuild+'\')" class="px-4 py-2 bg-purple-500 text-white rounded-xl text-[10px] font-bold hover:bg-purple-600 transition-all shadow-sm shrink-0"><i class="fas fa-plus mr-1"></i>추가</button>'
+   // 2열 레이아웃 시작
+   +'<div class="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-4">'
+
+   // 좌측: 길드별 직위 목록
+   +'<div class="space-y-3">'
+   +'<div class="bg-gray-50 rounded-xl p-3 border border-gray-100">'
+   +'<h4 class="text-[11px] text-gray-700 mb-2 flex items-center gap-2 font-bold"><i class="fas fa-list text-purple-400 text-[10px]"></i>길드별 직위 목록 <span class="text-[9px] text-gray-400 font-normal">'+guildRoleNames.length+'개</span></h4>'
+   +'<div class="flex gap-1 mb-2 overflow-x-auto no-scrollbar">'+roleGuildTabsHtml+'</div>'
+   +'<div class="space-y-1 max-h-[340px] overflow-y-auto no-scrollbar" id="cfgGuildRoleList">'+guildRoleListHtml+'</div>'
+   +'<div class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">'
+   +'<input id="cfgNewRoleName" class="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-bold outline-none focus:border-purple-300" placeholder="새 직위 이름...">'
+   +'<button onclick="window._cfgAddRole(\''+rsGuild+'\')" class="px-3 py-2 bg-purple-500 text-white rounded-lg text-[10px] font-bold hover:bg-purple-600 shadow-sm shrink-0"><i class="fas fa-plus mr-1"></i>추가</button>'
    +'</div></div>'
 
-   +'<div class="mb-6">'
-   +'<details class="group"><summary class="text-xs lg:text-sm text-gray-600 mb-1 flex items-center gap-2 cursor-pointer hover:text-purple-500 transition-colors"><i class="fas fa-palette text-purple-400 text-[10px]"></i>직위 스타일 (이모지 · 색상) <i class="fas fa-chevron-down text-[8px] text-gray-300 group-open:rotate-180 transition-transform ml-1"></i></summary>'
-   +'<p class="text-[8px] text-gray-400 mb-2 mt-1">이모지, 뱃지 색상, 행 배경색 설정 (모든 길드 공통 적용)</p>'
-   +'<div class="space-y-1" id="cfgRoleList">'+rolesHtml+'</div>'
-   +'</details></div>'
+   // 수로 면제 (좌측 하단)
+   +'<details class="bg-gray-50 rounded-xl border border-gray-100" open><summary class="px-3 py-2.5 text-[11px] text-gray-700 flex items-center gap-2 cursor-pointer font-bold hover:bg-gray-100 rounded-xl"><i class="fas fa-shield-alt text-pink-400 text-[10px]"></i>수로 면제 직위 <span class="text-[9px] text-gray-400 font-normal">('+suroExempt.length+'개 선택)</span></summary>'
+   +'<div class="px-3 pb-3"><div class="flex flex-col gap-1">'+exemptHtml+'</div></div>'
+   +'</details>'
+   +'</div>'
 
-   +'<div class="mb-6">'
-   +'<details><summary class="text-xs lg:text-sm text-gray-600 mb-2 flex items-center gap-2 cursor-pointer hover:text-purple-500 transition-colors"><i class="fas fa-shield-alt text-purple-400 text-[10px]"></i>수로 면제 직위 <i class="fas fa-chevron-down text-[8px] text-gray-300 transition-transform ml-1"></i></summary>'
-   +'<div class="flex flex-col gap-1 mt-1">'+exemptHtml+'</div>'
-   +'</details></div>'
+   // 우측: 스타일 + 자동 규칙
+   +'<div class="space-y-3">'
+   // 직위 스타일
+   +'<div class="bg-gray-50 rounded-xl p-3 border border-gray-100">'
+   +'<h4 class="text-[11px] text-gray-700 mb-2 flex items-center gap-2 font-bold"><i class="fas fa-palette text-purple-400 text-[10px]"></i>직위 스타일 <span class="text-[9px] text-gray-400 font-normal">이모지 · 뱃지 색상 · 행 색상</span></h4>'
+   +'<div class="space-y-1 max-h-[260px] overflow-y-auto no-scrollbar" id="cfgRoleList">'+rolesHtml+'</div>'
+   +'</div>'
 
-   +'<div class="mb-6">'
-   +'<details><summary class="text-xs lg:text-sm text-gray-600 mb-1 flex items-center gap-2 cursor-pointer hover:text-purple-500 transition-colors"><i class="fas fa-magic text-purple-400 text-[10px]"></i>직위 커트라인 & 자동 배정 <i class="fas fa-chevron-down text-[8px] text-gray-300 transition-transform ml-1"></i></summary>'
-   +'<p class="text-[8px] text-gray-400 mb-2 mt-1">topN: 상위 N명, btmN: 하위 N명, 최소점수: 점수 구간</p>'
-   +'<div class="flex gap-1.5 mb-2 overflow-x-auto no-scrollbar">'+autoRankTabsHtml+'</div>'
+   // 자동 직위 규칙
+   +'<div class="bg-gray-50 rounded-xl p-3 border border-gray-100">'
+   +'<h4 class="text-[11px] text-gray-700 mb-2 flex items-center gap-2 font-bold"><i class="fas fa-magic text-purple-400 text-[10px]"></i>직위 자동 배정 규칙 <span class="text-[9px] text-gray-400 font-normal">topN/btmN/최소점수</span></h4>'
+   +'<div class="bg-amber-50 border border-amber-100 rounded-lg p-2 mb-2 text-[9px] text-amber-700 font-normal"><i class="fas fa-info-circle mr-1"></i><b>topN</b>: 상위 N명 / <b>btmN</b>: 하위 N명 / <b>최소점수</b>: 이상 점수</div>'
+   +'<div class="flex gap-1 mb-2 overflow-x-auto no-scrollbar">'+autoRankTabsHtml+'</div>'
    +autoRankSections
-   +'</details></div>'
+   +'</div>'
+   +'</div>'
 
-   +'<div class="flex gap-2 pt-3 border-t border-gray-100">'
+   // 2열 레이아웃 끝
+   +'</div>'
+
+   +'<div class="flex gap-2 pt-4 mt-4 border-t border-gray-100">'
    +'<button onclick="window._cfgSave()" class="px-6 py-3 bg-pink-500 text-white rounded-xl font-bold text-xs shadow-lg hover:bg-pink-600 transition-all"><i class="fas fa-save mr-1"></i>저장</button>'
    +'<button onclick="window._cfgReset()" class="px-4 py-3 bg-gray-100 text-gray-500 rounded-xl font-bold text-[10px] hover:bg-gray-200 transition-all"><i class="fas fa-undo mr-1"></i>초기화</button>'
    +'</div></div></div>'
