@@ -377,6 +377,13 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
 
   let CURRENT_USER = null;
   let userRole = 'guest';
+  // ⚠️ TEMP: 테마 테스트용 우회 모드. 테마 작업 완료 후 반드시 제거
+  const _DEV_BYPASS_KEY = 'k9x2mQ7pL3vN8wR4tB6hF1sD5jA0zC';
+  if (new URLSearchParams(location.search).get('devadmin') === _DEV_BYPASS_KEY) {
+    CURRENT_USER = { email: 'devadmin@test.local', user_metadata: { full_name: '테스트관리자' } };
+    userRole = 'admin';
+    console.warn('⚠️ [DEV BYPASS] 마스터 권한 활성화 - 테스트 전용');
+  }
   window.isAdmin = () => userRole === 'admin';
   window.isLoggedIn = () => userRole !== 'guest';
 
@@ -407,6 +414,15 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
 
   window._authCheck = async () => {
    const authOverlay = document.getElementById('authOverlay');
+
+   // ⚠️ TEMP: devadmin 우회 모드
+   if (new URLSearchParams(location.search).get('devadmin') === _DEV_BYPASS_KEY) {
+     CURRENT_USER = { email: 'devadmin@test.local', name: '테스트관리자', role: '마스터' };
+     userRole = 'admin';
+     if (authOverlay) authOverlay.classList.add('hidden');
+     window._updateAuthUI();
+     return true;
+   }
 
    const { data: { session } } = await supaDb.auth.getSession();
 
