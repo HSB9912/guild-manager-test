@@ -9700,10 +9700,20 @@
   };
 
   window._guessMainChar = async (characterName) => {
+    // 1차: 메애기 API (가장 정확, 빠름)
+    try {
+      const meaegiRes = await fetch('https://meaegi.com/api/maplestory/character/' + encodeURIComponent(characterName));
+      if (meaegiRes.ok) {
+        const meaegiData = await meaegiRes.json();
+        if (meaegiData.mainCharacterName) {
+          return { name: meaegiData.mainCharacterName, method: 'meaegi', candidates: null };
+        }
+      }
+    } catch(e) {}
+
+    // 2차: 넥슨 유니온 랭킹 (KST 기준, 여러 날짜 시도)
     try {
       const ocid = await window._getCharOcid(characterName);
-
-      // 유니온 랭킹으로 본캐 조회 (KST 기준 어제 → 3일전 → 7일전)
       const tryDays = [1, 2, 3, 7];
       for (const daysBack of tryDays) {
         try {
@@ -9713,15 +9723,13 @@
             date: dateStr
           });
           if (rankData?.ranking?.length > 0) {
-            return rankData.ranking[0].character_name;
+            return { name: rankData.ranking[0].character_name, method: 'union', candidates: null };
           }
         } catch(e) { continue; }
       }
+    } catch(e) {}
 
-      return null;
-    } catch(e) {
-      return null;
-    }
+    return { name: null, method: 'fail', candidates: null };
   };
 
   window._runSync = async () => {
@@ -10126,10 +10134,21 @@
       if (!el) continue;
       el.innerHTML = '<i class="fas fa-spinner fa-spin text-[9px] text-gray-400"></i>';
       try {
-        const mainName = await window._guessMainChar(members[i].name);
-        if (mainName) {
-          const isSelf = mainName === members[i].name;
-          el.innerHTML = `<button onclick="window._applyGuess(${i},'${mainName.replace(/'/g,"\\'")}')" class="text-[10px] font-bold ${isSelf ? 'text-amber-600 bg-amber-50' : 'text-purple-600 bg-purple-50'} px-2 py-1 rounded-lg hover:opacity-80 transition-all" title="${isSelf ? '유니온 대표 = 자기자신 (이 캐릭이 계정 최고레벨)' : '클릭하면 본캐닉에 적용'}">${mainName}${isSelf ? '' : ' <i class="fas fa-arrow-left text-[8px] ml-1"></i>'}</button>`;
+        const result = await window._guessMainChar(members[i].name);
+
+        if (result.name) {
+          const isSelf = result.name === members[i].name;
+          const methodTag = result.method === 'block' ? '<span class="text-[8px] text-amber-400 ml-1">(블록)</span>' : '';
+          el.innerHTML = `<button onclick="window._applyGuess(${i},'${result.name.replace(/'/g,"\\'")}')" class="text-[10px] font-bold ${isSelf ? 'text-amber-600 bg-amber-50' : 'text-purple-600 bg-purple-50'} px-2 py-1 rounded-lg hover:opacity-80 transition-all" title="${isSelf ? '유니온 대표 = 자기자신' : '클릭하면 본캐닉에 적용'} (${result.method})">${result.name}${isSelf ? '' : ' <i class="fas fa-arrow-left text-[8px] ml-1"></i>'}${methodTag}</button>`;
+        } else if (result.method === 'block_multi' && result.candidates) {
+          // 후보 여러 명 → 선택 버튼들
+          el.innerHTML = `<div class="flex flex-wrap gap-1">
+            <span class="text-[8px] text-amber-500 font-bold">후보:</span>
+            ${result.candidates.map(c => `<button onclick="window._applyGuess(${i},'${c.replace(/'/g,"\\'")}')" class="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded hover:bg-blue-100">${c}</button>`).join('')}
+          </div>`;
+        } else if (result.method === 'block_hint' && result.hint) {
+          // 길드 밖 본캐 → 힌트만
+          el.innerHTML = `<span class="text-[9px] text-amber-500 font-bold" title="유니온 블록 최고레벨 캐릭 (길드 밖)">💡 ${result.hint}</span>`;
         } else {
           el.innerHTML = '<span class="text-[9px] text-gray-300">미확인</span>';
         }
