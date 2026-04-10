@@ -8085,7 +8085,7 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
        return '<div class="grid grid-cols-[50px_50px_70px_1fr_60px_28px] gap-0 items-center px-2 py-1 hover:bg-purple-50/30">'
        +'<input type="number" class="cfg-autorule-topn w-11 bg-transparent border-b border-gray-200 px-1 py-0.5 text-[11px] font-bold outline-none text-center focus:border-purple-400" value="'+(r.topN||'')+'" data-guild="'+gn+'" data-ri="'+ri+'" placeholder="—">'
        +'<input type="number" class="cfg-autorule-bottomn w-11 bg-transparent border-b border-gray-200 px-1 py-0.5 text-[11px] font-bold outline-none text-center focus:border-purple-400" value="'+(r.bottomN||'')+'" data-guild="'+gn+'" data-ri="'+ri+'" placeholder="—">'
-       +'<input type="number" class="cfg-autorule-min w-16 bg-transparent border-b border-gray-200 px-1 py-0.5 text-[11px] font-bold outline-none text-right focus:border-purple-400" value="'+(r.min > 0 ? r.min : '')+'" data-guild="'+gn+'" data-ri="'+ri+'" placeholder="—">'
+       +'<input type="number" class="cfg-autorule-min w-16 bg-transparent border-b border-gray-200 px-1 py-0.5 text-[11px] font-bold outline-none text-right focus:border-purple-400" value="'+(r.min !== undefined && r.min !== null ? r.min : '')+'" data-guild="'+gn+'" data-ri="'+ri+'" placeholder="—">'
        +'<input class="cfg-autorule-rank bg-transparent border-b border-gray-200 px-1 py-0.5 text-[11px] font-bold outline-none focus:border-purple-400" value="'+r.rank+'" data-guild="'+gn+'" data-ri="'+ri+'" placeholder="직위명">'
        +'<input class="cfg-autorule-note w-14 bg-transparent border-b border-gray-200 px-1 py-0.5 text-[9px] outline-none text-gray-400 focus:border-purple-400" value="'+(r.note||'')+'" data-guild="'+gn+'" data-ri="'+ri+'" placeholder="비고">'
        +'<button onclick="window._cfgRemoveAutoRule(\''+gn+'\','+ri+')" class="text-gray-300 hover:text-red-400 text-xs text-center"><i class="fas fa-times"></i></button></div>';
@@ -8552,7 +8552,9 @@ body.theme-retro.dark table tbody tr:hover td{background:#4338ca !important;}
    const ri = parseInt(el.dataset.ri);
    if (!cfg.autoRankRules[gn]) cfg.autoRankRules[gn] = [];
    if (!cfg.autoRankRules[gn][ri]) cfg.autoRankRules[gn][ri] = {};
-   cfg.autoRankRules[gn][ri].min = parseInt(el.value) || 0;
+   // 빈칸=undefined, 0도 정상 저장
+   if (el.value === '' || el.value == null) delete cfg.autoRankRules[gn][ri].min;
+   else cfg.autoRankRules[gn][ri].min = parseInt(el.value) || 0;
    });
    document.querySelectorAll('.cfg-autorule-rank').forEach(el => {
    const gn = el.dataset.guild;
